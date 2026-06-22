@@ -53,13 +53,15 @@ CREATE POLICY "admin lee todos los eventos"
 --    (faltaban políticas → select daba 500/sin filas)
 -- ─────────────────────────────────────────────────────────────
 
+-- NOTA: usa is_super_admin() (SECURITY DEFINER) — un subquery directo a
+-- profiles aquí causa recursión infinita en la policy (ver migration 20260622-03).
 DROP POLICY IF EXISTS "profiles_select_own" ON public.profiles;
 CREATE POLICY "profiles_select_own"
   ON public.profiles FOR SELECT
   TO authenticated
   USING (
     auth.uid() = id
-    OR EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = auth.uid() AND p.is_admin = true)
+    OR public.is_super_admin()
   );
 
 DROP POLICY IF EXISTS "profiles_update_own" ON public.profiles;
