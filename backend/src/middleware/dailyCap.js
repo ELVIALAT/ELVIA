@@ -1,7 +1,14 @@
-// Middleware para hard cap diario de análisis con Claude API
-// Límite: 100 análisis/día (ajustable en Supabase)
-// CRIT-3 fix: usa RPC atómica para evitar race condition en check + increment
+// Middleware para hard cap diario de análisis con Claude API.
+// ADR-004: caps en 3 dimensiones (global / per-tenant / per-user) vía RPC atómica,
+// para que el tenant genérico no sea vector de DoS económico entre usuarios B2C.
 const { supabaseAdmin } = require('../lib/supabase');
+
+// Mensajes por dimensión que bloqueó (no filtrar detalles de otros usuarios/tenants).
+const BLOCK_MESSAGES = {
+  global: 'El servicio alcanzó su capacidad diaria de análisis. Intenta mañana.',
+  tenant: 'Tu organización alcanzó su límite diario de análisis. Intenta mañana o contacta a tu administrador.',
+  user:   'Alcanzaste tu límite diario de análisis. Intenta de nuevo mañana.',
+};
 
 const dailyCap = async (req, res, next) => {
   if (!supabaseAdmin) {
@@ -11,9 +18,25 @@ const dailyCap = async (req, res, next) => {
 
   try {
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const userId = req.user?.id || null;
 
-    // Incremento atómico: la RPC hace check + insert/update en una sola transacción
-    const { data, error } = await supabaseAdmin.rpc('increment_daily_cap', { p_date: today });
+    // Resolver company_id del usuario (para el cap per-tenant)
+    let companyId = null;
+    if (userId) {
+      const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('company_id')
+        .eq('id', userId)
+        .maybeSingle();
+      companyId = profile?.company_id || null;
+    }
+
+    // Incremento atómico multi-dimensión: check + insert/update de las 3 dimensiones
+    const { data, error } = await supabaseAdmin.rpc('increment_daily_cap_v2', {
+      p_date: today,
+      p_company_id: companyId,
+      p_user_id: userId,
+    });
 
     if (error) {
       // Si la RPC no existe (ej. primer deploy), degradar con gracia
@@ -27,9 +50,11 @@ const dailyCap = async (req, res, next) => {
     if (!result?.allowed) {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
+      const scope = result?.blocked_scope || 'global';
       return res.status(429).json({
-        error: `Se alcanzó el límite diario de ${result?.max_count ?? 100} análisis. Intenta mañana.`,
-        retryAfter: tomorrow.toISOString().split('T')[0]
+        error: BLOCK_MESSAGES[scope] || BLOCK_MESSAGES.global,
+        scope,
+        retryAfter: tomorrow.toISOString().split('T')[0],
       });
     }
 
