@@ -20,14 +20,17 @@ CREATE INDEX IF NOT EXISTS linkedin_analyses_user_id_created_at
 -- RLS: users can only see and insert their own analyses
 ALTER TABLE linkedin_analyses ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "linkedin_analyses_select_own" ON linkedin_analyses;
 CREATE POLICY "linkedin_analyses_select_own"
   ON linkedin_analyses FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "linkedin_analyses_insert_own" ON linkedin_analyses;
 CREATE POLICY "linkedin_analyses_insert_own"
   ON linkedin_analyses FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "linkedin_analyses_delete_own" ON linkedin_analyses;
 CREATE POLICY "linkedin_analyses_delete_own"
   ON linkedin_analyses FOR DELETE
   USING (auth.uid() = user_id);

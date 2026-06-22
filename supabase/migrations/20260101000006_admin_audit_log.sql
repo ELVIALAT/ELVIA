@@ -25,8 +25,8 @@ CREATE POLICY "Super admin puede leer audit log"
   TO authenticated
   USING (
     EXISTS (
-      SELECT 1 FROM public.administrators
-      WHERE id = auth.uid() AND role = 'super_admin'
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid() AND is_admin = true
     )
   );
 

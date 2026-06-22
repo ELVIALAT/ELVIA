@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS company_invitations (
   company_id  UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   email       TEXT NOT NULL,
   nombre      TEXT,
-  token       TEXT UNIQUE NOT NULL DEFAULT encode(gen_random_bytes(32), 'hex'),
+  token       TEXT UNIQUE NOT NULL DEFAULT replace(gen_random_uuid()::text || gen_random_uuid()::text, '-', ''),
   status      TEXT NOT NULL DEFAULT 'pending', -- pending | accepted | expired
   invited_by  UUID REFERENCES profiles(id) ON DELETE SET NULL,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),

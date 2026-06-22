@@ -40,3 +40,6 @@ frontend/public/LOGOS/Logo APAZ Talent Search*
 # Artefactos de herramientas de desarrollo local (no pertenecen al repo)
 .agent/
 .swarm/
+
+# Supabase CLI — archivos temporales locales
+supabase/.temp/
