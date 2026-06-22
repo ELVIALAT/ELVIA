@@ -1,0 +1,42 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno — nunca subir al repo
+.env
+.env.local
+.env.production
+
+# Builds
+dist/
+build/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Archivos temporales de upload
+uploads/
+
+# Claude Code local configuration
+.claude/
+.claude-flow/
+.mcp.json
+.claude/settings.local.json
+
+# Propuestas comerciales (documentos internos)
+docs/*.html
+
+# Scripts de utilería root (potrace)
+/package.json
+/package-lock.json
+
+# Logos marca consultora APAZ (no pertenecen a la plataforma ELVIA)
+frontend/public/LOGOS/Logo APAZ Talent Search*
+
+# Artefactos de herramientas de desarrollo local (no pertenecen al repo)
+.agent/
+.swarm/
