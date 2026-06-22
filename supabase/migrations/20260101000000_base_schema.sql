@@ -275,26 +275,12 @@ INSERT INTO public.landing_stats (id, views) VALUES (1, 0) ON CONFLICT (id) DO N
 
 -- ─────────────────────────────────────────────────────────────
 -- 13. JOB_SEARCH_PROFILE (Gerente de Búsqueda — 6 pilares)
+--     OJO: NO es tabla. El frontend lo trata como columna JSONB de
+--     profiles: profiles.update({ job_search_profile: {...} }).
+--     Se agrega como columna; toda la estructura de pilares vive en el JSON.
 -- ─────────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS public.job_search_profile (
-  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id          UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-  company_id       UUID REFERENCES public.companies(id) ON DELETE SET NULL,
-  pilar_perfil     JSONB,
-  pilar_autoconocimiento JSONB,
-  pilar_aspiraciones JSONB,
-  pilar_linkedin   JSONB,
-  pilar_mercado    JSONB,
-  pilar_estrategia JSONB,
-  created_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
-  UNIQUE(user_id)
-);
-
-CREATE INDEX IF NOT EXISTS idx_job_search_profile_user_id    ON public.job_search_profile(user_id);
-CREATE INDEX IF NOT EXISTS idx_job_search_profile_company_id ON public.job_search_profile(company_id);
-
-ALTER TABLE public.job_search_profile ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles
+  ADD COLUMN IF NOT EXISTS job_search_profile JSONB NOT NULL DEFAULT '{}'::jsonb;
 
 -- ─────────────────────────────────────────────────────────────
 -- 14. SAVED_JOBS (vacantes guardadas — esquema completo para migration 010)
