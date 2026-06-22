@@ -3,14 +3,19 @@ require('dotenv').config();
 
 // Sentry debe inicializarse antes de importar app para instrumentar todas las rutas
 const Sentry = require('@sentry/node');
+const { scrubEvent } = require('./src/lib/sentryScrub');
 if (process.env.SENTRY_DSN) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     environment: process.env.NODE_ENV || 'development',
     // Muestreo al 10% en prod para no saturar cuota gratuita
     tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+    // PII Shield (Promesa #1): no enviar datos personales en reportes de error.
+    sendDefaultPii: false,
+    beforeSend: scrubEvent,
+    beforeSendTransaction: scrubEvent,
   });
-  console.log('[Sentry] inicializado');
+  console.log('[Sentry] inicializado con scrubbing PII');
 }
 
 const app = require('./src/app');
