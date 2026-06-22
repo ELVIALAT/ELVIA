@@ -3,8 +3,8 @@ node_modules/
 
 # Variables de entorno — nunca subir al repo
 .env
-.env.local
-.env.production
+.env.*
+!.env.example
 
 # Builds
 dist/
