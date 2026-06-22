@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext'
 import {
   ChartBar, Kanban, Target, TrendUp, CalendarCheck, ArrowRight
 } from '@phosphor-icons/react'
-import PlanBanner from '../components/common/PlanBanner'
 import HelpBadge from '../components/common/HelpBadge'
 
 const ETAPAS_ORDEN = ['Descubierto', 'Apliqué', 'Pruebas/Assessment', 'En entrevistas', 'Ofertado']
@@ -174,7 +173,6 @@ export default function MisMetricas() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
-      <PlanBanner />
 
       {/* Header */}
       <div>

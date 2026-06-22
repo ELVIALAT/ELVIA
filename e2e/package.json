@@ -1,0 +1,17 @@
+{
+  "name": "elvia-e2e",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tests E2E (Playwright) de ELVIA — flujos críticos y aislamiento multi-tenant",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "report": "playwright show-report",
+    "install:browsers": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@supabase/supabase-js": "^2.45.4",
+    "dotenv": "^16.4.5"
+  }
+}

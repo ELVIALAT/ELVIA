@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../services/authService'
-import PlanBanner from '../components/common/PlanBanner'
 import FeatureLocked from '../components/common/FeatureLocked'
 import HelpBadge from '../components/common/HelpBadge'
 import DetalleVacanteDrawer from '../components/common/DetalleVacanteDrawer'
@@ -275,7 +274,7 @@ const exportarExcel = (vacantes) => {
 }
 
 export default function Pipeline() {
-  const { user, loading: authLoading, featuresDesbloqueadas, isPaidPlan } = useAuth()
+  const { user, loading: authLoading, featuresDesbloqueadas } = useAuth()
   const navigate = useNavigate()
 
   const [vacantes, setVacantes]     = useState([])
@@ -362,15 +361,11 @@ export default function Pipeline() {
   const activas  = vacantes.filter(v => (v.estado || 'Descubierto') !== ETAPA_PERDIDA)
   const perdidas = vacantes.filter(v => (v.estado || 'Descubierto') === ETAPA_PERDIDA)
 
-  const activasVisibles = activas
-
   const visibles = filtroPerdidas
     ? perdidas
     : filtroEtapa
-      ? activasVisibles.filter(v => (v.estado || 'Descubierto') === filtroEtapa)
-      : activasVisibles
-
-  const ocultasPorPlan = !isPaidPlan && !featuresDesbloqueadas && !filtroPerdidas && activas.length > activasVisibles.length
+      ? activas.filter(v => (v.estado || 'Descubierto') === filtroEtapa)
+      : activas
 
   const conteo = ETAPAS.reduce((acc, e) => {
     acc[e] = activas.filter(v => (v.estado || 'Descubierto') === e).length
@@ -379,14 +374,6 @@ export default function Pipeline() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
-      {/* Banner cuando hay vacantes ocultas por plan */}
-      {ocultasPorPlan && (
-        <PlanBanner
-          tipo="upgrade_teaser"
-          mensaje={`Tienes ${activas.length - activasVisibles.length} vacante${activas.length - activasVisibles.length !== 1 ? 's' : ''} más en tu pipeline. Actívalas con un plan Pro.`}
-          className="mb-5"
-        />
-      )}
       <div className="mb-6 flex items-start justify-between gap-3 flex-wrap">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">

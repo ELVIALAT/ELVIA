@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS companies (
 -- 1. Branding & identity columns.
 
 ALTER TABLE companies
+  ADD COLUMN IF NOT EXISTS is_active        BOOLEAN DEFAULT true,
   ADD COLUMN IF NOT EXISTS logo_url         TEXT,
   ADD COLUMN IF NOT EXISTS logo_secondary   TEXT,
   ADD COLUMN IF NOT EXISTS primary_color    TEXT DEFAULT '#0066FF',

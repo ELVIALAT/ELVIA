@@ -3,24 +3,12 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useTenant } from '../../context/TenantContext'
-import { List, SignOut, Sparkle, Crown } from '@phosphor-icons/react'
-
-// Configuración de badges por plan (solo los 3 planes activos B2C)
-const PLAN_CONFIG = {
-  free:        { label: 'Plan Gratuito',   icon: Sparkle, bg: 'bg-slate-700/80',     text: 'text-slate-100',  border: 'border-slate-600/50' },
-  mensual:     { label: 'Plan Mensual',    icon: Crown,   bg: 'bg-emerald-600/90',   text: 'text-white',      border: 'border-emerald-400/40' },
-  trimestral:  { label: 'Plan Trimestral', icon: Crown,   bg: 'bg-blue-600/90',      text: 'text-white',      border: 'border-blue-400/40' },
-}
+import { List, SignOut, Crown } from '@phosphor-icons/react'
 
 export default function Header({ onMenuToggle }) {
   const { user, perfil, logout } = useAuth()
   const { tenant, isB2B, showTenantLogo, showElviaLogo, elviaProminent, showProgramBadge, programBadgeText, tenantResolved } = useTenant()
   const navigate = useNavigate()
-
-
-  const planKey = perfil?.plan || 'free'
-  const planCfg = PLAN_CONFIG[planKey] || PLAN_CONFIG['free']
-  const PlanIcon = planCfg.icon
 
   // Gradiente tenant-aware: B2B usa branding del tenant
   const headerStyle = isB2B
@@ -76,20 +64,12 @@ export default function Header({ onMenuToggle }) {
       {/* Info usuario — desktop */}
       {user ? (
         <div className="hidden md:flex items-center gap-3">
-          {/* Badge: B2B muestra "Programa {tenant}" si showProgramBadge=true; B2C muestra plan freemium */}
-          {isB2B && showProgramBadge ? (
+          {/* Badge de programa del tenant (B2B con showProgramBadge) */}
+          {isB2B && showProgramBadge && (
             <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border bg-white/15 text-white border-white/20 backdrop-blur-sm">
               <Crown size={13} weight="duotone" />
               {programBadgeText}
             </div>
-          ) : isB2B ? null : (
-            <Link
-              to="/mi-plan"
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all hover:opacity-90 hover:scale-105 ${planCfg.bg} ${planCfg.text} ${planCfg.border}`}
-            >
-              <PlanIcon size={13} weight="duotone" />
-              {planCfg.label}
-            </Link>
           )}
 
           {/* Avatar + nombre — sin dropdown */}

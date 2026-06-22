@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS company_invitations (
   company_id  UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
   email       TEXT NOT NULL,
   nombre      TEXT,
-  token       TEXT UNIQUE NOT NULL DEFAULT encode(gen_random_bytes(32), 'hex'),
+  token       TEXT UNIQUE NOT NULL DEFAULT replace(gen_random_uuid()::text || gen_random_uuid()::text, '-', ''),
   status      TEXT NOT NULL DEFAULT 'pending', -- pending | accepted | expired
   invited_by  UUID REFERENCES profiles(id) ON DELETE SET NULL,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -160,22 +160,13 @@ CREATE POLICY "super_admin_all_packages" ON mentor_packages
 -- 8. Actualizar RLS en profiles: company_admin solo ve su empresa
 -- ─────────────────────────────────────────────────────────────────────────
 
--- Eliminar política anterior si existe (cuidado con esto)
+-- Eliminar política anterior si existe.
 DROP POLICY IF EXISTS "company_admin_view_own_company" ON profiles;
 
--- Company admin: ver solo usuarios de su propia empresa
-CREATE POLICY "company_admin_view_own_company" ON profiles
-  FOR SELECT
-  USING (
-    -- Si es company_admin: ver solo usuarios de su empresa
-    (auth.uid() IN (SELECT id FROM profiles WHERE role = 'company_admin')
-      AND company_id = (SELECT company_id FROM profiles WHERE id = auth.uid()))
-    -- Si es super_admin o el usuario mismo: ver todo
-    OR (auth.uid() IN (SELECT id FROM profiles WHERE role = 'super_admin'))
-    OR auth.uid() = id
-    -- Service role: ver todo
-    OR (auth.jwt()->>'role') = 'service_role'
-  );
+-- NOTA: esta política se ELIMINA en la migration 20260622-03 por causar
+-- recursión infinita (subqueries a profiles dentro de la policy de profiles).
+-- El company_admin obtiene datos de su gente vía backend (service_role), NO
+-- por RLS directa. Se deja aquí solo por historial; queda sin efecto.
 
 -- ─────────────────────────────────────────────────────────────────────────
 -- FIN MIGRATION 004

@@ -3,6 +3,8 @@ const router = express.Router();
 const { Resend } = require('resend');
 const auth = require('../middleware/auth');
 const { supabaseAdmin } = require('../lib/supabase');
+const { validate } = require('../middleware/validate');
+const { emailSend } = require('../schemas');
 
 let resend = null;
 const _resendKey = process.env.RESEND_API_KEY;
@@ -55,7 +57,7 @@ const ALLOWED_RESET_ORIGINS = [
 ];
 
 // POST /api/email/send
-router.post('/send', auth, async (req, res) => {
+router.post('/send', auth, validate(emailSend), async (req, res) => {
   const { to, cvId, format = 'pdf' } = req.body;
 
   if (!to || !cvId) {

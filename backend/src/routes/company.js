@@ -14,6 +14,8 @@ const requireTenantContext = require('../middleware/requireTenantContext')
 const requireMFA = require('../middleware/requireMFA')
 const tenantQuery = require('../lib/tenantQuery')
 const logAudit = require('../lib/logAudit')
+const { validate } = require('../middleware/validate')
+const { companyRegistration, allowlistBulk } = require('../schemas')
 const { sendInvitacionEmail, sendCandidatoInviteEmail, sendBienvenidaActivacionEmail } = require('../services/resendService')
 
 const ALLOWED_PLANS = ['free', 'pro', 'business', 'enterprise']
@@ -162,7 +164,7 @@ router.get('/branding/:slug', async (req, res) => {
 // Body: { nombre, apellido, email, password }
 // ─────────────────────────────────────────────────────────────────────────
 
-router.post('/registration/:slug', registrationLimiter, async (req, res) => {
+router.post('/registration/:slug', registrationLimiter, validate(companyRegistration), async (req, res) => {
   try {
     const { slug } = req.params
     const { email, password, nombre, apellido } = req.body
@@ -1046,7 +1048,7 @@ router.get('/allowlist', auth, requireRole('company_admin'), requireTenantContex
 // Body: { rows: [{ email, nombre?, apellido?, cohort?, area?, cargo_actual? }], cohort_default? }
 // ─────────────────────────────────────────────────────────────────────────
 
-router.post('/allowlist/bulk', auth, requireRole('company_admin'), requireTenantContext, requireMFA, async (req, res) => {
+router.post('/allowlist/bulk', auth, requireRole('company_admin'), requireTenantContext, requireMFA, validate(allowlistBulk), async (req, res) => {
   if (!db) return res.status(503).json({ error: 'Servicio no disponible' })
   try {
     const { rows, cohort_default } = req.body || {}

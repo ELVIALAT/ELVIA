@@ -14,7 +14,6 @@ import {
   ShieldCheck, ArrowUpRight, TrendUp,
   CalendarBlank, User
 } from '@phosphor-icons/react'
-import PlanBanner from '../components/common/PlanBanner'
 import HelpBadge from '../components/common/HelpBadge'
 import { useTenant } from '../context/TenantContext'
 
@@ -70,7 +69,7 @@ function MetricCard({ icon: Icon, iconBg, label, value, sub, to, isEmpty, ctaLab
 }
 
 export default function Dashboard() {
-  const { user, perfil, jpData, isPaidPlan, trialExpired, trialDaysLeft, refreshUsage } = useAuth()
+  const { user, perfil, jpData, refreshUsage } = useAuth()
   const { tenant, isB2B } = useTenant()
 
   const [metricas, setMetricas] = useState({
@@ -249,7 +248,7 @@ export default function Dashboard() {
       id: 'notif_welcome',
       title: 'Ecosistema corporativo',
       desc: `Tu cuenta de ${tenant.name} está validada con acceso ejecutivo.`,
-      to: '/mi-plan',
+      to: '/perfil',
       type: 'success'
     })
   }
@@ -285,22 +284,6 @@ export default function Dashboard() {
   return (
     <div className="max-w-[1000px] mx-auto px-4 sm:px-6 py-8 space-y-8 bg-slate-50/50 min-h-screen text-slate-700 font-sans leading-relaxed animate-in fade-in duration-700" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
       
-      {/* ── Banners de Trial ── */}
-      {!isPaidPlan && !trialExpired && trialDaysLeft <= 3 && (
-        <PlanBanner
-          tipo="trial_warning"
-          mensaje={`Te quedan ${trialDaysLeft} día${trialDaysLeft !== 1 ? 's' : ''} de acceso completo.`}
-          ctaText="Ver planes →"
-        />
-      )}
-      {!isPaidPlan && trialExpired && (
-        <PlanBanner
-          tipo="trial_expired"
-          mensaje="Tu período de prueba de 14 días ha terminado."
-          ctaText="Ver planes →"
-        />
-      )}
-
       {/* ── CABECERA APPLE PREMIUM B2B ── */}
       <header className="bg-white border border-slate-100 rounded-3xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-6 shadow-[0_8px_30px_rgb(0,0,0,0.015)]">
         <div className="flex gap-4 items-center">

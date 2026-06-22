@@ -521,9 +521,6 @@ export default function CVOptimizer() {
             <p className="text-sm font-medium text-gray-700 mb-3">Enviar por email:</p>
             <EmailField cvId={resultadoOptimize.id} />
           </div>
-          <p className="mt-4 text-xs text-gray-400 text-right">
-            Créditos utilizados: {resultadoOptimize.usageCount} · Plan gratuito (2 análisis)
-          </p>
         </div>
       )}
 
