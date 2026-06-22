@@ -19,7 +19,6 @@ const MisCVs             = lazy(() => import('./pages/MisCVs'))
 const MisVacantes        = lazy(() => import('./pages/MisVacantes'))
 const Pipeline           = lazy(() => import('./pages/Pipeline'))
 const Perfil             = lazy(() => import('./pages/Perfil'))
-const MiPlan             = lazy(() => import('./pages/MiPlan'))
 const Dashboard          = lazy(() => import('./pages/Dashboard'))
 const BienvenidaOnboarding = lazy(() => import('./pages/BienvenidaOnboarding'))
 const Admin              = lazy(() => import('./pages/Admin'))
@@ -30,7 +29,6 @@ const Privacidad         = lazy(() => import('./pages/Privacidad'))
 const ResetPassword      = lazy(() => import('./pages/ResetPassword'))
 const Expertos           = lazy(() => import('./pages/Expertos'))
 const Infografias        = lazy(() => import('./pages/Infografias'))
-const Pricing            = lazy(() => import('./pages/Pricing'))
 const ProyectoLaboral    = lazy(() => import('./pages/ProyectoLaboral'))
 const ReporteLaboral     = lazy(() => import('./pages/ReporteLaboral'))
 const Bienestar          = lazy(() => import('./pages/Bienestar'))
@@ -53,19 +51,19 @@ function PageLoader() {
 }
 
 // Rutas que NO muestran sidebar ni header estándar
-const RUTAS_FULL = ['/', '/waitlist', '/inicio', '/auth', '/bienvenida', '/admin', '/empresa-admin', '/privacidad', '/cookies', '/reset-password', '/pricing']
+const RUTAS_FULL = ['/', '/waitlist', '/inicio', '/auth', '/bienvenida', '/admin', '/empresa-admin', '/privacidad', '/cookies', '/reset-password']
 // Rutas excluidas del guard de onboarding (no redirigen a /bienvenida aunque haya onboarding pendiente)
-const RUTAS_SIN_GUARD = ['/', '/waitlist', '/inicio', '/auth', '/bienvenida', '/admin', '/empresa-admin', '/privacidad', '/cookies', '/reset-password', '/pricing', '/proyecto-laboral', '/cv-desde-cero', '/linkedin-pro']
+const RUTAS_SIN_GUARD = ['/', '/waitlist', '/inicio', '/auth', '/bienvenida', '/admin', '/empresa-admin', '/privacidad', '/cookies', '/reset-password', '/proyecto-laboral', '/cv-desde-cero', '/linkedin-pro']
 // Rutas públicas (solo para usuarios NO autenticados).
 // /auth se excluye para que Auth.jsx maneje su propio redirect (evita que PublicRoute
 // intercepte la página antes de renderizar el banner de "sesión activa").
-const RUTAS_PUBLICAS = ['/', '/waitlist', '/privacidad', '/cookies', '/reset-password', '/pricing']
+const RUTAS_PUBLICAS = ['/', '/waitlist', '/privacidad', '/cookies', '/reset-password']
 
 // Rutas internas de la APP (si NO es una de estas, usamos FullLayout para el Catch-All)
 const RUTAS_APP = [
   '/dashboard', '/cv-optimizer', '/cv-desde-cero', '/cv-vs-job', '/jobs', 
-  '/mis-cvs', '/mis-vacantes', '/pipeline', '/perfil', '/mi-plan', 
-  '/entrevista', '/biblioteca', '/linkedin-pro', '/onboarding', 
+  '/mis-cvs', '/mis-vacantes', '/pipeline', '/perfil',
+  '/entrevista', '/biblioteca', '/linkedin-pro', '/onboarding',
   '/bienestar', '/proyecto-laboral', '/infografias', '/expertos', '/mis-metricas', '/ayuda'
 ]
 
@@ -231,7 +229,6 @@ export default function App() {
       <Route path="/auth"          element={<PublicRoute><Auth /></PublicRoute>} />
       <Route path="/privacidad"      element={<Privacidad />} />
       <Route path="/cookies"         element={<Cookies />} />
-      <Route path="/pricing"              element={<PublicRoute><Pricing /></PublicRoute>} />
       <Route path="/bienvenida"     element={<BienvenidaRoute><BienvenidaOnboarding /></BienvenidaRoute>} />
 
       {/* Landings co-brandeadas B2B y registro por slug de empresa/universidad */}
@@ -267,7 +264,6 @@ export default function App() {
       <Route path="/mis-vacantes"  element={<PrivateRoute><MisVacantes /></PrivateRoute>} />
       <Route path="/pipeline"      element={<PrivateRoute><Pipeline /></PrivateRoute>} />
       <Route path="/perfil"        element={<PrivateRoute><Perfil /></PrivateRoute>} />
-      <Route path="/mi-plan"       element={<PrivateRoute><MiPlan /></PrivateRoute>} />
       <Route path="/entrevista"      element={<PrivateRoute><Entrevista /></PrivateRoute>} />
       <Route path="/biblioteca"      element={<PrivateRoute><Biblioteca /></PrivateRoute>} />
       <Route path="/linkedin-pro"    element={<PrivateRoute><LinkedinPro /></PrivateRoute>} />

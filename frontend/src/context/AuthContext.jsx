@@ -165,81 +165,21 @@ export const AuthProvider = ({ children }) => {
 
   // ── Lógica de plan y acceso ───────────────────────────────────────────────
 
-  const planInfo = useMemo(() => {
-    if (!perfil) return {
-      plan: 'free',
-      isPaidPlan: false,
-      trialExpired: false,
-      trialDaysLeft: 14,
-      trialExpiresAt: null,
-      canOptimizeCV: true,
-      canMatchCV: true,
-      cvOptimizerCount: 0,
-      cvMatchCount: 0,
-      usageCount: 0,
-      creditosMatchRestantes: 3,
-      watermark: true,
-    }
-
-    const plan = perfil.plan || 'free'
-    const PLANES_PAGO = ['mensual', 'trimestral']
-    // b2b nunca expira ni tiene límites de créditos
-    const isB2B = plan === 'b2b' || !!perfil.company_id
-
-    // Cualquier plan de pago expirado → degradar a free en el cliente (no aplica a b2b)
-    const planExpirado =
-      !isB2B &&
-      PLANES_PAGO.includes(plan) &&
-      perfil.plan_expires_at &&
-      new Date(perfil.plan_expires_at) < new Date()
-    const planEfectivo = planExpirado ? 'free' : plan
-
-    const isPaidPlan = isB2B || PLANES_PAGO.includes(planEfectivo)
-
-
-    // Trial: 7 días desde el registro
-    const trialExpiresAt = perfil.free_trial_expires_at
-      ? new Date(perfil.free_trial_expires_at)
-      : null
-    const trialExpired =
-      !isPaidPlan &&
-      trialExpiresAt !== null &&
-      trialExpiresAt < new Date()
-
-    const trialDaysLeft = trialExpiresAt
-      ? Math.max(0, Math.ceil((trialExpiresAt - new Date()) / (1000 * 60 * 60 * 24)))
-      : 7
-
-    const cvOptimizerCount = perfil.cv_optimizer_count || 0
-    const cvMatchCount     = perfil.cv_match_count     || 0
-    const usageCount       = perfil.usage_count        || 0
-
-    const canOptimizeCV = isPaidPlan || (!trialExpired && cvOptimizerCount < 1)
-    const canMatchCV    = isPaidPlan || (!trialExpired && cvMatchCount < 3)
-
-    const creditosMatchRestantes = isPaidPlan ? Infinity : Math.max(0, 3 - cvMatchCount)
-    const watermark = !isPaidPlan
-
-    return {
-      plan: planEfectivo,
-      isPaidPlan,
-      trialExpired,
-      trialDaysLeft,
-      trialExpiresAt,
-      canOptimizeCV,
-      canMatchCV,
-      cvOptimizerCount,
-      cvMatchCount,
-      usageCount,
-      creditosMatchRestantes,
-      watermark,
-    }
-  }, [perfil])
+  // ELVIA B2B puro: sin planes. Acceso full para todos.
+  // (Modelo freemium eliminado 2026-06-22 — ver docs/legacy/freemium-model.md)
+  const planInfo = useMemo(() => ({
+    isPaidPlan: true,
+    trialExpired: false,
+    canOptimizeCV: true,
+    canMatchCV: true,
+    creditosMatchRestantes: Infinity,
+    watermark: false,
+  }), [])
 
   // Retrocompatibilidad: campos que otros componentes ya usan
-  const LIMITE_PLAN         = 3
-  const usageCount          = planInfo.usageCount
-  const creditosRestantes   = planInfo.creditosMatchRestantes
+  const LIMITE_PLAN         = Infinity
+  const usageCount          = 0
+  const creditosRestantes   = Infinity
 
   const onboardingPendiente  = useMemo(() => !loading && perfilCargado && !!user && (!perfil || !perfil.nombre1), [loading, perfilCargado, user, perfil])
   const bienvenidaPendiente  = useMemo(() => !loading && !!user && user.user_metadata?.bienvenida_pendiente === true, [loading, user])
@@ -254,7 +194,8 @@ export const AuthProvider = ({ children }) => {
   // (Cambio de criterio: la empresa paga el programa pero el flujo educativo del
   // Gerente de Búsqueda es parte del valor, no debe saltarse.)
   const isB2BUser = !!perfil?.company_id
-  const featuresDesbloqueadas = (progresoLaboral >= 100) || (planInfo.isPaidPlan && !isB2BUser)
+  // Features se desbloquean al completar el Gerente de Búsqueda al 100% (flujo educativo).
+  const featuresDesbloqueadas = progresoLaboral >= 100
 
   const refreshJpData = useCallback(async () => {
     if (!user) return

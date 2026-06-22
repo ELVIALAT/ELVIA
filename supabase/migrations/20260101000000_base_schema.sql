@@ -13,7 +13,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- ─────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.companies (
   id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  nombre            TEXT NOT NULL,
+  name              TEXT NOT NULL,
   email_contacto    TEXT,
   logo_url          TEXT,
   daily_cap         INTEGER NOT NULL DEFAULT 200,

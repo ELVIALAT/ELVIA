@@ -10,7 +10,7 @@ import {
   ArrowRight, ArrowLeft, CheckCircle, Star, Lightning,
   ChatText, Trophy, Target, Spinner,
 } from '@phosphor-icons/react'
-import ProGate from '../components/common/ProGate'
+import FeatureLocked from '../components/common/FeatureLocked'
 import HelpBadge from '../components/common/HelpBadge'
 
 const ENTREVISTADORES = [
@@ -61,27 +61,20 @@ function Estrellas({ n }) {
 
 // ── Componente principal ────────────────────────────────────────────────────
 export default function Entrevista() {
-  const { user, isPaidPlan, trialExpired, featuresDesbloqueadas, jpData, loading: authLoading } = useAuth()
+  const { user, featuresDesbloqueadas, jpData, loading: authLoading } = useAuth()
   const navigate = useNavigate()
   const track = useTrackEvent()
   useEffect(() => { track('page_view', 'entrevista') }, [])
 
-  // Bloqueo para usuarios sin progreso 100% o sin plan
+  // Bloqueo hasta completar el Gerente de Búsqueda al 100%
   if (authLoading) return null
 
   if (!featuresDesbloqueadas) {
     return (
-      <ProGate
-        tipo={trialExpired ? 'trial' : 'pro'}
+      <FeatureLocked
         titulo="Preparación para Entrevistas"
         descripcion="Practica entrevistas simuladas con IA, recibe feedback personalizado y llega preparado a cualquier proceso de selección."
         icono={<MicrophoneStage size={40} className="text-on-surface-variant/60" />}
-        beneficios={[
-          'Entrevistas simuladas con HR, Hiring Manager o panel técnico',
-          'Preguntas adaptadas a tu cargo y nivel de experiencia',
-          'Feedback detallado por respuesta con puntuación',
-          'Acceso a vacantes guardadas como contexto de práctica',
-        ]}
       />
     )
   }

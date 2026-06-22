@@ -116,14 +116,6 @@ const optimize = async (req, res, next) => {
 
     if (error) throw error;
 
-    // Incrementar contadores de uso
-    const nuevoOptimizerCount = (req.planInfo?.cv_optimizer_count || 0) + 1;
-    const nuevoUsageCount     = (req.planInfo?.usage_count || 0) + 1;
-    await db
-      .from('profiles')
-      .update({ cv_optimizer_count: nuevoOptimizerCount, usage_count: nuevoUsageCount })
-      .eq('id', req.user.id);
-
     res.json({
       id: saved.id,
       optimizedCV: resultado.optimizedCV,
@@ -131,9 +123,7 @@ const optimize = async (req, res, next) => {
       recommendations: resultado.recommendations,
       weakBullets: resultado.weakBullets || [],
       language,
-      usageCount: nuevoUsageCount,
-      cv_optimizer_count: nuevoOptimizerCount,
-      watermark: req.planInfo?.config?.watermark ?? false,
+      watermark: false,
     });
   } catch (err) {
     next(err);
@@ -261,14 +251,6 @@ const matchToJob = async (req, res, next) => {
 
     if (error) throw error;
 
-    // Incrementar contadores de uso
-    const nuevoMatchCount = (req.planInfo?.cv_match_count || 0) + 1;
-    const nuevoUsageCount = (req.planInfo?.usage_count || 0) + 1;
-    await db
-      .from('profiles')
-      .update({ cv_match_count: nuevoMatchCount, usage_count: nuevoUsageCount })
-      .eq('id', req.user.id);
-
     res.json({
       id: saved.id,
       tailoredCV: resultado.tailoredCV,
@@ -279,9 +261,7 @@ const matchToJob = async (req, res, next) => {
       keywords: resultado.keywords,
       dimensiones: resultado.dimensiones,
       language,
-      usageCount: nuevoUsageCount,
-      cv_match_count: nuevoMatchCount,
-      watermark: req.planInfo?.config?.watermark ?? false,
+      watermark: false,
     });
   } catch (err) {
     next(err);
@@ -351,7 +331,7 @@ const download = async (req, res, next) => {
       return res.status(403).json({ error: 'Sin permiso para acceder a este recurso' });
     }
 
-    const watermark = req.planInfo?.config?.watermark ?? false;
+    const watermark = false;
 
     if (req.query.format === 'word') {
       const buffer = await generarWord(data.contenido, { watermark });

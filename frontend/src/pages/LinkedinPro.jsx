@@ -382,7 +382,7 @@ function SeccionResultado({ seccion, datos, original, editable, onEditableChange
 }
 
 export default function LinkedinOptima() {
-  const { user, isPaidPlan, trialExpired, jpData, perfil } = useAuth()
+  const { user, jpData, perfil } = useAuth()
   const navigate = useNavigate()
   const track = useTrackEvent()
   useEffect(() => { track('page_view', 'linkedin_pro') }, [])
@@ -443,8 +443,8 @@ export default function LinkedinOptima() {
     loadHistorialYUso()
   }, [user])
 
-  // Bloqueo para usuarios que no han llegado al 100% de progreso (o plan pago)
-  if (!isPaidPlan && !isUnlockedByProgress) {
+  // Bloqueo hasta completar el Gerente de Búsqueda al 100%
+  if (!isUnlockedByProgress) {
     return (
       <FeatureLocked 
         titulo="LinkedIn Pro" 
