@@ -14,6 +14,8 @@ const auth = require('../middleware/auth');
 const requireRole = require('../middleware/requireAdmin');
 const auditAdmin = require('../middleware/auditAdmin');
 const logAudit = require('../lib/logAudit');
+const { validate } = require('../middleware/validate');
+const { adminCreateTenant } = require('../schemas');
 const { sendHRWelcomeEmail } = require('../services/resendService');
 const { runEmailTriggers } = require('../controllers/cronController');
 
@@ -471,7 +473,7 @@ router.get('/tenants/check-slug/:slug', auth, requireRole('super_admin'), async 
  *         welcome_message?, allowed_email_domain?, require_allowlist?,
  *         require_invite?, hr_nombre, hr_email, hr_apellido? }
  */
-router.post('/tenants', auth, requireRole('super_admin'), tenantCreateLimiter, async (req, res) => {
+router.post('/tenants', auth, requireRole('super_admin'), tenantCreateLimiter, validate(adminCreateTenant), async (req, res) => {
   const {
     nombre, slug,
     sector = 'corporate', plan = 'professional', country = 'MX',

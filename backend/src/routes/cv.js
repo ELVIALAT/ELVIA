@@ -4,13 +4,16 @@ const router = express.Router();
 
 const auth                  = require('../middleware/auth');
 const { dailyCap }          = require('../middleware/dailyCap');
+const { validate }          = require('../middleware/validate');
+const { cvOptimize }        = require('../schemas');
 const upload                = require('../middleware/upload');
 const { limiterOptimize, limiterMatch, limiterResumen } = require('../middleware/rateLimiter');
 const { optimize, matchToJob, download, extractProfile, generarInfografia, generarInfografiaProyecto, generarCartaPresentacion, optimizarResumen, optimizarExp, fusionarResumen, generarOfertaValorIA } = require('../controllers/cvController')
 const { generarCV } = require('../controllers/cvGenerarController')
 
 // Optimización de CV — dailyCap va DESPUÉS de upload para no consumir slot con archivos inválidos
-router.post('/optimize', auth, limiterOptimize, upload.single('cv'), dailyCap, optimize);
+// validate corre tras multer (que parsea los campos de texto del multipart)
+router.post('/optimize', auth, limiterOptimize, upload.single('cv'), validate(cvOptimize), dailyCap, optimize);
 
 // CV vs Vacante — usuario → rate → upload → dailyCap
 router.post('/match', auth, limiterMatch, upload.single('cv'), dailyCap, matchToJob);

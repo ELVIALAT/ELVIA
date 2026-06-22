@@ -3,6 +3,8 @@ const router = express.Router();
 const OpenAI = require('openai');
 const Anthropic = require('@anthropic-ai/sdk');
 const auth                = require('../middleware/auth');
+const { validate }        = require('../middleware/validate');
+const { jobsCompatibility } = require('../schemas');
 
 // DeepSeek V3 — para búsqueda y filtrado (no toca datos de usuario/PII)
 let client = null;
@@ -517,7 +519,7 @@ router.get('/similar', auth, async (req, res) => {
 });
 
 // POST /api/jobs/compatibility — score rápido CV vs vacante (con cache por usuario)
-router.post('/compatibility', auth, async (req, res) => {
+router.post('/compatibility', auth, validate(jobsCompatibility), async (req, res) => {
   const { cvText, jobTitle, jobCompany, jobSnippet, jobLink, jobLocation, jobVia } = req.body;
 
   // Límites de tamaño
