@@ -65,12 +65,8 @@ const jobsCompatibility = z.object({
   jobVia: z.string().trim().max(120).optional(),
 });
 
-// ── /email (enviar CV por correo) ──
-const emailSend = z.object({
-  to: email,
-  cvId: z.string().uuid(),
-  format: z.enum(['pdf', 'word']).optional().default('pdf'),
-});
+// NOTA: el schema de email/send se movió a
+// src/modules/notifications/notifications.schemas.js (Fase 2).
 
 module.exports = {
   cvOptimize,
@@ -78,5 +74,4 @@ module.exports = {
   allowlistBulk,
   adminCreateTenant,
   jobsCompatibility,
-  emailSend,
 };

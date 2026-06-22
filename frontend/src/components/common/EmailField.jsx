@@ -11,7 +11,7 @@ export default function EmailField({ cvId }) {
     if (!email || !cvId) return
     setEstado('loading')
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/email/send`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications/send-cv`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ to: email, cvId, format: formato }),
