@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-06-10
 **Autor:** Alejandro Paz + Claude (Fable 5)
-**Estado:** Aprobación pendiente
+**Estado:** EN EJECUCIÓN — Fases 0 y 1 completas (2026-06-22). Ver progreso detallado en `docs/superpowers/ESTADO_REFACTOR.md`.
 **Reemplaza/consolida:** `AUDIT_ARCHITECTURE_2026_05_18.md` (plan 4 semanas) + `docs/superpowers/specs/2026-06-01-estabilizacion-y-separacion-b2b-design.md` (spec 8 semanas)
 **Cliente activo durante ejecución:** Telefónica México (en pruebas — NO romper producción)
 
