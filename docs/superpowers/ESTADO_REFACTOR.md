@@ -49,9 +49,17 @@ cd backend && npm run test:isolation # aislamiento BD (requiere backend/.env.sta
 cd e2e && npm test                   # E2E Playwright (requiere e2e/.env)
 ```
 
-## Fase 2 — Backend modular ⏳ SIGUIENTE
+## Fase 2 — Backend modular 🔄 EN PROGRESO
 
-Migrar `backend/src/` a `modules/<dominio>/` (routes→controller→service→repository→schemas), **1 módulo por PR**. Orden: `notifications` → `linkedin` → `interview` → `mentor` → `jobs` → `cv` → `tenancy`/`company` → `admin` → `identity`.
+Migrar `backend/src/` a `modules/<dominio>/` (routes→controller→service→repository→schemas), **1 módulo por PR** (rama `feat/module-<x>` → merge a `dev`). Orden: `notifications` → `linkedin` → `interview` → `mentor` → `jobs` → `cv` → `tenancy`/`company` → `admin` → `identity`.
+
+| Módulo | Estado | Notas |
+|---|---|---|
+| notifications | ✅ | PILOTO — patrón de referencia. `POST /api/email/send` → `/api/notifications/send-cv`. 4 tests. `src/modules/notifications/`. |
+| linkedin | ⏳ | siguiente |
+| interview, mentor, jobs, cv, tenancy/company, admin, identity | ⏳ | |
+
+**Patrón establecido (replicar):** `<modulo>.routes.js` (wiring) → `.controller.js` (HTTP + envelope) → `.service.js` (negocio, errores de dominio con `code`) → `.repository.js` (ÚNICA capa que toca Supabase, queries con contexto) → `.schemas.js` (Zod). HTML/templates en `templates/`. Tests en `tests/modules/`.
 
 Pendientes anotados:
 - **Refactor `/admin`** (admin.js backend en F2; Admin.jsx + components/admin en F3).
