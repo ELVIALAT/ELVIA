@@ -26,6 +26,7 @@ const waitlistRoutes  = require('./routes/waitlist')
 const eventRoutes     = require('./routes/events')
 const companyRoutes   = require('./routes/company')
 const manualChatRoutes = require('./routes/manualChat')
+const notificationsRoutes = require('./modules/notifications/notifications.routes')
 
 // Carga el manual ELVIA al boot — falla rápido si falta el archivo
 require('./lib/loadManual').loadManual();
@@ -109,6 +110,7 @@ app.use(limiterGeneral);
 // --- Rutas de la API ---
 app.use('/api/cv', cvRoutes);
 app.use('/api/jobs', jobsRoutes);
+app.use('/api/notifications', notificationsRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/chat/manual', manualChatRoutes)
 app.use('/api/chat',      chatRoutes)
