@@ -1,6 +1,6 @@
 // Orquesta los servicios para cada endpoint de CV
-const { parseCV } = require('../utils/cvParser');
-const { detectLanguage } = require('../utils/languageDetector');
+const { parseCV } = require('../../utils/cvParser');
+const { detectLanguage } = require('../../utils/languageDetector');
 const {
   optimizeCV,
   matchCVtoJob,
@@ -11,10 +11,10 @@ const {
   fusionarResumen: fusionarResumenService,
   optimizarDescripcionExp,
   extractProfileFromCV,
-} = require('../services/deepseekService');
-const { generarPDF } = require('../services/pdfService');
-const { generarWord } = require('../services/wordService');
-const { incrementDailyCap } = require('../middleware/dailyCap');
+} = require('../../services/deepseekService');
+const { generarPDF } = require('../../services/pdfService');
+const { generarWord } = require('../../services/wordService');
+const { incrementDailyCap } = require('../../middleware/dailyCap');
 
 // POST /api/cv/optimize
 const optimize = async (req, res, next) => {
