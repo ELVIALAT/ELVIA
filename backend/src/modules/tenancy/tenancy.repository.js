@@ -160,13 +160,10 @@ async function getTenantUserById(db, companyId, userId, fields = 'company_id') {
   return data || null
 }
 
-async function insertTenantProfile(db, companyId, profileData) {
-  const tq = tenantQuery(db, companyId)
-  const { data, error } = await tq.insert('profiles', profileData).select().single()
-  if (error) throw error
-  return data
-}
-
+// SIEMPRE upsert sobre profiles (nunca insert puro): un trigger en auth.users
+// (handle_new_user) ya crea la fila con (id, email_principal) al registrar el
+// auth user. Un insert chocaría con profiles_pkey; el upsert onConflict id
+// añade company_id, role, plan y nombres sin pisar lo que puso el trigger.
 async function upsertTenantProfile(db, companyId, profileData) {
   const tq = tenantQuery(db, companyId)
   const { data, error } = await tq.upsert('profiles', profileData, { onConflict: 'id' }).select().single()
@@ -408,7 +405,6 @@ module.exports = {
   // con tenant (companyId obligatorio)
   listTenantUsers,
   getTenantUserById,
-  insertTenantProfile,
   upsertTenantProfile,
   updateTenantUser,
   countTenantUsers,

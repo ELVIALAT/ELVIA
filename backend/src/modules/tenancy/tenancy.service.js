@@ -62,9 +62,12 @@ async function createUser(db, companyId, { email, nombre, apellido, password }) 
     throw new DomainError(400, 'AUTH_ERROR', authErr.message || 'Error al crear usuario')
   }
 
-  // 2. Crear profile con company_id (vía repo → companyId obligatorio).
+  // 2. Vincular profile al tenant (vía repo → companyId obligatorio).
+  //    UPSERT (no insert) porque un trigger en auth.users (handle_new_user)
+  //    ya creó la fila con (id, email_principal); un insert puro chocaría con
+  //    profiles_pkey. El upsert añade company_id, role, plan y nombres.
   try {
-    const profile = await repo.insertTenantProfile(db, companyId, {
+    const profile = await repo.upsertTenantProfile(db, companyId, {
       id: authUser.user.id,
       email_principal: email,
       nombre1: nombre || '',
