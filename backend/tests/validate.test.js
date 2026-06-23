@@ -36,11 +36,7 @@ describe('validate middleware + envelope', () => {
     expect(typeof res.body.mensaje).toBe('string');       // retrocompat frontend
   });
 
-  test('jobs/compatibility sin cvText → rechaza', () => {
-    const { res, nexted } = run(schemas.jobsCompatibility, { jobTitle: 'Dev' });
-    expect(nexted).toBe(false);
-    expect(res.statusCode).toBe(400);
-  });
+  // (jobs/compatibility schema migrado a src/modules/jobs — cubierto en jobs.test.js)
 
   test('admin/tenants con slug inválido → rechaza con mensaje claro', () => {
     const { res, nexted } = run(schemas.adminCreateTenant, {
