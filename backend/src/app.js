@@ -17,7 +17,7 @@ const { limiterGeneral } = require('./middleware/rateLimiter');
 const cvRoutes = require('./routes/cv');
 const jobsRoutes = require('./routes/jobs');
 const emailRoutes = require('./routes/email');
-const chatRoutes      = require('./routes/chat')
+const { chatRouter, manualChatRouter } = require('./modules/mentor/mentor.routes')
 const interviewRoutes = require('./modules/interview/interview.routes')
 const linkedinRoutes  = require('./modules/linkedin/linkedin.routes')
 const codesRoutes     = require('./routes/codes')
@@ -25,7 +25,6 @@ const adminRoutes     = require('./routes/admin')
 const waitlistRoutes  = require('./routes/waitlist')
 const eventRoutes     = require('./routes/events')
 const companyRoutes   = require('./routes/company')
-const manualChatRoutes = require('./routes/manualChat')
 const notificationsRoutes = require('./modules/notifications/notifications.routes')
 
 // Carga el manual ELVIA al boot — falla rápido si falta el archivo
@@ -112,8 +111,8 @@ app.use('/api/cv', cvRoutes);
 app.use('/api/jobs', jobsRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/email', emailRoutes);
-app.use('/api/chat/manual', manualChatRoutes)
-app.use('/api/chat',      chatRoutes)
+app.use('/api/chat/manual', manualChatRouter)
+app.use('/api/chat',        chatRouter)
 app.use('/api/interview', interviewRoutes)
 app.use('/api/linkedin',  linkedinRoutes)
 app.use('/api/codes',     codesRoutes)
