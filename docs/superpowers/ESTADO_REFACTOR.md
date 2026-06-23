@@ -57,8 +57,9 @@ Migrar `backend/src/` a `modules/<dominio>/` (routes→controller→service→re
 |---|---|---|
 | notifications | ✅ | PILOTO — patrón de referencia. `POST /api/email/send` → `/api/notifications/send-cv`. 4 tests. |
 | linkedin | ✅ | LinkedIn® Pro. Mismo path `/api/linkedin`. 8 funciones repo, 9 tests. |
-| interview | ⏳ | siguiente |
-| mentor, jobs, cv, tenancy/company, admin, identity | ⏳ | |
+| interview | ✅ | Simulador. `/api/interview`. 5 tests. **Pendiente avatar premium** → spec `specs/2026-06-22-avatar-entrevista-premium.md`. |
+| mentor | ⏳ | siguiente |
+| jobs, cv, tenancy/company, admin, identity | ⏳ | |
 
 **Patrón establecido (replicar):** `<modulo>.routes.js` (wiring) → `.controller.js` (HTTP + envelope) → `.service.js` (negocio, errores de dominio con `code`) → `.repository.js` (ÚNICA capa que toca Supabase, queries con contexto) → `.schemas.js` (Zod). HTML/templates en `templates/`. Tests en `tests/modules/`.
 
