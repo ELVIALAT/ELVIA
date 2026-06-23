@@ -1,5 +1,7 @@
-// Middleware de autenticación — verifica el JWT de Supabase
+// Middleware de autenticación — adaptador Express fino sobre el módulo identity.
+// Verifica el JWT de Supabase (vía identity.service) y adjunta user/cliente.
 const { supabase, crearClienteAutenticado } = require('../lib/supabase');
+const { authenticate } = require('../modules/identity/identity.service');
 
 const auth = async (req, res, next) => {
   if (!supabase) {
@@ -13,15 +15,15 @@ const auth = async (req, res, next) => {
 
   const token = authHeader.split(' ')[1];
 
-  // Supabase verifica la firma del JWT y devuelve el usuario
-  const { data: { user }, error } = await supabase.auth.getUser(token);
+  // identity.service valida la firma del JWT y resuelve el usuario.
+  const { user, error } = await authenticate(token);
 
   if (error || !user) {
     return res.status(401).json({ error: 'Token inválido o expirado' });
   }
 
-  // Adjuntar usuario y cliente autenticado a la request
-  // req.supabase tiene el contexto del usuario → RLS funciona correctamente
+  // Adjuntar usuario y cliente autenticado a la request.
+  // req.supabase tiene el contexto del usuario → RLS funciona correctamente.
   req.user = user;
   req.token = token;
   req.supabase = crearClienteAutenticado(token);

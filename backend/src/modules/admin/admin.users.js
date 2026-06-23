@@ -11,7 +11,7 @@ const crypto = require('crypto')
 const auth = require('../../middleware/auth')
 const requireRole = require('../../middleware/requireAdmin')
 const { supabaseAdmin } = require('../../lib/supabase')
-const { createOTP, validateOTP } = require('../../services/otpService')
+const { createOTP, validateOTP } = require('../identity/identity.otp')
 const { sendOTPEmail } = require('../../services/resendService')
 
 const router = express.Router()
