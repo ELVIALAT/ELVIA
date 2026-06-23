@@ -54,16 +54,7 @@ const adminCreateTenant = z.object({
   require_invite: z.boolean().optional(),
 }).passthrough(); // muchos campos opcionales de branding
 
-// ── /jobs/compatibility ──
-const jobsCompatibility = z.object({
-  cvText: z.string().min(1).max(50000),
-  jobTitle: z.string().trim().min(1).max(300),
-  jobCompany: z.string().trim().max(300).optional(),
-  jobSnippet: z.string().max(10000).optional(),
-  jobLink: z.string().url().max(2000).optional().or(z.literal('')),
-  jobLocation: z.string().trim().max(300).optional(),
-  jobVia: z.string().trim().max(120).optional(),
-});
+// NOTA: jobsCompatibility movido a src/modules/jobs/jobs.schemas.js (Fase 2).
 
 // NOTA: el schema de email/send se movió a
 // src/modules/notifications/notifications.schemas.js (Fase 2).
@@ -73,5 +64,4 @@ module.exports = {
   companyRegistration,
   allowlistBulk,
   adminCreateTenant,
-  jobsCompatibility,
 };

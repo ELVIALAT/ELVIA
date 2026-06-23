@@ -15,7 +15,7 @@ const helmet = require('helmet');
 
 const { limiterGeneral } = require('./middleware/rateLimiter');
 const cvRoutes = require('./routes/cv');
-const jobsRoutes = require('./routes/jobs');
+const jobsRoutes = require('./modules/jobs/jobs.routes');
 const emailRoutes = require('./routes/email');
 const { chatRouter, manualChatRouter } = require('./modules/mentor/mentor.routes')
 const interviewRoutes = require('./modules/interview/interview.routes')
