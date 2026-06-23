@@ -1,8 +1,8 @@
 // Tests del middleware de validación Zod + envelope (Fase 1, tareas 4-5).
 const { validate } = require('../src/middleware/validate');
-const schemas = require('../src/schemas');
-// companyRegistration y allowlistBulk migraron al módulo tenancy (Fase 2).
+// Schemas migraron a sus módulos (Fase 2).
 const tenancySchemas = require('../src/modules/tenancy/tenancy.schemas');
+const tenantsSchemas = require('../src/modules/admin/tenants/tenants.schemas');
 
 // Mock mínimo de res
 function mockRes() {
@@ -41,7 +41,7 @@ describe('validate middleware + envelope', () => {
   // (jobs/compatibility schema migrado a src/modules/jobs — cubierto en jobs.test.js)
 
   test('admin/tenants con slug inválido → rechaza con mensaje claro', () => {
-    const { res, nexted } = run(schemas.adminCreateTenant, {
+    const { res, nexted } = run(tenantsSchemas.adminCreateTenant, {
       nombre: 'X', slug: 'Slug Con Espacios', hr_nombre: 'Y', hr_email: 'y@z.com',
     });
     expect(nexted).toBe(false);
