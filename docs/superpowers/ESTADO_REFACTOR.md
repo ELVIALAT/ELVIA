@@ -60,8 +60,9 @@ Migrar `backend/src/` a `modules/<dominio>/` (routes→controller→service→re
 | interview | ✅ | Simulador. `/api/interview`. 5 tests. **Pendiente avatar premium** → spec `specs/2026-06-22-avatar-entrevista-premium.md`. |
 | mentor | ✅ | Chat ELVIA (general + manual). `/api/chat` y `/api/chat/manual`. Sin repository (no toca DB). 5 tests. |
 | jobs | ✅ | Vacantes/matches. `/api/jobs`. 612 LOC → providers/ssrf/ai/repo/service. 6 tests. |
-| cv | ⏳ | siguiente (grande) |
-| tenancy/company, admin, identity | ⏳ | |
+| cv | ✅ | Factoría Harvard (1028 LOC, 12 rutas). `/api/cv`. Reubicar+repository+**fix anti-patrón C-3** (quitado supabaseAdmin fallback). 5 tests. |
+| tenancy/company | ⏳ | siguiente (el más sensible: service_role, multi-tenant) |
+| admin, identity | ⏳ | |
 
 **Nota Fase 3:** el Gerente de Búsqueda (`ProyectoLaboral.jsx`, 3605 LOC, 6 pilares) casi no tiene backend (datos en `profiles.job_search_profile`); su refactor real es Fase 3 (frontend) — primer god-file a partir. Reglas: no tocar sessionStorage ni columna `soft_skills`.
 
