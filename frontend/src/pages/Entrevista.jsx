@@ -121,6 +121,7 @@ export default function Entrevista() {
   const recognitionRef = useRef(null)
   const textareaRef    = useRef(null)
   const vocesRef       = useRef([])
+  const audioRef       = useRef(null)   // <audio> para la voz premium (OpenAI TTS)
 
   // Cargar CV Base (tipo=optimize sin subtipo especial) para contexto de entrevista
   useEffect(() => {
@@ -205,12 +206,16 @@ export default function Entrevista() {
     setDescripcion(v.job_data?.full_description || v.job_data?.description || v.job_data?.snippet || '')
   }
 
-  // ── Cargar voces disponibles ───────────────────────────────────────────
+  // ── Cargar voces disponibles + cleanup de audio al desmontar ────────────
   useEffect(() => {
     const cargarVoces = () => { vocesRef.current = window.speechSynthesis?.getVoices() || [] }
     cargarVoces()
     window.speechSynthesis?.addEventListener('voiceschanged', cargarVoces)
-    return () => window.speechSynthesis?.removeEventListener('voiceschanged', cargarVoces)
+    return () => {
+      window.speechSynthesis?.removeEventListener('voiceschanged', cargarVoces)
+      try { audioRef.current?.pause() } catch { /* noop */ }
+      window.speechSynthesis?.cancel()
+    }
   }, [])
 
   // Toggle mute (persistente en localStorage)
@@ -218,23 +223,56 @@ export default function Entrevista() {
     setMuted(prev => {
       const next = !prev
       localStorage.setItem('entrevista_muted', next ? '1' : '0')
-      if (next) {
-        window.speechSynthesis?.cancel()
-        setHablando(false)
-      }
+      if (next) detenerVoz()
       return next
     })
   }
 
-  // ── TTS: solo voces neuronales/de alta calidad ─────────────────────────
-  // Si el navegador no tiene voz "Natural" (Edge) ni "Google" (Chrome), no habla
-  // — preferimos silencio a una voz robótica de baja calidad.
-  const leerEnVoz = (texto) => {
+  // ── TTS premium (OpenAI) con fallback al navegador ──────────────────────
+  // Voz natural del entrevistador vía backend. Si el backend no tiene TTS
+  // disponible o falla, cae a la voz neuronal del navegador (leerEnVozBrowser).
+  const leerEnVoz = async (texto) => {
+    if (muted || !texto) return
+    detenerVoz()
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/interview/tts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+        body: JSON.stringify({ text: texto }),
+      })
+      if (!res.ok) throw new Error(`TTS ${res.status}`)
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const audio = new Audio(url)
+      audioRef.current = audio
+      audio.onplay  = () => setHablando(true)
+      audio.onended = () => { setHablando(false); URL.revokeObjectURL(url) }
+      audio.onerror = () => { setHablando(false); URL.revokeObjectURL(url); leerEnVozBrowser(texto) }
+      await audio.play()
+    } catch {
+      // Backend TTS no disponible → fallback a la voz del navegador
+      leerEnVozBrowser(texto)
+    }
+  }
+
+  // Detiene cualquier voz en curso (premium o navegador).
+  const detenerVoz = () => {
+    try { audioRef.current?.pause(); audioRef.current = null } catch { /* noop */ }
+    window.speechSynthesis?.cancel()
+    setHablando(false)
+  }
+
+  // ── Fallback: voz neuronal del navegador (speechSynthesis) ──────────────
+  // Si no hay voz "Natural"/"Google", no habla — silencio > voz robótica.
+  const leerEnVozBrowser = (texto) => {
     if (muted) return
     if (!window.speechSynthesis) return
     const voces = vocesRef.current
 
-    // Preferir voces LATAM (es-MX, es-US, es-419) sobre es-ES
     const esLatam = v => /es-(MX|US|419|AR|CO|CL|PE)/i.test(v.lang)
     const esNeural = v => /Natural|Online|Neural/i.test(v.name)
     const esGoogle = v => /Google/i.test(v.name)
@@ -246,7 +284,7 @@ export default function Entrevista() {
       || voces.find(v => esEspanol(v) && esNeural(v))
       || voces.find(v => esEspanol(v) && esGoogle(v))
 
-    if (!vozBuena) return // sin voz de calidad disponible → silencio
+    if (!vozBuena) return
 
     window.speechSynthesis.cancel()
     const utt = new SpeechSynthesisUtterance(texto)
@@ -254,7 +292,6 @@ export default function Entrevista() {
     utt.lang  = vozBuena.lang
     utt.rate  = 0.95
     utt.pitch = 1.0
-
     utt.onstart = () => setHablando(true)
     utt.onend   = () => setHablando(false)
     utt.onerror = () => setHablando(false)
@@ -284,9 +321,8 @@ export default function Entrevista() {
         return
       }
 
-      // Detener TTS antes de escuchar
-      window.speechSynthesis.cancel()
-      setHablando(false)
+      // Detener TTS (premium o navegador) antes de escuchar
+      detenerVoz()
 
       const rec = new SR()
       rec.lang = 'es-MX'
@@ -427,7 +463,7 @@ export default function Entrevista() {
 
   // ── Finalizar y evaluar ───────────────────────────────────────────────
   const finalizarEntrevista = async (resp = respuestas) => {
-    window.speechSynthesis.cancel()
+    detenerVoz()
     setLoadingEval(true)
     try {
       const resultado = await api.post('/api/interview/evaluar', {
@@ -447,7 +483,7 @@ export default function Entrevista() {
   }
 
   const reiniciar = () => {
-    window.speechSynthesis.cancel()
+    detenerVoz()
     setPreguntas([]); setRespuestas([]); setPreguntaIdx(0)
     setInputRespuesta(''); setEvaluacion(null); setFeedbackInmediato(null)
     setGuardadoEnPipeline(false)

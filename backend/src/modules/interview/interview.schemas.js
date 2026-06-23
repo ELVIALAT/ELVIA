@@ -19,4 +19,9 @@ const evaluar = z.object({
   feedbackPorPregunta: z.boolean().optional(),
 });
 
-module.exports = { generarPreguntas, evaluar };
+const tts = z.object({
+  text: z.string().trim().min(1, 'texto requerido').max(4000),
+  voice: z.enum(['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer']).optional(),
+});
+
+module.exports = { generarPreguntas, evaluar, tts };
