@@ -15,10 +15,10 @@ El realismo percibido viene ~70% de la VOZ, no del rostro. Rostro perfecto + voz
 
 ## Plan por capas
 
-### 1. Voz premium (mayor impacto)
-- Backend: endpoint `POST /api/interview/tts` que recibe texto → llama **OpenAI TTS (`tts-1`, voz `onyx`/`nova`)** → devuelve audio (mp3/opus). Costo ~$0.015/1K chars (~$0.90/h de habla).
-- Frontend: reemplazar `speechSynthesis.speak()` por reproducción del audio del backend. Mantener `speechSynthesis` como fallback si el endpoint falla.
-- Cachear audio por pregunta (las preguntas se repiten) para no re-generar.
+### 1. Voz premium (mayor impacto) ✅ HECHO (2026-06-22, commit c5a0612)
+- Backend: `POST /api/interview/tts` (auth + dailyCap + Zod) → OpenAI TTS (`tts-1`, voz `onyx`) → audio mp3. En `src/modules/interview/interview.tts.js`. Degrada si falta OPENAI_API_KEY.
+- Frontend: `leerEnVoz` en Entrevista.jsx pide audio al backend y reproduce; fallback a `leerEnVozBrowser` (speechSynthesis) si falla. `detenerVoz()` unifica el stop.
+- ⏳ PENDIENTE de este paso: cachear audio por pregunta (las preguntas se repiten) para no re-generar; requiere OPENAI_API_KEY en Railway para activarse en staging.
 
 ### 2. Rostro en video loop ($0)
 - Reemplazar el logo por un rostro humano. Usar `Optima video mentor 0.mp4` o generar 3 loops cortos UNA vez con HeyGen (~$5 total, no por uso): `idle` (escuchando), `hablando`, `asintiendo`.
