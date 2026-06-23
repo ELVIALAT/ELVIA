@@ -8,12 +8,7 @@ const password = z.string().min(8, 'mínimo 8 caracteres').max(200);
 const nombre = z.string().trim().min(1).max(100);
 const optionalShortText = z.string().trim().max(200).optional();
 
-// ── /cv/optimize (multipart: el archivo va aparte; aquí los campos de texto) ──
-const cvOptimize = z.object({
-  language: z.enum(['es', 'en']).optional().default('es'),
-  jobText: z.string().max(20000).optional(),
-  cvId: z.string().uuid().optional(),
-}).passthrough(); // multer agrega campos; no rechazar por extras
+// NOTA: cvOptimize movido a src/modules/cv/cv.schemas.js (Fase 2).
 
 // ── /company/registration/:slug ──
 const companyRegistration = z.object({
@@ -60,7 +55,6 @@ const adminCreateTenant = z.object({
 // src/modules/notifications/notifications.schemas.js (Fase 2).
 
 module.exports = {
-  cvOptimize,
   companyRegistration,
   allowlistBulk,
   adminCreateTenant,

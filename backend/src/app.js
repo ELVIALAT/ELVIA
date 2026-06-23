@@ -14,7 +14,7 @@ process.on('unhandledRejection', (reason, promise) => {
 const helmet = require('helmet');
 
 const { limiterGeneral } = require('./middleware/rateLimiter');
-const cvRoutes = require('./routes/cv');
+const cvRoutes = require('./modules/cv/cv.routes');
 const jobsRoutes = require('./modules/jobs/jobs.routes');
 const emailRoutes = require('./routes/email');
 const { chatRouter, manualChatRouter } = require('./modules/mentor/mentor.routes')

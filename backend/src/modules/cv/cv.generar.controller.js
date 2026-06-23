@@ -1,5 +1,4 @@
 // Generador de CV desde cero — formulario estructurado → Claude → Harvard
-const { supabaseAdmin } = require('../lib/supabase')
 
 const generarCV = async (req, res, next) => {
   try {
@@ -185,7 +184,10 @@ Responde EXACTAMENTE con estos delimitadores XML (sin texto fuera de ellos):
       return res.status(500).json({ error: 'No se pudo generar la CV. Intenta de nuevo.' })
     }
 
-    // Guardar en cv_results — no bloquea la respuesta si falla
+    // Guardar en cv_results con el cliente del usuario (RLS) — no bloquea la
+    // respuesta si falla. SIN fallback a service_role (anti-patrón C-3 de la
+    // auditoría: bypasea el aislamiento multi-tenant). Si RLS rechaza, es un
+    // error real que NO se debe ocultar escribiendo con admin.
     const supabase = req.supabase
     let savedId = null
     const { data: savedCV, error: errorSave } = await supabase.from('cv_results').insert({
@@ -196,36 +198,14 @@ Responde EXACTAMENTE con estos delimitadores XML (sin texto fuera de ellos):
     }).select('id').single()
 
     if (errorSave) {
-      // Fallback: intentar con service role (evita problemas de RLS)
-      console.warn('cv_results insert con usuario falló, intentando con admin:', errorSave.message)
-      const { data: adminSaved, error: adminErr } = await supabaseAdmin.from('cv_results').insert({
-        user_id: userId,
-        tipo: 'generar',
-        contenido: cvText,
-        metadata: { datos_originales: datos, cambios, recomendaciones, language, subtipo: 'desde_cero' }
-      }).select('id').single()
-      if (adminErr) {
-        console.error('Error guardando cv_results (admin fallback):', adminErr.message)
-        // No bloquear — la CV ya fue generada, devolver igual
-      } else {
-        savedId = adminSaved?.id
-      }
+      // No bloquear — la CV ya fue generada; solo no quedó persistida.
+      console.error('[cv/generar] cv_results insert falló (sin fallback admin):', errorSave.message)
     } else {
       savedId = savedCV?.id
     }
 
-    // Incrementar contadores
-    const { data: profileData } = await supabaseAdmin.from('profiles')
-      .select('cv_generar_count, usage_count, plan')
-      .eq('id', userId)
-      .single()
-
-    await supabaseAdmin.from('profiles').update({
-      cv_generar_count: (profileData?.cv_generar_count || 0) + 1,
-      usage_count:      (profileData?.usage_count || 0) + 1
-    }).eq('id', userId)
-
-    const isPaidPlan = profileData && ['mensual', 'trimestral', 'b2b'].includes(profileData.plan)
+    // Acceso full (sin planes freemium): nunca watermark.
+    const isPaidPlan = true
 
     res.json({
       id: savedId,
