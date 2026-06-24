@@ -19,6 +19,10 @@ const ALLOWED = new Set([
   'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'fetch', 'alert',
   'Blob', 'File', 'FileReader', 'FormData', 'URL', 'URLSearchParams', 'atob', 'btoa',
   'requestAnimationFrame', 'cancelAnimationFrame', 'structuredClone', 'crypto',
+  // Browser — media / web APIs
+  'Audio', 'Image', 'AudioContext', 'MediaRecorder', 'SpeechSynthesisUtterance',
+  'Notification', 'IntersectionObserver', 'ResizeObserver', 'MutationObserver',
+  'AbortController', 'TextEncoder', 'TextDecoder', 'Worker', 'EventSource',
   // JS builtins
   'Object', 'Array', 'String', 'Number', 'Boolean', 'Math', 'JSON', 'Date',
   'Promise', 'Map', 'Set', 'WeakMap', 'WeakSet', 'Symbol', 'RegExp', 'Error',
