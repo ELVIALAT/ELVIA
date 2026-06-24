@@ -1,10 +1,11 @@
 // features/cv/components/WizardLayout.jsx
-// Chrome presentacional del wizard: header, barra de pasos, % de llenado, banner de
-// autosave, despacho de los 7 pasos, navegación y panel lateral de análisis.
-// Extraído verbatim desde pages/CVDesdeCero.jsx (Fase 3). Sin lógica: solo presentación
-// y plumbing de props — toda la lógica/persistencia vive en el orquestador.
+// Chrome del wizard: header, barra de pasos, % de llenado, banner de autosave,
+// despacho de los 7 pasos, navegación y panel lateral de análisis.
+// Los pasos se autoservician del CVWizardContext, así que aquí ya NO se cablean
+// props hacia ellos — sólo se consume lo necesario para el chrome y la navegación.
 import { ArrowLeft, ArrowRight, SpinnerGap, FileArrowDown, Eye, X } from '@phosphor-icons/react'
 import { PASOS } from '../constants'
+import { useCVWizard } from '../CVWizardContext'
 import PanelAnalisis from './PanelAnalisis'
 import PasoDatos from './PasoDatos'
 import PasoResumen from './PasoResumen'
@@ -14,31 +15,12 @@ import PasoHabilidades from './PasoHabilidades'
 import PasoIdiomas from './PasoIdiomas'
 import PasoPreview from './PasoPreview'
 
-export default function WizardLayout({
-  // chrome
-  modoForzado, pasoActual, setPasoActual, pctLlenado, setShowCancelModal,
-  user, ultimoGuardado, analisis, setAnalisis, error,
-  generando, iniciarGenerarCV,
-  // datos personales (paso 0)
-  fileRef, extraerCV, cvFileName, extrayendo, cvMismatch, setCvMismatch,
-  setCvPending, setCvFileName, cvIdioma, datos, upDatos, tipsPorPaso,
-  // resumen (paso 1)
-  cvResumenOriginal, ofertaValorGerente, handleFusionarResumen, fusionando,
-  errorFusion, resumenFusionSugerido, setResumenFusionSugerido, resumenBloqueado,
-  setResumenBloqueado, handleOptimizarResumen, optimizandoResumen, resumenSugerido,
-  setResumenSugerido,
-  // experiencia (paso 2)
-  delExp, upExp, addExp, handleOptimizarExp, expOptimizando, expSugeridas,
-  expMejoradas, aplicarSugerenciaExp, rechazarSugerenciaExp, setExpSugeridas,
-  // educación (paso 3)
-  delEdu, upEdu, addEdu,
-  // habilidades (paso 4)
-  togHab, nuevaHab, setNuevaHab, addHab,
-  // idiomas (paso 5)
-  setDatos, upNivIdm, togIdm,
-  // preview (paso 6)
-  borradorFinal, setBorradorFinal,
-}) {
+export default function WizardLayout() {
+  const {
+    modoForzado, pasoActual, setPasoActual, pctLlenado, setShowCancelModal,
+    user, ultimoGuardado, analisis, setAnalisis, error, generando,
+    iniciarGenerarCV, borradorFinal, datos,
+  } = useCVWizard()
   const pasoInfo = PASOS[pasoActual]
 
   return (
@@ -97,103 +79,13 @@ export default function WizardLayout({
           {/* ── Wizard principal ─────────────────────────────────────────────── */}
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-7">
 
-            {pasoActual === 0 && (
-              <PasoDatos
-                modoForzado={modoForzado}
-                fileRef={fileRef}
-                extraerCV={extraerCV}
-                cvFileName={cvFileName}
-                extrayendo={extrayendo}
-                cvMismatch={cvMismatch}
-                setCvMismatch={setCvMismatch}
-                setCvPending={setCvPending}
-                setCvFileName={setCvFileName}
-                analisis={analisis}
-                cvIdioma={cvIdioma}
-                error={error}
-                datos={datos}
-                upDatos={upDatos}
-                tips={tipsPorPaso.datos}
-              />
-            )}
-
-            {pasoActual === 1 && (
-              <PasoResumen
-                modoForzado={modoForzado}
-                cvResumenOriginal={cvResumenOriginal}
-                ofertaValorGerente={ofertaValorGerente}
-                handleFusionarResumen={handleFusionarResumen}
-                fusionando={fusionando}
-                errorFusion={errorFusion}
-                resumenFusionSugerido={resumenFusionSugerido}
-                setResumenFusionSugerido={setResumenFusionSugerido}
-                resumenBloqueado={resumenBloqueado}
-                setResumenBloqueado={setResumenBloqueado}
-                upDatos={upDatos}
-                datos={datos}
-                handleOptimizarResumen={handleOptimizarResumen}
-                optimizandoResumen={optimizandoResumen}
-                resumenSugerido={resumenSugerido}
-                setResumenSugerido={setResumenSugerido}
-                tips={tipsPorPaso.resumen}
-              />
-            )}
-
-            {pasoActual === 2 && (
-              <PasoExperiencia
-                datos={datos}
-                delExp={delExp}
-                upExp={upExp}
-                addExp={addExp}
-                handleOptimizarExp={handleOptimizarExp}
-                expOptimizando={expOptimizando}
-                expSugeridas={expSugeridas}
-                expMejoradas={expMejoradas}
-                aplicarSugerenciaExp={aplicarSugerenciaExp}
-                rechazarSugerenciaExp={rechazarSugerenciaExp}
-                setExpSugeridas={setExpSugeridas}
-                tips={tipsPorPaso.experiencia}
-              />
-            )}
-
-            {pasoActual === 3 && (
-              <PasoEducacion
-                datos={datos}
-                delEdu={delEdu}
-                upEdu={upEdu}
-                addEdu={addEdu}
-                tips={tipsPorPaso.educacion}
-              />
-            )}
-
-            {pasoActual === 4 && (
-              <PasoHabilidades
-                datos={datos}
-                togHab={togHab}
-                nuevaHab={nuevaHab}
-                setNuevaHab={setNuevaHab}
-                addHab={addHab}
-                tips={tipsPorPaso.habilidades}
-              />
-            )}
-
-            {pasoActual === 5 && (
-              <PasoIdiomas
-                datos={datos}
-                setDatos={setDatos}
-                upNivIdm={upNivIdm}
-                togIdm={togIdm}
-                tips={tipsPorPaso.idiomas}
-              />
-            )}
-
-            {pasoActual === 6 && (
-              <PasoPreview
-                datos={datos}
-                borradorFinal={borradorFinal}
-                setBorradorFinal={setBorradorFinal}
-              />
-            )}
+            {pasoActual === 0 && <PasoDatos />}
+            {pasoActual === 1 && <PasoResumen />}
+            {pasoActual === 2 && <PasoExperiencia />}
+            {pasoActual === 3 && <PasoEducacion />}
+            {pasoActual === 4 && <PasoHabilidades />}
+            {pasoActual === 5 && <PasoIdiomas />}
+            {pasoActual === 6 && <PasoPreview />}
 
             {/* Navegación */}
             <div className="mt-8 flex justify-between">

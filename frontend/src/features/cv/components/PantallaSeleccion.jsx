@@ -2,10 +2,10 @@
 // Pantalla de selección de ruta (subir CV vs empezar de cero / modo upload forzado).
 // Extraído verbatim desde pages/CVDesdeCero.jsx (Fase 3).
 import { ArrowLeft, FileDoc, UploadSimple, SpinnerGap, PencilSimple } from '@phosphor-icons/react'
+import { useCVWizard } from '../CVWizardContext'
 
-export default function PantallaSeleccion({
-  modoForzado, fileRef, extraerCV, extrayendo, error, setModoSeleccion, navigate,
-}) {
+export default function PantallaSeleccion() {
+  const { modoForzado, fileRef, extraerCV, extrayendo, error, setModoSeleccion, navigate } = useCVWizard()
   const soloUpload = modoForzado === 'upload'
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-6">

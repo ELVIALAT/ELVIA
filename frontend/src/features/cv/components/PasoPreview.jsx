@@ -3,8 +3,10 @@
 // Extraído verbatim desde pages/CVDesdeCero.jsx (Fase 3).
 import { Eye } from '@phosphor-icons/react'
 import CVHarvardPreview from '../../../components/cv/CVHarvardPreview'
+import { useCVWizard } from '../CVWizardContext'
 
-export default function PasoPreview({ datos, borradorFinal, setBorradorFinal }) {
+export default function PasoPreview() {
+  const { datos, borradorFinal, setBorradorFinal } = useCVWizard()
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-2">

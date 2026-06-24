@@ -3,8 +3,11 @@
 // Extraído verbatim desde pages/CVDesdeCero.jsx (Fase 3).
 import HelpBadge from '../../../components/common/HelpBadge'
 import { IDIOMAS_LIST, NIVELES_CEFR } from '../constants'
+import { useCVWizard } from '../CVWizardContext'
 
-export default function PasoIdiomas({ datos, setDatos, upNivIdm, togIdm, tips }) {
+export default function PasoIdiomas() {
+  const { datos, setDatos, upNivIdm, togIdm, tipsPorPaso } = useCVWizard()
+  const tips = tipsPorPaso.idiomas
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-2">

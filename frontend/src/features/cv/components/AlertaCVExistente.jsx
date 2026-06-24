@@ -2,8 +2,10 @@
 // Alerta cuando el usuario ya tiene un CV generado (sobrescribir vs volver).
 // Extraído verbatim desde pages/CVDesdeCero.jsx (Fase 3).
 import { WarningCircle, ArrowLeft } from '@phosphor-icons/react'
+import { useCVWizard } from '../CVWizardContext'
 
-export default function AlertaCVExistente({ navigate, setAlertaExistente }) {
+export default function AlertaCVExistente() {
+  const { navigate, setAlertaExistente } = useCVWizard()
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <div className="bg-amber-50 border border-amber-200 rounded-3xl p-8 text-center shadow-sm">

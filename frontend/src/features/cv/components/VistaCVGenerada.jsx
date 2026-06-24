@@ -2,12 +2,15 @@
 // Vista del CV generado para revisión (score antes/después, cambios, descargas, confirmar).
 // Extraído verbatim desde pages/CVDesdeCero.jsx (Fase 3).
 import { ArrowLeft, Check, DownloadSimple, FileDoc, SpinnerGap, CheckFat } from '@phosphor-icons/react'
+import { descargarCV } from '../../../services/cvService'
 import { analizarCalidad } from '../utils'
+import { useCVWizard } from '../CVWizardContext'
 
-export default function VistaCVGenerada({
-  cvGenerada, setCvGenerada, borradorFinal, datos, scoreAntes, analisis,
-  generando, error, descargarCV, confirmarYGuardar,
-}) {
+export default function VistaCVGenerada() {
+  const {
+    cvGenerada, setCvGenerada, borradorFinal, datos, scoreAntes, analisis,
+    generando, error, confirmarYGuardar,
+  } = useCVWizard()
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
       <div className="max-w-4xl mx-auto">

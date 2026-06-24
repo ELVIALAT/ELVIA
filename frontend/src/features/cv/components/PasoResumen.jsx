@@ -5,14 +5,17 @@ import HelpBadge from '../../../components/common/HelpBadge'
 import { Notepad, Sparkle, MagicWand, SpinnerGap, X, Warning, CheckFat, Lock, PencilSimple } from '@phosphor-icons/react'
 import Tooltip from './Tooltip'
 import { renderDiff, renderDiffFusion } from '../diff'
+import { useCVWizard } from '../CVWizardContext'
 
-export default function PasoResumen({
-  modoForzado, cvResumenOriginal, ofertaValorGerente, handleFusionarResumen,
-  fusionando, errorFusion, resumenFusionSugerido, setResumenFusionSugerido,
-  resumenBloqueado, setResumenBloqueado, upDatos, datos,
-  handleOptimizarResumen, optimizandoResumen, resumenSugerido, setResumenSugerido,
-  tips,
-}) {
+export default function PasoResumen() {
+  const {
+    modoForzado, cvResumenOriginal, ofertaValorGerente, handleFusionarResumen,
+    fusionando, errorFusion, resumenFusionSugerido, setResumenFusionSugerido,
+    resumenBloqueado, setResumenBloqueado, upDatos, datos,
+    handleOptimizarResumen, optimizandoResumen, resumenSugerido, setResumenSugerido,
+    tipsPorPaso,
+  } = useCVWizard()
+  const tips = tipsPorPaso.resumen
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-2">

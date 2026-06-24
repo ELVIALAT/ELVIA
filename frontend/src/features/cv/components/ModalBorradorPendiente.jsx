@@ -2,8 +2,10 @@
 // Modal de decisión cuando entras con mode='scratch' y ya hay un borrador en BD.
 // Extraído verbatim desde pages/CVDesdeCero.jsx (Fase 3).
 import { Notepad, ArrowUUpLeft } from '@phosphor-icons/react'
+import { useCVWizard } from '../CVWizardContext'
 
-export default function ModalBorradorPendiente({ continuarBorrador, descartarYEmpezar, setBorradorPendiente, navigate }) {
+export default function ModalBorradorPendiente() {
+  const { continuarBorrador, descartarYEmpezar, setBorradorPendiente, navigate } = useCVWizard()
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-6">
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-7">

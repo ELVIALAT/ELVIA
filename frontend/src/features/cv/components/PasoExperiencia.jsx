@@ -4,12 +4,15 @@
 import HelpBadge from '../../../components/common/HelpBadge'
 import { X, Plus, MagicWand, SpinnerGap, CheckFat } from '@phosphor-icons/react'
 import { renderDiff } from '../diff'
+import { useCVWizard } from '../CVWizardContext'
 
-export default function PasoExperiencia({
-  datos, delExp, upExp, addExp, handleOptimizarExp, expOptimizando,
-  expSugeridas, expMejoradas, aplicarSugerenciaExp, rechazarSugerenciaExp,
-  setExpSugeridas, tips,
-}) {
+export default function PasoExperiencia() {
+  const {
+    datos, delExp, upExp, addExp, handleOptimizarExp, expOptimizando,
+    expSugeridas, expMejoradas, aplicarSugerenciaExp, rechazarSugerenciaExp,
+    setExpSugeridas, tipsPorPaso,
+  } = useCVWizard()
+  const tips = tipsPorPaso.experiencia
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-2">

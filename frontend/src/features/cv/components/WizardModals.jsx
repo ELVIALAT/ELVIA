@@ -2,12 +2,14 @@
 // Modales de pie del wizard: placeholder sin reemplazar, confirmación de idioma y cancelar.
 // Extraído verbatim desde pages/CVDesdeCero.jsx (Fase 3).
 import { Warning, UploadSimple } from '@phosphor-icons/react'
+import { useCVWizard } from '../CVWizardContext'
 
-export default function WizardModals({
-  alertaPlaceholder, setAlertaPlaceholder,
-  alertaIdioma, setAlertaIdioma, cvIdioma, generarCV,
-  showCancelModal, setShowCancelModal, modoForzado, user, navigate,
-}) {
+export default function WizardModals() {
+  const {
+    alertaPlaceholder, setAlertaPlaceholder,
+    alertaIdioma, setAlertaIdioma, cvIdioma, generarCV,
+    showCancelModal, setShowCancelModal, modoForzado, user, navigate,
+  } = useCVWizard()
   return (
     <>
       {/* ── Modal: placeholder sin reemplazar ────────────────────────────── */}

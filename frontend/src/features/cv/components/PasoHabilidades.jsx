@@ -3,8 +3,11 @@
 // Extraído verbatim desde pages/CVDesdeCero.jsx (Fase 3).
 import HelpBadge from '../../../components/common/HelpBadge'
 import { X, Plus } from '@phosphor-icons/react'
+import { useCVWizard } from '../CVWizardContext'
 
-export default function PasoHabilidades({ datos, togHab, nuevaHab, setNuevaHab, addHab, tips }) {
+export default function PasoHabilidades() {
+  const { datos, togHab, nuevaHab, setNuevaHab, addHab, tipsPorPaso } = useCVWizard()
+  const tips = tipsPorPaso.habilidades
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-2">

@@ -4,12 +4,15 @@
 import HelpBadge from '../../../components/common/HelpBadge'
 import { SpinnerGap, UploadSimple, WarningCircle, CheckCircle, Warning } from '@phosphor-icons/react'
 import { PAISES } from '../constants'
+import { useCVWizard } from '../CVWizardContext'
 
-export default function PasoDatos({
-  modoForzado, fileRef, extraerCV, cvFileName, extrayendo, cvMismatch,
-  setCvMismatch, setCvPending, setCvFileName, analisis, cvIdioma, error,
-  datos, upDatos, tips,
-}) {
+export default function PasoDatos() {
+  const {
+    modoForzado, fileRef, extraerCV, cvFileName, extrayendo, cvMismatch,
+    setCvMismatch, setCvPending, setCvFileName, analisis, cvIdioma, error,
+    datos, upDatos, tipsPorPaso,
+  } = useCVWizard()
+  const tips = tipsPorPaso.datos
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-2 border-b border-slate-100 pb-3 mb-2">
