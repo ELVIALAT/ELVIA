@@ -27,6 +27,7 @@ vi.mock('../context/AuthContext', () => {
     featuresDesbloqueadas: true,
     loading: false,
     isPaidPlan: false,
+    onboardingPendiente: false,
     logout: () => {},
     refreshPerfil: () => {},
     refreshJpData: () => {},
@@ -50,8 +51,8 @@ function chainable(resolved = { data: [], error: null, count: 0 }) {
     select: () => obj, eq: () => obj, in: () => obj, order: () => obj, limit: () => obj,
     range: () => obj, gt: () => obj, lt: () => obj, ilike: () => obj, neq: () => obj,
     update: () => obj, insert: () => obj, upsert: () => obj, delete: () => obj,
-    single: async () => ({ data: null, error: null }),
-    maybeSingle: async () => ({ data: null, error: null }),
+    single: async () => ({ data: {}, error: null }),
+    maybeSingle: async () => ({ data: {}, error: null }),
     then: (resolve) => resolve(resolved),
   }
   return obj
@@ -88,6 +89,7 @@ beforeEach(() => {
 import Entrevista from './Entrevista'
 import CompanyAdmin from './CompanyAdmin'
 import LinkedinPro from './LinkedinPro'
+import ProyectoLaboral from './ProyectoLaboral'
 
 describe('Smoke de montaje — pantallas refactorizadas (hook+context)', () => {
   test('Entrevista monta y muestra el simulador (gate desbloqueado → setup)', async () => {
@@ -105,6 +107,14 @@ describe('Smoke de montaje — pantallas refactorizadas (hook+context)', () => {
   test('LinkedinPro monta (gate desbloqueado → formulario)', async () => {
     const { container, unmount } = render(<LinkedinPro />)
     await waitFor(() => expect(container.textContent).toMatch(/LinkedIn/i))
+    unmount()
+  })
+
+  // ProyectoLaboral fue split de pilares (sin context), pero montar el orquestador
+  // valida que los pilares extraídos siguen renderizando.
+  test('ProyectoLaboral monta y muestra el Gerente (pilares extraídos renderizan)', async () => {
+    const { container, unmount } = render(<ProyectoLaboral />)
+    await waitFor(() => expect(container.textContent).toMatch(/Mi Perfil|Competencias|Gerente/i))
     unmount()
   })
 })
