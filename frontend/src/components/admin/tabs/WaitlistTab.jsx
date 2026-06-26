@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import * as PI from '@phosphor-icons/react'
+import { ArrowClockwise, ChartLine, DownloadSimple, Eye, ListStar, MagnifyingGlass, Robot, ShareNetwork, ShieldCheck, Target, UsersThree } from '@phosphor-icons/react'
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   Cell, AreaChart, Area 
@@ -65,22 +65,22 @@ const WaitlistTab = ({ leads, views, events, onRefresh, fmtDate }) => {
       <SectionHeading 
         title="Auditoría de Leads" 
         subtitle="Conversión de la lista de espera y embudo de registro"
-        icon={PI.ListStar}
+        icon={ListStar}
       >
         <button onClick={exportCSV} className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white bg-slate-800/10 hover:bg-slate-800 px-6 py-3 rounded-2xl border border-slate-800 transition-all shadow-xl">
-          <PI.DownloadSimple size={16} weight="bold" /> Exportar CSV
+          <DownloadSimple size={16} weight="bold" /> Exportar CSV
         </button>
         <button onClick={onRefresh} className="p-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl shadow-xl shadow-indigo-900/20 transition-all active:scale-95">
-          <PI.ArrowClockwise size={20} weight="bold" />
+          <ArrowClockwise size={20} weight="bold" />
         </button>
       </SectionHeading>
 
       {/* KPIs Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KpiCard label="Total Leads" value={leads.length} icon={PI.UsersThree} color="blue" />
-        <KpiCard label="Visitas Landing" value={views} icon={PI.Eye} color="purple" />
-        <KpiCard label="Conversión" value={`${conversionRate}%`} sub="Visitas → Leads" icon={PI.Target} color="green" />
-        <KpiCard label="Simulaciones" value={simCount} icon={PI.Robot} color="amber" />
+        <KpiCard label="Total Leads" value={leads.length} icon={UsersThree} color="blue" />
+        <KpiCard label="Visitas Landing" value={views} icon={Eye} color="purple" />
+        <KpiCard label="Conversión" value={`${conversionRate}%`} sub="Visitas → Leads" icon={Target} color="green" />
+        <KpiCard label="Simulaciones" value={simCount} icon={Robot} color="amber" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -92,7 +92,7 @@ const WaitlistTab = ({ leads, views, events, onRefresh, fmtDate }) => {
               <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">Nuevos prospectos (últimos 7 días)</p>
             </div>
             <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-              <PI.ChartLine size={24} weight="duotone" />
+              <ChartLine size={24} weight="duotone" />
             </div>
           </div>
           
@@ -121,7 +121,7 @@ const WaitlistTab = ({ leads, views, events, onRefresh, fmtDate }) => {
         <div className="bg-[#111827] rounded-[2.5rem] p-10 border border-slate-800 shadow-2xl">
           <div className="flex items-center gap-4 mb-10">
              <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <PI.ShieldCheck size={24} weight="duotone" />
+                <ShieldCheck size={24} weight="duotone" />
              </div>
              <div>
                 <h3 className="font-black text-white text-lg italic uppercase">Situación Laboral</h3>
@@ -147,7 +147,7 @@ const WaitlistTab = ({ leads, views, events, onRefresh, fmtDate }) => {
         <div className="bg-[#111827] rounded-[2.5rem] p-10 border border-slate-800 shadow-2xl">
           <div className="flex items-center gap-4 mb-10">
              <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                <PI.ShareNetwork size={24} weight="duotone" />
+                <ShareNetwork size={24} weight="duotone" />
              </div>
              <div>
                 <h3 className="font-black text-white text-lg italic uppercase">Top Embajadores</h3>
@@ -193,7 +193,7 @@ const WaitlistTab = ({ leads, views, events, onRefresh, fmtDate }) => {
       {/* Tabla de Leads */}
       <div className="bg-[#111827] rounded-[2.5rem] border border-slate-800 shadow-2xl overflow-hidden mt-8">
         <div className="px-10 py-6 border-b border-slate-800 flex items-center gap-4">
-          <PI.MagnifyingGlass size={18} className="text-slate-500 shrink-0" />
+          <MagnifyingGlass size={18} className="text-slate-500 shrink-0" />
           <input
             type="text"
             placeholder="BUSCAR POR NOMBRE, EMAIL O PAÍS..."

@@ -3,7 +3,7 @@
 // Componente props (onClose, onSubmit, primary, defaultCohort).
 // Extraído verbatim desde pages/CompanyAdmin.jsx (Fase 3).
 import { useState } from 'react'
-import * as PI from '@phosphor-icons/react'
+import { FileCsv, Info, UploadSimple, WarningCircle, X } from '@phosphor-icons/react'
 import { useSectorLabels } from '../../../hooks/useSectorLabels'
 
 export default function CsvUploadModal({ onClose, onSubmit, primary, defaultCohort }) {
@@ -98,13 +98,13 @@ export default function CsvUploadModal({ onClose, onSubmit, primary, defaultCoho
         {/* Header */}
         <div className="p-6 border-b border-gray-100 flex items-start gap-4">
           <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${primary}15`, color: primary }}>
-            <PI.UploadSimple size={20} weight="duotone" />
+            <UploadSimple size={20} weight="duotone" />
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-bold text-gray-900">{L.uploadListTitle}</h3>
             <p className="text-sm text-gray-500">Sube un CSV con los emails que tendrán acceso al programa.</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-700"><PI.X size={20} /></button>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-700"><X size={20} /></button>
         </div>
 
         {/* Body */}
@@ -112,7 +112,7 @@ export default function CsvUploadModal({ onClose, onSubmit, primary, defaultCoho
           {/* Step 1: Plantilla */}
           {!file && (
             <div className="bg-gray-50 border border-gray-100 rounded-xl p-4 flex items-start gap-3">
-              <PI.Info size={18} className="text-gray-400 mt-0.5 shrink-0" weight="duotone" />
+              <Info size={18} className="text-gray-400 mt-0.5 shrink-0" weight="duotone" />
               <div className="flex-1 text-sm text-gray-600 leading-relaxed">
                 Columnas requeridas: <code className="px-1 bg-white rounded">email</code>. Opcionales: <code className="px-1 bg-white rounded">nombre, apellido, cohort, area, cargo_actual, dias_licencia</code> (días de acceso; default 90).
                 <button onClick={downloadTemplate} className="font-semibold ml-2 hover:underline" style={{ color: primary }}>
@@ -129,12 +129,12 @@ export default function CsvUploadModal({ onClose, onSubmit, primary, defaultCoho
               <input type="file" accept=".csv,.txt" className="hidden" onChange={e => e.target.files[0] && handleFile(e.target.files[0])} />
               {file ? (
                 <div className="text-sm text-gray-700">
-                  <PI.FileCsv size={32} weight="duotone" className="mx-auto mb-2" style={{ color: primary }} />
+                  <FileCsv size={32} weight="duotone" className="mx-auto mb-2" style={{ color: primary }} />
                   <strong>{file.name}</strong> · {(file.size / 1024).toFixed(1)} KB
                 </div>
               ) : (
                 <div className="text-sm text-gray-500">
-                  <PI.UploadSimple size={32} weight="duotone" className="mx-auto mb-2 text-gray-400" />
+                  <UploadSimple size={32} weight="duotone" className="mx-auto mb-2 text-gray-400" />
                   Click para seleccionar un CSV
                 </div>
               )}
@@ -157,7 +157,7 @@ export default function CsvUploadModal({ onClose, onSubmit, primary, defaultCoho
           {errors.length > 0 && (
             <div className="bg-red-50 border border-red-200 rounded-xl p-4">
               <div className="text-sm font-bold text-red-700 mb-2 flex items-center gap-2">
-                <PI.WarningCircle size={16} weight="fill" />
+                <WarningCircle size={16} weight="fill" />
                 {errors.length} errores detectados
               </div>
               <div className="text-xs text-red-600 max-h-32 overflow-y-auto space-y-1">

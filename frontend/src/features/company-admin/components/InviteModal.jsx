@@ -2,7 +2,7 @@
 // Modal de invitación individual. Componente props (onClose, onSubmit, primary).
 // Extraído verbatim desde pages/CompanyAdmin.jsx (Fase 3).
 import { useState } from 'react'
-import * as PI from '@phosphor-icons/react'
+import { PaperPlaneTilt } from '@phosphor-icons/react'
 import { useSectorLabels } from '../../../hooks/useSectorLabels'
 
 export default function InviteModal({ onClose, onSubmit, primary }) {
@@ -29,7 +29,7 @@ export default function InviteModal({ onClose, onSubmit, primary }) {
             className="w-11 h-11 rounded-xl flex items-center justify-center"
             style={{ background: `${primary}15`, color: primary }}
           >
-            <PI.PaperPlaneTilt size={20} weight="duotone" />
+            <PaperPlaneTilt size={20} weight="duotone" />
           </div>
           <div>
             <h3 className="text-lg font-bold text-gray-900">{L.inviteMember}</h3>

@@ -2,7 +2,7 @@
 // Tab "Seguimiento" — estado de todos los invitados al programa (mini KPIs + tabla).
 // Extraído verbatim desde pages/CompanyAdmin.jsx (Fase 3); el IIFE original pasa a ser
 // el cuerpo del componente.
-import * as PI from '@phosphor-icons/react'
+import { CheckCircle, Clock, PaperPlaneTilt, ProhibitInset, UserPlus } from '@phosphor-icons/react'
 import { useCompanyAdminCtx } from '../CompanyAdminContext'
 
 export default function TabInvitaciones() {
@@ -17,10 +17,10 @@ export default function TabInvitaciones() {
   const invMap = Object.fromEntries(invitations.map(i => [i.email, i]))
 
   const statusCfg = {
-    activated: { label: 'Activado',  bg: 'bg-emerald-50', text: 'text-emerald-700', icon: PI.CheckCircle,  iconColor: 'text-emerald-500' },
-    pending:   { label: 'Invitado',  bg: 'bg-amber-50',   text: 'text-amber-700',   icon: PI.Clock,        iconColor: 'text-amber-500'   },
-    invited:   { label: 'Invitado',  bg: 'bg-amber-50',   text: 'text-amber-700',   icon: PI.Clock,        iconColor: 'text-amber-500'   },
-    revoked:   { label: 'Inactivo',  bg: 'bg-gray-100',   text: 'text-gray-500',    icon: PI.ProhibitInset, iconColor: 'text-gray-400'   },
+    activated: { label: 'Activado',  bg: 'bg-emerald-50', text: 'text-emerald-700', icon: CheckCircle,  iconColor: 'text-emerald-500' },
+    pending:   { label: 'Invitado',  bg: 'bg-amber-50',   text: 'text-amber-700',   icon: Clock,        iconColor: 'text-amber-500'   },
+    invited:   { label: 'Invitado',  bg: 'bg-amber-50',   text: 'text-amber-700',   icon: Clock,        iconColor: 'text-amber-500'   },
+    revoked:   { label: 'Inactivo',  bg: 'bg-gray-100',   text: 'text-gray-500',    icon: ProhibitInset, iconColor: 'text-gray-400'   },
   }
 
   return (
@@ -35,7 +35,7 @@ export default function TabInvitaciones() {
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition-opacity"
           style={{ background: primary }}
         >
-          <PI.PaperPlaneTilt size={16} weight="bold" />
+          <PaperPlaneTilt size={16} weight="bold" />
           Nueva invitación
         </button>
       </div>
@@ -63,7 +63,7 @@ export default function TabInvitaciones() {
       <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
         {allowlist.length === 0 ? (
           <div className="p-16 text-center">
-            <PI.UserPlus size={48} className="text-gray-300 mx-auto mb-3" weight="duotone" />
+            <UserPlus size={48} className="text-gray-300 mx-auto mb-3" weight="duotone" />
             <p className="text-sm font-semibold text-gray-700 mb-1">Sin participantes aún</p>
             <p className="text-xs text-gray-500 mb-5">Invita personas manualmente o carga un CSV desde la pestaña Personas.</p>
             <button
@@ -71,7 +71,7 @@ export default function TabInvitaciones() {
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold"
               style={{ background: primary }}
             >
-              <PI.PaperPlaneTilt size={16} weight="bold" />
+              <PaperPlaneTilt size={16} weight="bold" />
               Nueva invitación
             </button>
           </div>

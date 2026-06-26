@@ -1,7 +1,7 @@
 // features/company-admin/components/CompanyAdminHeader.jsx
 // Header del panel HR (logo tenant + identidad + tabs de navegación).
 // Extraído verbatim desde pages/CompanyAdmin.jsx (Fase 3).
-import * as PI from '@phosphor-icons/react'
+import { ChartBar, Gear, ListChecks, ShieldCheck, SignOut, UsersThree } from '@phosphor-icons/react'
 import { useCompanyAdminCtx } from '../CompanyAdminContext'
 
 export default function CompanyAdminHeader() {
@@ -24,7 +24,7 @@ export default function CompanyAdminHeader() {
             <img src="/LOGOS/ELVIA_logo_fondo_transparente.png" alt="ELVIA" className="h-4 md:h-5 object-contain opacity-80" />
           </div>
           <div className="hidden md:flex items-center gap-2 ml-4 pl-4 border-l border-gray-200">
-            <PI.ShieldCheck size={14} className="text-emerald-500" weight="duotone" />
+            <ShieldCheck size={14} className="text-emerald-500" weight="duotone" />
             <span className="text-xs font-bold text-gray-600 uppercase tracking-widest">Panel HR</span>
           </div>
         </div>
@@ -44,7 +44,7 @@ export default function CompanyAdminHeader() {
             className="p-2 text-gray-400 hover:text-gray-700 transition-colors"
             title="Cerrar sesión"
           >
-            <PI.SignOut size={18} />
+            <SignOut size={18} />
           </button>
         </div>
       </div>
@@ -52,10 +52,10 @@ export default function CompanyAdminHeader() {
       {/* Tabs */}
       <div className="max-w-7xl mx-auto px-6 lg:px-10 flex items-center gap-1 border-t border-gray-50">
         {[
-          { id: 'resumen',    label: 'Resumen',     icon: PI.ChartBar },
-          { id: 'personas',   label: 'Personas',    icon: PI.UsersThree },
-          { id: 'invitaciones', label: 'Seguimiento', icon: PI.ListChecks },
-          { id: 'config',     label: 'Configuración', icon: PI.Gear },
+          { id: 'resumen',    label: 'Resumen',     icon: ChartBar },
+          { id: 'personas',   label: 'Personas',    icon: UsersThree },
+          { id: 'invitaciones', label: 'Seguimiento', icon: ListChecks },
+          { id: 'config',     label: 'Configuración', icon: Gear },
         ].map(t => {
           const active = tab === t.id
           return (

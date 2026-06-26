@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import * as PI from '@phosphor-icons/react'
+import { ArrowClockwise, CalendarCheck, CheckCircle, CircleNotch, ClockCounterClockwise, Cpu, Crown, FileText, Fingerprint, Gear, GlobeSimple, IdentificationCard, MagnifyingGlass, Robot, ShieldCheck, UserFocus, UserPlus, UsersThree, X } from '@phosphor-icons/react'
 import Badge from '../shared/Badge'
 import SectionHeading from '../shared/SectionHeading'
 import AdminSkeleton from '../shared/AdminSkeleton'
@@ -36,7 +36,7 @@ const UserRow = ({ u, onEdit, onView, fmtDate }) => {
       </td>
       <td className="px-6 py-5">
         <div className="flex items-center gap-2">
-           <PI.GlobeSimple size={14} className="text-slate-600" />
+           <GlobeSimple size={14} className="text-slate-600" />
            <span className="text-[10px] text-slate-300 font-black uppercase tracking-widest">{u.pais || '—'}</span>
         </div>
       </td>
@@ -77,7 +77,7 @@ const UserRow = ({ u, onEdit, onView, fmtDate }) => {
             className="p-2.5 text-slate-500 hover:text-white hover:bg-slate-800 rounded-xl transition-all border border-transparent hover:border-slate-700"
             title="Ajustes rápidos"
           >
-            <PI.Gear size={18} weight="duotone" />
+            <Gear size={18} weight="duotone" />
           </button>
           <button 
             onClick={() => onView(u)}
@@ -135,21 +135,21 @@ const UsersTab = ({ users, onRefresh, fmtDate, db, API_URL }) => {
         <QuickStatCard 
           label="Candidatos Totales" 
           value={totalUsers} 
-          icon={PI.UsersThree} 
+          icon={UsersThree} 
           sub="Base de datos global" 
           color="indigo" 
         />
         <QuickStatCard 
           label="Nuevos Hoy" 
           value={activeToday} 
-          icon={PI.UserPlus} 
+          icon={UserPlus} 
           sub="Últimas 24 horas" 
           color="emerald" 
         />
         <QuickStatCard 
           label="Intervenciones IA" 
           value={totalIA} 
-          icon={PI.Cpu} 
+          icon={Cpu} 
           sub="Total optimizaciones" 
           color="violet" 
         />
@@ -159,7 +159,7 @@ const UsersTab = ({ users, onRefresh, fmtDate, db, API_URL }) => {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-slate-900/30 p-8 rounded-[2.5rem] border border-slate-800/50 backdrop-blur-sm">
         <div>
            <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter flex items-center gap-4">
-             <PI.UserFocus size={32} className="text-indigo-400" weight="duotone" />
+             <UserFocus size={32} className="text-indigo-400" weight="duotone" />
              Gestión de Talento
            </h2>
            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.4em] mt-1 ml-12">Administración de perfiles y accesos ELVIA</p>
@@ -167,7 +167,7 @@ const UsersTab = ({ users, onRefresh, fmtDate, db, API_URL }) => {
         
         <div className="flex items-center gap-4">
           <div className="relative group min-w-[320px]">
-            <PI.MagnifyingGlass size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+            <MagnifyingGlass size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
             <input 
               type="text" 
               placeholder="BUSCAR POR NOMBRE O EMAIL..." 
@@ -182,7 +182,7 @@ const UsersTab = ({ users, onRefresh, fmtDate, db, API_URL }) => {
             className="p-4 bg-slate-950 border border-slate-800 rounded-[1.5rem] text-slate-400 hover:text-white hover:bg-slate-800 transition-all group flex items-center gap-3 active:scale-95 shadow-xl"
             title="Sincronización Maestra"
           >
-            <PI.ArrowClockwise size={20} weight="bold" className={`${localLoading ? 'animate-spin' : 'group-hover:rotate-180'} transition-transform duration-700`} />
+            <ArrowClockwise size={20} weight="bold" className={`${localLoading ? 'animate-spin' : 'group-hover:rotate-180'} transition-transform duration-700`} />
             <span className="text-[10px] font-black uppercase tracking-widest hidden md:inline italic">Refrescar</span>
           </button>
         </div>
@@ -192,7 +192,7 @@ const UsersTab = ({ users, onRefresh, fmtDate, db, API_URL }) => {
         {localLoading && (
           <div className="absolute inset-0 bg-slate-950/20 backdrop-blur-[1px] z-10 flex items-center justify-center">
              <div className="bg-indigo-600/10 border border-indigo-500/30 px-6 py-3 rounded-2xl flex items-center gap-3">
-               <PI.CircleNotch size={20} className="text-indigo-500 animate-spin" />
+               <CircleNotch size={20} className="text-indigo-500 animate-spin" />
                <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Refrescando Red...</span>
              </div>
           </div>
@@ -303,7 +303,7 @@ const ViewUserDetailModal = ({ user, onClose, fmtDate, db }) => {
         <div className="flex items-center justify-between mb-12 relative z-10">
           <div className="flex items-center gap-6">
             <div className="w-16 h-16 rounded-[1.5rem] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center shadow-xl">
-              <PI.IdentificationCard size={32} weight="duotone" />
+              <IdentificationCard size={32} weight="duotone" />
             </div>
             <div>
               <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">Análisis Avanzado de Perfil</h3>
@@ -311,7 +311,7 @@ const ViewUserDetailModal = ({ user, onClose, fmtDate, db }) => {
             </div>
           </div>
           <button onClick={onClose} className="p-4 bg-slate-800/30 hover:bg-slate-800 rounded-2xl transition-all border border-slate-800/50">
-            <PI.X size={24} className="text-slate-400" />
+            <X size={24} className="text-slate-400" />
           </button>
         </div>
 
@@ -330,10 +330,10 @@ const ViewUserDetailModal = ({ user, onClose, fmtDate, db }) => {
             <div className="pt-8 border-t border-slate-800/50">
               <SectionTag label="Uso de la Plataforma" />
               <div className="grid grid-cols-2 gap-4 mt-6">
-                 <UsageCard label="CVs Generadas" value={stats.loading ? '...' : stats.cvs} icon={PI.FileText} color="indigo" />
-                 <UsageCard label="Llamados al Bot" value={stats.loading ? '...' : stats.matches} icon={PI.Robot} color="violet" />
-                 <UsageCard label="Total Acciones" value={user.usage_count || 0} icon={PI.Fingerprint} color="blue" />
-                 <UsageCard label="Acceso" value={fmtDate(user.updated_at)} icon={PI.ClockCounterClockwise} color="emerald" smaller />
+                 <UsageCard label="CVs Generadas" value={stats.loading ? '...' : stats.cvs} icon={FileText} color="indigo" />
+                 <UsageCard label="Llamados al Bot" value={stats.loading ? '...' : stats.matches} icon={Robot} color="violet" />
+                 <UsageCard label="Total Acciones" value={user.usage_count || 0} icon={Fingerprint} color="blue" />
+                 <UsageCard label="Acceso" value={fmtDate(user.updated_at)} icon={ClockCounterClockwise} color="emerald" smaller />
               </div>
             </div>
           </div>
@@ -342,7 +342,7 @@ const ViewUserDetailModal = ({ user, onClose, fmtDate, db }) => {
           <div className="space-y-8">
             <div className="bg-slate-900/40 border border-slate-800 rounded-[2.5rem] p-8 relative overflow-hidden group hover:border-indigo-500/30 transition-all">
               <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                <PI.Crown size={64} weight="duotone" />
+                <Crown size={64} weight="duotone" />
               </div>
               <SectionTag label="Plan & Facturación" />
               <div className="mt-8 space-y-6">
@@ -364,7 +364,7 @@ const ViewUserDetailModal = ({ user, onClose, fmtDate, db }) => {
                 {daysRemaining !== null && (
                   <div className={`mt-6 p-4 rounded-2xl border flex items-center justify-between shadow-xl ${isExpiringSoon ? 'bg-amber-500/5 border-amber-500/20 text-amber-400' : 'bg-indigo-500/5 border-indigo-500/20 text-indigo-400'}`}>
                     <div className="flex items-center gap-3">
-                      <PI.CalendarCheck size={20} weight="duotone" />
+                      <CalendarCheck size={20} weight="duotone" />
                       <span className="text-[10px] font-black uppercase tracking-widest">Días Restantes</span>
                     </div>
                     <span className="text-lg font-black italic">{daysRemaining}</span>
@@ -387,7 +387,7 @@ const ViewUserDetailModal = ({ user, onClose, fmtDate, db }) => {
 
         <div className="mt-12 pt-8 border-t border-slate-800/50 flex justify-end gap-4 relative z-10">
            <button onClick={onClose} className="px-10 py-5 bg-indigo-600 text-white rounded-[1.5rem] text-[11px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-all shadow-xl shadow-indigo-900/40 italic flex items-center gap-3">
-             <PI.CheckCircle size={18} weight="bold" /> Finalizar Revisión
+             <CheckCircle size={18} weight="bold" /> Finalizar Revisión
            </button>
         </div>
       </div>
@@ -445,7 +445,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
         
         <div className="flex items-center gap-4 mb-8">
             <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                <PI.Gear size={24} weight="duotone" />
+                <Gear size={24} weight="duotone" />
             </div>
             <div>
                 <h3 className="text-lg font-black text-white uppercase italic tracking-tight">Acciones Administrador</h3>
@@ -503,7 +503,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
             <button type="submit" disabled={loading}
               className="flex-1 py-4 rounded-2xl bg-indigo-600 text-white text-[11px] font-black uppercase tracking-widest hover:bg-indigo-500 shadow-xl shadow-indigo-900/40 disabled:opacity-50 transition-all flex items-center justify-center gap-2 italic"
             >
-              {loading ? <PI.CircleNotch size={16} className="animate-spin" /> : <PI.ShieldCheck size={16} weight="bold" />}
+              {loading ? <CircleNotch size={16} className="animate-spin" /> : <ShieldCheck size={16} weight="bold" />}
               {loading ? 'Sincronizando' : 'Actualizar'}
             </button>
           </div>

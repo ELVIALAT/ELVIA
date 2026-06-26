@@ -1,11 +1,11 @@
 import React from 'react'
-import * as PI from '@phosphor-icons/react'
+import { Buildings, ChartBar, Crosshair, FileText, Gauge, Sparkle, Target, TrendUp } from '@phosphor-icons/react'
 import KpiCard from '../../shared/KpiCard'
 
 const CompanyDashboardTab = ({ company, data }) => {
   if (!company) return (
     <div className="py-32 flex flex-col items-center justify-center text-center animate-fade-in">
-       <PI.Buildings size={64} className="text-slate-800 mb-6" weight="duotone" />
+       <Buildings size={64} className="text-slate-800 mb-6" weight="duotone" />
        <p className="text-slate-500 font-black uppercase tracking-[0.3em] text-sm mb-2">Selección Requerida</p>
        <p className="text-[10px] text-slate-700 max-w-xs mx-auto font-black uppercase">Elija una entidad corporativa para desplegar su panel de control estratégico.</p>
     </div>
@@ -25,10 +25,10 @@ const CompanyDashboardTab = ({ company, data }) => {
     <div className="space-y-10 animate-fade-in">
       {/* KPIs Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KpiCard label="Adopción" value={`${stats.adoptionRate}%`} icon={PI.TrendUp} color="blue" />
-        <KpiCard label="Créditos Usados" value={stats.usedCredits} icon={PI.ChartBar} color="amber" />
-        <KpiCard label="CV Optimizer" value={stats.cvOptimizerUse} icon={PI.FileText} color="green" />
-        <KpiCard label="CV vs Vacante" value={stats.cvMatchUse} icon={PI.Target} color="purple" />
+        <KpiCard label="Adopción" value={`${stats.adoptionRate}%`} icon={TrendUp} color="blue" />
+        <KpiCard label="Créditos Usados" value={stats.usedCredits} icon={ChartBar} color="amber" />
+        <KpiCard label="CV Optimizer" value={stats.cvOptimizerUse} icon={FileText} color="green" />
+        <KpiCard label="CV vs Vacante" value={stats.cvMatchUse} icon={Target} color="purple" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -38,7 +38,7 @@ const CompanyDashboardTab = ({ company, data }) => {
           
           <div className="flex items-center gap-4 mb-10">
              <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                <PI.Gauge size={24} weight="duotone" />
+                <Gauge size={24} weight="duotone" />
              </div>
              <div>
                 <h3 className="font-black text-white text-lg italic uppercase">Consumo de Recursos</h3>
@@ -65,7 +65,7 @@ const CompanyDashboardTab = ({ company, data }) => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                    <div className="space-y-3">
                       <div className="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                         <span className="flex items-center gap-2"><PI.Sparkle size={14} className="text-emerald-500" /> CV OPTIMIZER</span>
+                         <span className="flex items-center gap-2"><Sparkle size={14} className="text-emerald-500" /> CV OPTIMIZER</span>
                          <span className="text-white">{stats.cvOptimizerUse}</span>
                       </div>
                       <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
@@ -74,7 +74,7 @@ const CompanyDashboardTab = ({ company, data }) => {
                    </div>
                    <div className="space-y-3">
                       <div className="flex justify-between text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                         <span className="flex items-center gap-2"><PI.Crosshair size={14} className="text-violet-500" /> CV MATCH</span>
+                         <span className="flex items-center gap-2"><Crosshair size={14} className="text-violet-500" /> CV MATCH</span>
                          <span className="text-white">{stats.cvMatchUse}</span>
                       </div>
                       <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">

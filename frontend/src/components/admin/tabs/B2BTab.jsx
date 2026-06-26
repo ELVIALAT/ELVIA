@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import * as PI from '@phosphor-icons/react'
+import { Briefcase, Buildings, Check, CheckCircle, CheckSquareOffset, CircleNotch, Copy, EnvelopeSimple, ListChecks, PaintBucket, Plus, ShieldCheck, UserPlus, Warning, X, XCircle } from '@phosphor-icons/react'
 import KpiCard from '../shared/KpiCard'
 import SectionHeading from '../shared/SectionHeading'
 import Badge from '../shared/Badge'
@@ -30,10 +30,10 @@ const PLAN_OPTIONS = [
 ]
 
 const WIZARD_STEPS = [
-  { id: 1, label: 'Identidad',  icon: PI.Buildings },
-  { id: 2, label: 'Branding',   icon: PI.PaintBucket },
-  { id: 3, label: 'Acceso',     icon: PI.ShieldCheck },
-  { id: 4, label: 'Admin HR',   icon: PI.UserPlus },
+  { id: 1, label: 'Identidad',  icon: Buildings },
+  { id: 2, label: 'Branding',   icon: PaintBucket },
+  { id: 3, label: 'Acceso',     icon: ShieldCheck },
+  { id: 4, label: 'Admin HR',   icon: UserPlus },
 ]
 
 const INITIAL_DATA = {
@@ -135,10 +135,10 @@ const TenantWizard = ({ onClose, onSuccess, db, API_URL }) => {
   }
 
   const SlugStatusIcon = () => {
-    if (slugStatus === 'checking')  return <PI.CircleNotch size={16} className="animate-spin text-slate-500" />
-    if (slugStatus === 'available') return <PI.CheckCircle size={16} className="text-emerald-400" />
-    if (slugStatus === 'taken')     return <PI.XCircle size={16} className="text-rose-400" />
-    if (slugStatus === 'invalid')   return <PI.Warning size={16} className="text-amber-400" />
+    if (slugStatus === 'checking')  return <CircleNotch size={16} className="animate-spin text-slate-500" />
+    if (slugStatus === 'available') return <CheckCircle size={16} className="text-emerald-400" />
+    if (slugStatus === 'taken')     return <XCircle size={16} className="text-rose-400" />
+    if (slugStatus === 'invalid')   return <Warning size={16} className="text-amber-400" />
     return null
   }
 
@@ -337,13 +337,13 @@ const TenantWizard = ({ onClose, onSuccess, db, API_URL }) => {
               field: 'require_allowlist',
               label: 'Requerir allowlist',
               desc: 'Solo candidatos en la lista cargada por HR pueden registrarse',
-              icon: PI.ListChecks,
+              icon: ListChecks,
             },
             {
               field: 'require_invite',
               label: 'Requerir invitación',
               desc: 'Solo candidatos con link de invitación activo pueden acceder',
-              icon: PI.EnvelopeSimple,
+              icon: EnvelopeSimple,
             },
           ].map(({ field, label, desc, icon: Icon }) => (
             <label key={field}
@@ -352,7 +352,7 @@ const TenantWizard = ({ onClose, onSuccess, db, API_URL }) => {
                 <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
                   data[field] ? 'bg-indigo-600 border-indigo-600' : 'bg-slate-900 border-slate-700'
                 }`}>
-                  {data[field] && <PI.Check size={12} weight="bold" className="text-white" />}
+                  {data[field] && <Check size={12} weight="bold" className="text-white" />}
                 </div>
                 <input type="checkbox" checked={data[field]} onChange={set(field)} className="sr-only" />
               </div>
@@ -432,7 +432,7 @@ const TenantWizard = ({ onClose, onSuccess, db, API_URL }) => {
     if (step === 5 && result) return (
       <div className="text-center space-y-6 py-4">
         <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto">
-          <PI.CheckCircle size={32} className="text-emerald-400" weight="duotone" />
+          <CheckCircle size={32} className="text-emerald-400" weight="duotone" />
         </div>
         <div>
           <h3 className="text-lg font-black text-white uppercase italic">{result.company?.name || data.nombre}</h3>
@@ -445,7 +445,7 @@ const TenantWizard = ({ onClose, onSuccess, db, API_URL }) => {
             <code className="text-xs text-indigo-300 bg-slate-950 px-3 py-2 rounded-xl flex-1 truncate">{result.hr_url}</code>
             <button onClick={() => { navigator.clipboard.writeText(result.hr_url); toast.success('URL copiada') }}
               className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 transition-colors">
-              <PI.Copy size={14} />
+              <Copy size={14} />
             </button>
           </div>
           <p className="text-[10px] text-slate-500">
@@ -466,7 +466,7 @@ const TenantWizard = ({ onClose, onSuccess, db, API_URL }) => {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                <PI.Buildings size={20} weight="duotone" />
+                <Buildings size={20} weight="duotone" />
               </div>
               <div>
                 <h2 className="text-sm font-black text-white uppercase italic tracking-tight">
@@ -478,7 +478,7 @@ const TenantWizard = ({ onClose, onSuccess, db, API_URL }) => {
               </div>
             </div>
             <button onClick={onClose} className="p-2 rounded-xl text-slate-600 hover:text-slate-400 hover:bg-slate-800 transition-colors">
-              <PI.X size={16} weight="bold" />
+              <X size={16} weight="bold" />
             </button>
           </div>
 
@@ -494,7 +494,7 @@ const TenantWizard = ({ onClose, onSuccess, db, API_URL }) => {
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black transition-all ${
                         done ? 'bg-emerald-500 text-white' : active ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-500'
                       }`}>
-                        {done ? <PI.Check size={10} weight="bold" /> : s.id}
+                        {done ? <Check size={10} weight="bold" /> : s.id}
                       </div>
                       {active && <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest hidden sm:block">{s.label}</span>}
                     </div>
@@ -538,7 +538,7 @@ const TenantWizard = ({ onClose, onSuccess, db, API_URL }) => {
               ) : (
                 <button onClick={handleSubmit} disabled={!canNext() || submitting}
                   className="flex-1 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white font-black uppercase tracking-widest py-4 rounded-2xl transition-all text-[11px] italic flex items-center justify-center gap-2">
-                  {submitting ? <><PI.CircleNotch size={16} className="animate-spin" /> Creando...</> : '✓ Crear Tenant'}
+                  {submitting ? <><CircleNotch size={16} className="animate-spin" /> Creando...</> : '✓ Crear Tenant'}
                 </button>
               )}
               <button onClick={onClose}
@@ -604,26 +604,26 @@ const B2BTab = ({ db, API_URL }) => {
       <SectionHeading
         title="Unidades de Negocio"
         subtitle="Gestión de alianzas estratégicas y cuentas corporativas ELVIA"
-        icon={PI.Buildings}
+        icon={Buildings}
       >
         <button
           onClick={() => setShowWizard(true)}
           className="px-8 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-3 transition-all shadow-xl shadow-indigo-900/20"
         >
-          <PI.Plus size={16} weight="bold" /> Nuevo Tenant
+          <Plus size={16} weight="bold" /> Nuevo Tenant
         </button>
       </SectionHeading>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <KpiCard label="Alianzas Activas"  value={activeCount}       sub="CUENTAS OPERATIVAS"   icon={PI.CheckSquareOffset} color="blue" />
-        <KpiCard label="Pipeline Total"    value={companies.length}  sub="ENTIDADES REGISTRADAS" icon={PI.Briefcase}         color="green" />
+        <KpiCard label="Alianzas Activas"  value={activeCount}       sub="CUENTAS OPERATIVAS"   icon={CheckSquareOffset} color="blue" />
+        <KpiCard label="Pipeline Total"    value={companies.length}  sub="ENTIDADES REGISTRADAS" icon={Briefcase}         color="green" />
       </div>
 
       <div className="bg-[#111827] rounded-[2.5rem] border border-slate-800 shadow-2xl overflow-hidden relative">
         {loading && (
           <div className="absolute inset-0 bg-slate-950/20 backdrop-blur-[1px] z-10 flex items-center justify-center">
             <div className="bg-indigo-600/10 border border-indigo-500/30 px-6 py-3 rounded-2xl flex items-center gap-3">
-              <PI.CircleNotch size={20} className="text-indigo-500 animate-spin" />
+              <CircleNotch size={20} className="text-indigo-500 animate-spin" />
               <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Sincronizando...</span>
             </div>
           </div>
@@ -655,7 +655,7 @@ const B2BTab = ({ db, API_URL }) => {
                         ? <img src={c.logo_url} alt={c.name} className="w-10 h-10 object-contain rounded-xl" />
                         : (
                           <div className="w-10 h-10 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-indigo-400 group-hover:border-indigo-500/30 transition-all">
-                            <PI.Buildings size={18} weight="duotone" />
+                            <Buildings size={18} weight="duotone" />
                           </div>
                         )
                       }

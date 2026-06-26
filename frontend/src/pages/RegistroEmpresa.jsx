@@ -6,7 +6,7 @@
 import { useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { Turnstile } from '@marsidev/react-turnstile'
-import * as PI from '@phosphor-icons/react'
+import { ArrowRight, CheckCircle, CircleNotch, Eye, EyeSlash, Info, ShieldCheck, UserPlus, WarningCircle } from '@phosphor-icons/react'
 import { useTenant, DEFAULT_TENANT } from '../context/TenantContext'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
@@ -54,7 +54,7 @@ export default function RegistroEmpresa() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white px-6">
         <div className="max-w-md text-center">
-          <PI.WarningCircle size={56} weight="duotone" className="text-amber-500 mx-auto mb-4" />
+          <WarningCircle size={56} weight="duotone" className="text-amber-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Programa no disponible</h1>
           <p className="text-sm text-gray-500 mb-6">
             No encontramos un programa activo con el identificador <code className="px-2 py-0.5 bg-gray-100 rounded">{slug}</code>.
@@ -137,7 +137,7 @@ export default function RegistroEmpresa() {
             className="w-16 h-16 rounded-2xl mx-auto mb-6 flex items-center justify-center"
             style={{ background: `${primary}15` }}
           >
-            <PI.CheckCircle size={32} weight="duotone" style={{ color: primary }} />
+            <CheckCircle size={32} weight="duotone" style={{ color: primary }} />
           </div>
           {linked ? (
             <>
@@ -214,7 +214,7 @@ export default function RegistroEmpresa() {
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-5"
               style={{ background: `${primary}10`, color: primary }}
             >
-              <PI.UserPlus size={12} weight="bold" />
+              <UserPlus size={12} weight="bold" />
               Activación de cuenta
             </div>
 
@@ -276,7 +276,7 @@ export default function RegistroEmpresa() {
                     type="button" onClick={() => setShowPwd(v => !v)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
                   >
-                    {showPwd ? <PI.EyeSlash size={16} /> : <PI.Eye size={16} />}
+                    {showPwd ? <EyeSlash size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
 
@@ -290,7 +290,7 @@ export default function RegistroEmpresa() {
                       { key:'special', label:'1 símbolo'      },
                     ].map(c => (
                       <p key={c.key} className={`text-xs flex items-center gap-1.5 ${pwdChecks[c.key] ? 'text-emerald-600' : 'text-gray-400'}`}>
-                        <PI.CheckCircle size={12} weight={pwdChecks[c.key] ? 'fill' : 'regular'} />
+                        <CheckCircle size={12} weight={pwdChecks[c.key] ? 'fill' : 'regular'} />
                         {c.label}
                       </p>
                     ))}
@@ -315,7 +315,7 @@ export default function RegistroEmpresa() {
               {error === '__EMAIL_EXISTS__' && (
                 <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
                   <div className="flex items-start gap-2.5 mb-3">
-                    <PI.Info size={18} className="text-blue-600 shrink-0 mt-0.5" weight="duotone" />
+                    <Info size={18} className="text-blue-600 shrink-0 mt-0.5" weight="duotone" />
                     <div className="text-sm text-blue-900">
                       <strong>Ya tienes una cuenta con este correo.</strong>
                       <div className="text-blue-700 mt-1 leading-relaxed">
@@ -335,7 +335,7 @@ export default function RegistroEmpresa() {
               )}
               {error === '__NOT_IN_ALLOWLIST__' && (
                 <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2.5">
-                  <PI.WarningCircle size={18} className="text-amber-600 shrink-0 mt-0.5" weight="duotone" />
+                  <WarningCircle size={18} className="text-amber-600 shrink-0 mt-0.5" weight="duotone" />
                   <div className="text-sm text-amber-900">
                     <strong>Tu correo no está en la lista aprobada.</strong>
                     <div className="text-amber-700 mt-1 leading-relaxed">
@@ -349,7 +349,7 @@ export default function RegistroEmpresa() {
               )}
               {error && error !== '__EMAIL_EXISTS__' && error !== '__NOT_IN_ALLOWLIST__' && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 flex items-start gap-2">
-                  <PI.WarningCircle size={16} className="shrink-0 mt-0.5" weight="duotone" />
+                  <WarningCircle size={16} className="shrink-0 mt-0.5" weight="duotone" />
                   <span>{error}</span>
                 </div>
               )}
@@ -363,13 +363,13 @@ export default function RegistroEmpresa() {
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <PI.CircleNotch size={16} className="animate-spin" />
+                    <CircleNotch size={16} className="animate-spin" />
                     Activando cuenta...
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
                     Activar mi cuenta
-                    <PI.ArrowRight size={14} weight="bold" />
+                    <ArrowRight size={14} weight="bold" />
                   </span>
                 )}
               </button>
@@ -393,7 +393,7 @@ export default function RegistroEmpresa() {
 
           <div className="relative z-10 flex flex-col justify-between p-12 text-white">
             <div>
-              <PI.ShieldCheck size={32} weight="duotone" className="mb-4 opacity-90" />
+              <ShieldCheck size={32} weight="duotone" className="mb-4 opacity-90" />
               <h2 className="text-2xl font-bold mb-3 leading-tight">
                 Tu información, tu decisión.
               </h2>
@@ -409,7 +409,7 @@ export default function RegistroEmpresa() {
                   '24/7 acceso desde cualquier dispositivo',
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm opacity-90">
-                    <PI.CheckCircle size={16} weight="fill" style={{ color: primary }} />
+                    <CheckCircle size={16} weight="fill" style={{ color: primary }} />
                     {item}
                   </li>
                 ))}

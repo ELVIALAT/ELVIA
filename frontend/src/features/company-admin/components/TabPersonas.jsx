@@ -1,7 +1,7 @@
 // features/company-admin/components/TabPersonas.jsx
 // Tab "Personas" — lista aprobada (allowlist) con KPIs, carga CSV/invitación y tabla.
 // Extraído verbatim desde pages/CompanyAdmin.jsx (Fase 3).
-import * as PI from '@phosphor-icons/react'
+import { UploadSimple, UserPlus, UsersThree } from '@phosphor-icons/react'
 import { useCompanyAdminCtx } from '../CompanyAdminContext'
 
 export default function TabPersonas() {
@@ -23,14 +23,14 @@ export default function TabPersonas() {
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold hover:opacity-90 transition-opacity"
             style={{ background: primary }}
           >
-            <PI.UploadSimple size={16} weight="bold" />
+            <UploadSimple size={16} weight="bold" />
             Cargar CSV
           </button>
           <button
             onClick={() => setShowInviteModal(true)}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-gray-200 text-gray-700 text-sm font-semibold hover:bg-gray-50"
           >
-            <PI.UserPlus size={16} weight="bold" />
+            <UserPlus size={16} weight="bold" />
             Invitar uno
           </button>
         </div>
@@ -70,7 +70,7 @@ export default function TabPersonas() {
       <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden">
         {allowlist.length === 0 ? (
           <div className="p-16 text-center">
-            <PI.UsersThree size={48} className="text-gray-300 mx-auto mb-3" weight="duotone" />
+            <UsersThree size={48} className="text-gray-300 mx-auto mb-3" weight="duotone" />
             <p className="text-sm font-semibold text-gray-700 mb-1">Aún no hay personas en la lista aprobada</p>
             <p className="text-xs text-gray-500 mb-5">Carga un CSV con los emails de tu cohorte o invita a uno manualmente.</p>
             <div className="flex gap-2 justify-center">
@@ -79,7 +79,7 @@ export default function TabPersonas() {
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-semibold"
                 style={{ background: primary }}
               >
-                <PI.UploadSimple size={16} weight="bold" />
+                <UploadSimple size={16} weight="bold" />
                 Cargar CSV
               </button>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import * as PI from '@phosphor-icons/react'
+import { ArrowSquareOut, CircleNotch, Copy, Fire, Globe, Lightbulb, MagicWand, Sparkle, TrendUp } from '@phosphor-icons/react'
 import SectionHeading from '../shared/SectionHeading'
 import { toast } from 'react-hot-toast'
 
@@ -68,7 +68,7 @@ const MarketingTab = ({ config, onRefresh }) => {
       <SectionHeading 
         title="Escalabilidad & Marketing" 
         subtitle="Herramientas de crecimiento y posicionamiento global de ELVIA"
-        icon={PI.TrendUp}
+        icon={TrendUp}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -79,7 +79,7 @@ const MarketingTab = ({ config, onRefresh }) => {
           
           <div className="flex items-center gap-4 mb-8">
             <div className="p-3 rounded-2xl bg-orange-500/10 text-orange-500 border border-orange-500/20">
-              <PI.Fire size={24} weight="duotone" />
+              <Fire size={24} weight="duotone" />
             </div>
             <div>
               <h3 className="font-black text-white text-lg uppercase italic tracking-tight">Mapas de Calor</h3>
@@ -96,7 +96,7 @@ const MarketingTab = ({ config, onRefresh }) => {
             target="_blank" rel="noreferrer"
             className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-orange-600 hover:bg-orange-500 text-white font-black text-[11px] uppercase tracking-widest transition-all shadow-xl shadow-orange-900/20 italic"
           >
-            Sincronizar con Clarity <PI.ArrowSquareOut size={18} weight="bold" />
+            Sincronizar con Clarity <ArrowSquareOut size={18} weight="bold" />
           </a>
         </div>
 
@@ -106,7 +106,7 @@ const MarketingTab = ({ config, onRefresh }) => {
           
           <div className="flex items-center gap-4 mb-8">
             <div className="p-3 rounded-2xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
-              <PI.MagicWand size={24} weight="duotone" />
+              <MagicWand size={24} weight="duotone" />
             </div>
             <div>
               <h3 className="font-black text-white text-lg uppercase italic tracking-tight">Growth AI Writing</h3>
@@ -139,7 +139,7 @@ const MarketingTab = ({ config, onRefresh }) => {
                 onClick={() => { navigator.clipboard.writeText(idea); alert("¡Copiado al portapapeles!") }} 
                 className="absolute top-4 right-4 p-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl transition-all border border-slate-700 shadow-xl"
               >
-                <PI.Copy size={16} weight="bold" />
+                <Copy size={16} weight="bold" />
               </button>
               <pre className="text-xs text-slate-300 font-sans whitespace-pre-wrap leading-relaxed italic">{idea}</pre>
               <div className="mt-6 pt-6 border-t border-slate-800 flex justify-end">
@@ -150,12 +150,12 @@ const MarketingTab = ({ config, onRefresh }) => {
 
           {!idea && (
             <div className="flex-1 flex flex-col justify-center items-center text-center p-8 border-2 border-dashed border-slate-800 rounded-[2rem] group-hover:border-indigo-500/30 transition-all">
-              <PI.Lightbulb size={32} weight="duotone" className="text-slate-700 mb-4 group-hover:text-indigo-400 transition-colors" />
+              <Lightbulb size={32} weight="duotone" className="text-slate-700 mb-4 group-hover:text-indigo-400 transition-colors" />
               <button 
                 onClick={handleGenerarIdea} disabled={generando}
                 className="flex items-center gap-3 py-4 px-8 rounded-2xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-black text-[11px] uppercase tracking-widest transition-all shadow-xl shadow-indigo-900/40 italic"
               >
-                {generando ? <PI.CircleNotch size={18} className="animate-spin" /> : <PI.Sparkle size={18} weight="fill" />}
+                {generando ? <CircleNotch size={18} className="animate-spin" /> : <Sparkle size={18} weight="fill" />}
                 {generando ? 'Destilando Estrategia...' : 'Activar IA Copywriter'}
               </button>
             </div>
@@ -169,14 +169,14 @@ const MarketingTab = ({ config, onRefresh }) => {
           <div className="flex items-center justify-between mb-10">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-2xl bg-teal-500/10 text-teal-400 border border-teal-500/20">
-                <PI.Globe size={24} weight="duotone" />
+                <Globe size={24} weight="duotone" />
               </div>
               <div>
                 <h3 className="font-black text-white text-lg uppercase italic tracking-tight">SEO & Meta Protocols</h3>
                 <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Posicionamiento en motores de búsqueda</p>
               </div>
             </div>
-            {savingSeo && <PI.CircleNotch size={20} className="animate-spin text-teal-500" />}
+            {savingSeo && <CircleNotch size={20} className="animate-spin text-teal-500" />}
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">

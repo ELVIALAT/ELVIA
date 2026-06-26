@@ -2,7 +2,7 @@
 // Tab "Configuración" — datos del tenant + compliance & seguridad.
 // Extraído verbatim desde pages/CompanyAdmin.jsx (Fase 3).
 import { Link } from 'react-router-dom'
-import * as PI from '@phosphor-icons/react'
+import { ArrowRight, CheckCircle, ShieldCheck } from '@phosphor-icons/react'
 import { useCompanyAdminCtx } from '../CompanyAdminContext'
 
 export default function TabConfig() {
@@ -29,21 +29,21 @@ export default function TabConfig() {
 
       <div className="bg-white border border-gray-100 rounded-2xl p-6">
         <h3 className="text-sm font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <PI.ShieldCheck size={16} className="text-emerald-500" weight="duotone" />
+          <ShieldCheck size={16} className="text-emerald-500" weight="duotone" />
           Compliance & Seguridad
         </h3>
         <ul className="space-y-2 text-sm text-gray-600">
-          <li className="flex items-start gap-2"><PI.CheckCircle size={14} className="text-emerald-500 mt-0.5 shrink-0" weight="fill" /> Aislamiento estricto por tenant (RLS Postgres)</li>
-          <li className="flex items-start gap-2"><PI.CheckCircle size={14} className="text-emerald-500 mt-0.5 shrink-0" weight="fill" /> Cifrado en tránsito (TLS 1.3) y en reposo</li>
-          <li className="flex items-start gap-2"><PI.CheckCircle size={14} className="text-emerald-500 mt-0.5 shrink-0" weight="fill" /> Audit log de todas las acciones administrativas</li>
-          <li className="flex items-start gap-2"><PI.CheckCircle size={14} className="text-emerald-500 mt-0.5 shrink-0" weight="fill" /> Sin acceso a datos individuales de {L.members}</li>
+          <li className="flex items-start gap-2"><CheckCircle size={14} className="text-emerald-500 mt-0.5 shrink-0" weight="fill" /> Aislamiento estricto por tenant (RLS Postgres)</li>
+          <li className="flex items-start gap-2"><CheckCircle size={14} className="text-emerald-500 mt-0.5 shrink-0" weight="fill" /> Cifrado en tránsito (TLS 1.3) y en reposo</li>
+          <li className="flex items-start gap-2"><CheckCircle size={14} className="text-emerald-500 mt-0.5 shrink-0" weight="fill" /> Audit log de todas las acciones administrativas</li>
+          <li className="flex items-start gap-2"><CheckCircle size={14} className="text-emerald-500 mt-0.5 shrink-0" weight="fill" /> Sin acceso a datos individuales de {L.members}</li>
         </ul>
         <Link
           to="/privacidad"
           className="inline-flex items-center gap-1 text-xs font-semibold mt-4 hover:underline"
           style={{ color: primary }}
         >
-          Ver política completa de privacidad <PI.ArrowRight size={12} weight="bold" />
+          Ver política completa de privacidad <ArrowRight size={12} weight="bold" />
         </Link>
       </div>
     </div>

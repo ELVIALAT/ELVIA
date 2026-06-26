@@ -1,18 +1,18 @@
 import React from 'react'
-import * as PI from '@phosphor-icons/react'
+import { Binoculars, Brain, CaretRight, ClockCounterClockwise, Coins, Gear, Kanban, ListStar, ShieldCheck, SignOut, Storefront, Tag, TrendUp, UsersThree } from '@phosphor-icons/react'
 
 const TABS_B2C = [
-  { id: 'overview',      label: 'Escritorio',     icon: PI.Kanban },
-  { id: 'users',         label: 'Usuarios',       icon: PI.UsersThree },
-  { id: 'b2b',           label: 'Empresas (B2B)', icon: PI.Storefront },
-  { id: 'suscripciones', label: 'Suscripciones',  icon: PI.Coins },
-  { id: 'codigos',       label: 'Códigos',        icon: PI.Tag },
-  { id: 'waitlist',      label: 'Lista de Espera', icon: PI.ListStar },
-  { id: 'marketing',     label: 'Marketing Hub',  icon: PI.TrendUp },
-  { id: 'knowledge',     label: 'Conocimiento',   icon: PI.Brain },
-  { id: 'cohort',        label: 'Cohort Telefónica', icon: PI.Binoculars },
-  { id: 'audit',         label: 'Audit Log',      icon: PI.ClockCounterClockwise },
-  { id: 'sistema',       label: 'Configuración',  icon: PI.Gear },
+  { id: 'overview',      label: 'Escritorio',     icon: Kanban },
+  { id: 'users',         label: 'Usuarios',       icon: UsersThree },
+  { id: 'b2b',           label: 'Empresas (B2B)', icon: Storefront },
+  { id: 'suscripciones', label: 'Suscripciones',  icon: Coins },
+  { id: 'codigos',       label: 'Códigos',        icon: Tag },
+  { id: 'waitlist',      label: 'Lista de Espera', icon: ListStar },
+  { id: 'marketing',     label: 'Marketing Hub',  icon: TrendUp },
+  { id: 'knowledge',     label: 'Conocimiento',   icon: Brain },
+  { id: 'cohort',        label: 'Cohort Telefónica', icon: Binoculars },
+  { id: 'audit',         label: 'Audit Log',      icon: ClockCounterClockwise },
+  { id: 'sistema',       label: 'Configuración',  icon: Gear },
 ]
 
 const SidebarItem = ({ id, label, icon: Icon, active, onClick, isLight }) => (
@@ -30,7 +30,7 @@ const SidebarItem = ({ id, label, icon: Icon, active, onClick, isLight }) => (
       <Icon size={18} weight={active ? 'fill' : 'duotone'} className={active ? 'text-white' : 'text-slate-500 group-hover:text-indigo-500 transition-colors'} />
     </div>
     <span className="flex-1 text-left">{label}</span>
-    {active && <PI.CaretRight size={12} weight="bold" className="text-white/40" />}
+    {active && <CaretRight size={12} weight="bold" className="text-white/40" />}
   </button>
 )
 
@@ -42,7 +42,7 @@ const AdminSidebar = ({ currentTab, onTabChange, onLogout, theme }) => {
       {/* Branding */}
       <div className="p-8 pb-10 flex flex-col items-center">
         <div className="mb-4 group flex items-center justify-center p-2 rounded-xl bg-indigo-500/10">
-          <PI.ShieldCheck size={32} weight="duotone" className="text-indigo-500" />
+          <ShieldCheck size={32} weight="duotone" className="text-indigo-500" />
         </div>
         <h1 className={`text-xl font-black tracking-tighter italic uppercase ${isLight ? 'text-slate-800' : 'text-white'}`}>
             ELVIA <span className="text-indigo-500">ADMIN</span>
@@ -69,7 +69,7 @@ const AdminSidebar = ({ currentTab, onTabChange, onLogout, theme }) => {
           onClick={onLogout}
           className="w-full flex items-center gap-3 px-5 py-4 rounded-2xl bg-rose-500/5 hover:bg-rose-500/10 text-rose-500 border border-rose-500/10 transition-all group"
         >
-          <PI.SignOut size={20} weight="duotone" className="group-hover:rotate-12 transition-transform" />
+          <SignOut size={20} weight="duotone" className="group-hover:rotate-12 transition-transform" />
           <span className="text-[10px] font-black uppercase tracking-widest italic font-bold">Cerrar Sesión</span>
         </button>
       </div>

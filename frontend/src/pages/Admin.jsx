@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@supabase/supabase-js'
-import * as PI from '@phosphor-icons/react'
+import { ArrowRight, CircleNotch, Cpu, Envelope, Lock, Warning } from '@phosphor-icons/react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 // Layout & Components
@@ -93,7 +93,7 @@ const AdminLogin = ({ onLogin }) => {
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic ml-1">Protocolo de Identidad</label>
               <div className="relative group">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-indigo-400 transition-colors">
-                  <PI.Envelope size={18} weight="bold" />
+                  <Envelope size={18} weight="bold" />
                 </div>
                 <input
                   type="email"
@@ -110,7 +110,7 @@ const AdminLogin = ({ onLogin }) => {
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic ml-1">Clave de Acceso</label>
               <div className="relative group">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-indigo-400 transition-colors">
-                  <PI.Lock size={18} weight="bold" />
+                  <Lock size={18} weight="bold" />
                 </div>
                 <input
                   type="password"
@@ -125,7 +125,7 @@ const AdminLogin = ({ onLogin }) => {
 
             {error && (
               <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 flex items-center gap-3 animate-shake">
-                <PI.Warning size={18} className="text-rose-500 shrink-0" />
+                <Warning size={18} className="text-rose-500 shrink-0" />
                 <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest">{error}</p>
               </div>
             )}
@@ -135,7 +135,7 @@ const AdminLogin = ({ onLogin }) => {
               disabled={loading}
               className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-black uppercase tracking-widest py-5 rounded-2xl transition-all shadow-xl shadow-indigo-900/40 flex items-center justify-center gap-3 italic text-[11px]"
             >
-              {loading ? <PI.CircleNotch size={18} className="animate-spin" /> : <PI.ArrowRight size={18} weight="bold" />}
+              {loading ? <CircleNotch size={18} className="animate-spin" /> : <ArrowRight size={18} weight="bold" />}
               {loading ? 'Validando...' : 'Iniciar Sesión'}
             </button>
           </form>
@@ -219,7 +219,7 @@ function Dashboard({ adminUser, onLogout }) {
     if (loading && tab !== 'users') {
         return (
             <div className="h-full flex flex-col items-center justify-center py-32 opacity-50 transition-opacity">
-                <PI.Cpu size={48} className="text-indigo-500 animate-pulse mb-6" weight="duotone" />
+                <Cpu size={48} className="text-indigo-500 animate-pulse mb-6" weight="duotone" />
                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 animate-pulse">Sincronizando Módulos ELVIA...</p>
             </div>
         )

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import * as PI from '@phosphor-icons/react'
+import { ArrowClockwise, EnvelopeSimpleOpen, FileCsv, PaperPlaneTilt, Plus, UserCircleDashed, UsersFour } from '@phosphor-icons/react'
 import Badge from '../../shared/Badge'
 import SectionHeading from '../../shared/SectionHeading'
 
@@ -43,7 +43,7 @@ const InviteUserModal = ({ company, onClose, onRefresh, db, API_URL }) => {
         
         <div className="flex items-center gap-4 mb-8">
             <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                <PI.PaperPlaneTilt size={24} weight="duotone" />
+                <PaperPlaneTilt size={24} weight="duotone" />
             </div>
             <div>
                 <h3 className="text-lg font-black text-white uppercase italic tracking-tight">Expandir Equipo</h3>
@@ -69,7 +69,7 @@ const InviteUserModal = ({ company, onClose, onRefresh, db, API_URL }) => {
             <button type="submit" disabled={loading}
               className="flex-1 py-4 rounded-2xl bg-indigo-600 text-white text-[11px] font-black uppercase tracking-widest hover:bg-indigo-500 shadow-xl shadow-indigo-900/40 disabled:opacity-50 transition-all flex items-center justify-center gap-3 italic"
             >
-              {loading ? <PI.ArrowClockwise size={16} className="animate-spin" /> : <PI.PaperPlaneTilt size={16} weight="bold" />}
+              {loading ? <ArrowClockwise size={16} className="animate-spin" /> : <PaperPlaneTilt size={16} weight="bold" />}
               {loading ? 'Transmitiendo...' : 'Enviar Pase'}
             </button>
           </div>
@@ -89,7 +89,7 @@ const CompanyUsersTab = ({ company, users, invitations, onRefresh, fmtDate, db, 
        <SectionHeading 
           title="Fuerza Laboral" 
           subtitle="Gestión de colaboradores registrados e invitaciones en tránsito"
-          icon={PI.UsersFour}
+          icon={UsersFour}
        >
           <div className="flex gap-4">
             <button
@@ -120,13 +120,13 @@ const CompanyUsersTab = ({ company, users, invitations, onRefresh, fmtDate, db, 
               }}
               className="bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-black uppercase tracking-widest px-8 py-3 rounded-2xl border border-slate-700 transition-all flex items-center gap-3 italic active:scale-95"
             >
-              <PI.FileCsv size={18} weight="duotone" /> Exportar Reporte
+              <FileCsv size={18} weight="duotone" /> Exportar Reporte
             </button>
             <button
               onClick={() => setShowInviteModal(true)}
               className="bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black uppercase tracking-widest px-8 py-3 rounded-2xl shadow-xl shadow-indigo-900/20 transition-all flex items-center gap-3 italic active:scale-95"
             >
-              <PI.Plus size={18} weight="bold" /> Invitar Colaborador
+              <Plus size={18} weight="bold" /> Invitar Colaborador
             </button>
           </div>
        </SectionHeading>
@@ -155,7 +155,7 @@ const CompanyUsersTab = ({ company, users, invitations, onRefresh, fmtDate, db, 
                 ))}
                 {users.length === 0 && (
                   <div className="py-24 text-center">
-                    <PI.UserCircleDashed size={48} className="mx-auto text-slate-800 mb-4" weight="duotone" />
+                    <UserCircleDashed size={48} className="mx-auto text-slate-800 mb-4" weight="duotone" />
                     <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Aún no hay usuarios activos</p>
                   </div>
                 )}
@@ -182,7 +182,7 @@ const CompanyUsersTab = ({ company, users, invitations, onRefresh, fmtDate, db, 
                 ))}
                 {invitations.length === 0 && (
                   <div className="py-24 text-center">
-                    <PI.EnvelopeSimpleOpen size={48} className="mx-auto text-slate-800 mb-4" weight="duotone" />
+                    <EnvelopeSimpleOpen size={48} className="mx-auto text-slate-800 mb-4" weight="duotone" />
                     <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">No hay pases en espera</p>
                   </div>
                 )}

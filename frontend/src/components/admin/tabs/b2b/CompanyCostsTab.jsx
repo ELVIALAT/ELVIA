@@ -1,5 +1,5 @@
 import React from 'react'
-import * as PI from '@phosphor-icons/react'
+import { DownloadSimple, Receipt, User, UsersFour } from '@phosphor-icons/react'
 import Badge from '../../shared/Badge'
 import SectionHeading from '../../shared/SectionHeading'
 
@@ -14,13 +14,13 @@ const CompanyCostsTab = ({ company, costs, onExport }) => {
        <SectionHeading 
           title="Inversión Corporativa" 
           subtitle="Reporte financiero y desglose de facturación por perfil"
-          icon={PI.Receipt}
+          icon={Receipt}
        >
           <button
             onClick={() => onExport()}
             className="bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black uppercase tracking-widest px-8 py-3 rounded-2xl shadow-xl shadow-indigo-900/20 transition-all flex items-center gap-3 italic active:scale-95"
           >
-            <PI.DownloadSimple size={18} weight="bold" /> Exportar Auditoría
+            <DownloadSimple size={18} weight="bold" /> Exportar Auditoría
           </button>
        </SectionHeading>
 
@@ -43,7 +43,7 @@ const CompanyCostsTab = ({ company, costs, onExport }) => {
        <div className="bg-[#111827] rounded-[2.5rem] border border-slate-800 shadow-2xl overflow-hidden mt-8">
           <div className="px-10 py-6 border-b border-slate-800 flex items-center justify-between">
              <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] italic">Desglose de Beneficiarios</h3>
-             <PI.UsersFour size={20} className="text-slate-800" />
+             <UsersFour size={20} className="text-slate-800" />
           </div>
           <div className="overflow-x-auto">
              <table className="w-full text-left">
@@ -61,7 +61,7 @@ const CompanyCostsTab = ({ company, costs, onExport }) => {
                          <td className="px-10 py-7">
                             <div className="flex items-center gap-4">
                                <div className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
-                                  <PI.User size={18} weight="duotone" />
+                                  <User size={18} weight="duotone" />
                                </div>
                                <p className="text-sm font-black text-white uppercase italic tracking-tight">{p.assigned_to || 'Sin asignar'}</p>
                             </div>

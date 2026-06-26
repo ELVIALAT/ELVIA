@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import * as PI from '@phosphor-icons/react'
+import { ArrowClockwise, CheckCircle, Coins, Plus, Tag } from '@phosphor-icons/react'
 import KpiCard from '../shared/KpiCard'
 import SectionHeading from '../shared/SectionHeading'
 import Badge from '../shared/Badge'
@@ -96,20 +96,20 @@ const CodesTab = ({ db, fmtDate }) => {
       <SectionHeading 
         title="Llaves Maestras" 
         subtitle="Generación y canje de códigos de acceso premium"
-        icon={PI.Tag}
+        icon={Tag}
       >
         <button
           onClick={() => setShowForm(v => !v)}
           className="px-8 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-3 transition-all shadow-xl shadow-indigo-900/20"
         >
-          <PI.Plus size={16} weight="bold" /> Nuevo Código
+          <Plus size={16} weight="bold" /> Nuevo Código
         </button>
       </SectionHeading>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <KpiCard label="Códigos activos"  value={codigos.filter(c => c.is_active).length}  icon={PI.Tag}         color="blue"   />
-        <KpiCard label="Canjeados"        value={redenidos.length}                          icon={PI.CheckCircle} color="green"  />
-        <KpiCard label="Planes canjeados" value={Object.keys(porPlan).length}             icon={PI.Coins}       color="amber"  sub="Total por tipo" />
+        <KpiCard label="Códigos activos"  value={codigos.filter(c => c.is_active).length}  icon={Tag}         color="blue"   />
+        <KpiCard label="Canjeados"        value={redenidos.length}                          icon={CheckCircle} color="green"  />
+        <KpiCard label="Planes canjeados" value={Object.keys(porPlan).length}             icon={Coins}       color="amber"  sub="Total por tipo" />
       </div>
 
       {showForm && (
@@ -132,7 +132,7 @@ const CodesTab = ({ db, fmtDate }) => {
                   onClick={() => setForm(f => ({ ...f, code: generarCodigo() }))}
                   className="p-4 bg-slate-800 hover:bg-slate-700 text-indigo-400 rounded-2xl transition-all border border-slate-700"
                 >
-                  <PI.ArrowClockwise size={20} weight="bold" />
+                  <ArrowClockwise size={20} weight="bold" />
                 </button>
               </div>
             </div>
@@ -189,7 +189,7 @@ const CodesTab = ({ db, fmtDate }) => {
             </button>
             <button type="submit" disabled={saving}
               className="flex-1 py-4 rounded-2xl bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 shadow-xl shadow-indigo-900/40 disabled:opacity-50 transition-all flex items-center justify-center gap-3 italic">
-              {saving ? <PI.ArrowClockwise size={16} className="animate-spin" /> : <PI.Plus size={16} weight="bold" />}
+              {saving ? <ArrowClockwise size={16} className="animate-spin" /> : <Plus size={16} weight="bold" />}
               {saving ? 'Procesando...' : 'Activar Código'}
             </button>
           </div>

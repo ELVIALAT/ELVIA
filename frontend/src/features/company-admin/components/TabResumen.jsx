@@ -2,7 +2,7 @@
 // Tab "Resumen" — KPIs, funnel, engagement, adopción por área, outcomes, uso agregado.
 // Extraído verbatim desde pages/CompanyAdmin.jsx (Fase 3); el IIFE original pasa a ser
 // el cuerpo del componente (mismos cálculos derivados al tope + JSX idéntico).
-import * as PI from '@phosphor-icons/react'
+import { Confetti, FileText, ShieldCheck, TrendUp, UsersThree } from '@phosphor-icons/react'
 import KpiCard from './KpiCard'
 import { useCompanyAdminCtx } from '../CompanyAdminContext'
 
@@ -55,10 +55,10 @@ export default function TabResumen() {
 
       {/* KPIs principales */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard icon={PI.UsersThree} label={L.membersActiveLabel} value={activados}            sub={`de ${invitados} invitados`}        accent={primary} />
-        <KpiCard icon={PI.TrendUp}    label="Tasa de adopción"      value={`${adopcion}%`}      sub="Activos / Invitados"               accent="#F59E0B" />
-        <KpiCard icon={PI.FileText}   label="CVs generados"         value={stats.cvOptimizerUse || 0} sub={`${conCV} ${L.members} con CV`} accent="#8B5CF6" />
-        <KpiCard icon={PI.Confetti}   label={L.successMetric}        value={empleados}           sub={empleados > 0 ? 'Felicidades 🎉' : L.successProcess}      accent="#10B981" />
+        <KpiCard icon={UsersThree} label={L.membersActiveLabel} value={activados}            sub={`de ${invitados} invitados`}        accent={primary} />
+        <KpiCard icon={TrendUp}    label="Tasa de adopción"      value={`${adopcion}%`}      sub="Activos / Invitados"               accent="#F59E0B" />
+        <KpiCard icon={FileText}   label="CVs generados"         value={stats.cvOptimizerUse || 0} sub={`${conCV} ${L.members} con CV`} accent="#8B5CF6" />
+        <KpiCard icon={Confetti}   label={L.successMetric}        value={empleados}           sub={empleados > 0 ? 'Felicidades 🎉' : L.successProcess}      accent="#10B981" />
       </div>
 
       {/* Funnel del programa */}
@@ -163,7 +163,7 @@ export default function TabResumen() {
         <div className="bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 rounded-2xl p-6">
           <div className="flex items-start gap-4 mb-5">
             <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-emerald-100 text-emerald-700 shrink-0">
-              <PI.Confetti size={20} weight="duotone" />
+              <Confetti size={20} weight="duotone" />
             </div>
             <div className="flex-1">
               <h3 className="text-base font-bold text-gray-900">Outcomes del programa</h3>
@@ -198,7 +198,7 @@ export default function TabResumen() {
       {/* Confidencialidad recordatorio */}
       <div className="bg-white border border-gray-100 rounded-2xl p-6 flex items-start gap-4">
         <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-emerald-50 text-emerald-600 shrink-0">
-          <PI.ShieldCheck size={20} weight="duotone" />
+          <ShieldCheck size={20} weight="duotone" />
         </div>
         <div className="flex-1">
           <h3 className="text-sm font-bold text-gray-900 mb-1">Tu rol como administrador del programa</h3>
