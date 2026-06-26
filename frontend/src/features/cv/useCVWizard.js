@@ -7,10 +7,10 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { supabase } from '../../services/authService'
 import { generarCVDesdeCero, extractarPerfilCV, optimizarResumenIA, optimizarExpIA, fusionarResumenIA } from '../../services/cvService'
 import { ESTADO_EMPTY } from './constants'
 import { analizarCalidad, calcularLlenado, generarTipsPorPaso, parseExpYear } from './utils'
+import { cvApi } from './api'
 
 export function useCVWizardState() {
   const { user, isPaidPlan, perfil, refreshPerfil, refreshJpData } = useAuth()
@@ -155,7 +155,7 @@ export function useCVWizardState() {
     delete newJsp.cv_borrador
     delete newJsp.cv_datos_originales
     try {
-      await supabase.from('profiles').update({ job_search_profile: newJsp }).eq('id', user.id)
+      await cvApi.discardDraft(user.id, newJsp)
     } catch (e) {
       console.error('Error descartando borrador:', e)
     }
@@ -210,7 +210,7 @@ export function useCVWizardState() {
       // 2. Fetch desde Supabase (fuente de verdad)
       try {
         setInicializando(true)
-        const { data: p } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle()
+        const p = await cvApi.getProfile(user.id)
         if (!p) return
 
         const borrador = p?.job_search_profile?.cv_borrador
@@ -267,13 +267,8 @@ export function useCVWizardState() {
     if (saveTimer.current) clearTimeout(saveTimer.current)
     saveTimer.current = setTimeout(async () => {
       try {
-        const { data: p } = await supabase.from('profiles').select('job_search_profile').eq('id', user.id).maybeSingle()
-        if (!p) return
-        const jsp = p.job_search_profile || {}
-        const { error: e } = await supabase.from('profiles').update({
-          job_search_profile: { ...jsp, cv_borrador: { paso_actual: pasoActual, ultimo_guardado: new Date().toISOString(), datos } }
-        }).eq('id', user.id)
-        if (!e) {
+        const { ok } = await cvApi.saveDraft(user.id, { pasoActual, datos })
+        if (ok) {
           setUltimoGuardado(new Date())
           sessionStorage.setItem(`cv_draft_${user.id}`, JSON.stringify({ datos, paso_actual: pasoActual }))
         }
@@ -290,15 +285,8 @@ export function useCVWizardState() {
       if (saveTimer.current) clearTimeout(saveTimer.current)
       // Guardar en sessionStorage de forma síncrona (instantáneo)
       sessionStorage.setItem(`cv_draft_${userRef.current.id}`, JSON.stringify({ datos: datosRef.current, paso_actual: pasoRef.current }))
-      // Fire-and-forget a Supabase en background
-      supabase.from('profiles').select('job_search_profile').eq('id', userRef.current.id).maybeSingle()
-        .then(({ data: p }) => {
-          if (!p) return
-          const jsp = p.job_search_profile || {}
-          supabase.from('profiles').update({
-            job_search_profile: { ...jsp, cv_borrador: { paso_actual: pasoRef.current, ultimo_guardado: new Date().toISOString(), datos: datosRef.current } }
-          }).eq('id', userRef.current.id).then(() => {})
-        }).catch(() => {})
+      // Fire-and-forget a Supabase en background (mismo read-modify-write que el autosave)
+      cvApi.saveDraft(userRef.current.id, { pasoActual: pasoRef.current, datos: datosRef.current }).catch(() => {})
     }
   }, [])
 
@@ -558,48 +546,20 @@ export function useCVWizardState() {
       const nombreLimpio = `${src.nombre} ${src.apellido}`.trim() || 'Usuario ELVIA'
       const nombreArchivo = `CV_${nombreLimpio} - original ${ddmmaa}.txt`
 
-      // 1. Subir texto generado a Storage
+      // Texto generado → Storage; el path destino lo fija aquí, la capa de datos lo sube
       const blob = new Blob([cvGenerada.optimizedCV], { type: 'text/plain' })
       const filePath = `${user.id}/cv_original.txt`
 
-      const { data: up, error: upErr } = await supabase.storage
-        .from('cvs').upload(filePath, blob, { upsert: true })
-
-      if (upErr) throw new Error('Error al guardar CV en Storage')
-
-      // 2. Usar el ID que ya nos dio el backend al generar
+      // Usar el ID que ya nos dio el backend al generar
       const savedId = cvGenerada.id;
       if (!savedId) {
         console.warn('Backend no retornó ID, continuando sin vinculación crítica.');
       }
 
-      // 3. Obtener job_search_profile actual para no sobreescribir otros datos
-      const { data: pActual } = await supabase.from('profiles')
-        .select('job_search_profile')
-        .eq('id', user.id)
-        .maybeSingle()
+      // Subir a Storage + persistir cv_path/cv_filename/cv_datos_originales (limpia el borrador)
+      await cvApi.saveGeneratedCV(user.id, { blob, filePath, nombreArchivo, datos })
 
-      const jsp = pActual?.job_search_profile || {}
-
-      // 4. Guardar datos estructurados + limpiar borrador en la DB
-      const { cv_borrador, ...restoJsp } = jsp
-
-      const { error: updErr } = await supabase.from('profiles').update({
-        cv_path:     up.path,
-        cv_filename: nombreArchivo,
-        job_search_profile: {
-          ...restoJsp,
-          cv_datos_originales: { datos, generado_en: new Date().toISOString() },
-          optimizer: {
-            ...(restoJsp.optimizer || {}),
-            cv_generado: true
-          }
-        }
-      }).eq('id', user.id)
-
-      if (updErr) throw new Error('Error al actualizar el perfil en la base de datos')
-
-      // 4. Limpiar caches locales — ESTO ES CRITICO para que ProyectoLaboral no cargue basura
+      // Limpiar caches locales — ESTO ES CRITICO para que ProyectoLaboral no cargue basura
       sessionStorage.removeItem(`jsp_${user.id}`)
       sessionStorage.removeItem(`cv_draft_${user.id}`)
       sessionStorage.removeItem(`perfil_lp_${user.id}`)
