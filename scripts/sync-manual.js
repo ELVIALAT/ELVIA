@@ -9,8 +9,8 @@ const path = require('path');
 
 const SOURCE = path.join(__dirname, '..', 'docs', 'manual', 'manual-elvia.md');
 const TARGETS = [
-  path.join(__dirname, '..', 'frontend', 'public', 'manual', 'manual-elvia.md'),
-  path.join(__dirname, '..', 'backend', 'data', 'manual-elvia.md'),
+  path.join(__dirname, '..', 'apps', 'web', 'public', 'manual', 'manual-elvia.md'),
+  path.join(__dirname, '..', 'services', 'api', 'data', 'manual-elvia.md'),
 ];
 
 function main() {

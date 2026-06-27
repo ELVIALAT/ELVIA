@@ -30,12 +30,8 @@ uploads/
 # Propuestas comerciales (documentos internos)
 docs/*.html
 
-# Scripts de utilería root (potrace)
-/package.json
-/package-lock.json
-
 # Logos marca consultora APAZ (no pertenecen a la plataforma ELVIA)
-frontend/public/LOGOS/Logo APAZ Talent Search*
+apps/web/public/LOGOS/Logo APAZ Talent Search*
 
 # Artefactos de herramientas de desarrollo local (no pertenecen al repo)
 .agent/

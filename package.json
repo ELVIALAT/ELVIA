@@ -1,0 +1,21 @@
+{
+  "name": "elvia-platform",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm -w apps/web run dev",
+    "dev:api": "npm -w services/api run dev",
+    "build:web": "npm -w apps/web run build",
+    "test:web": "npm -w apps/web exec -- npx vitest run",
+    "test:api": "npm -w services/api run test",
+    "test": "npm run test:api ; npm run test:web",
+    "check:api": "npm -w services/api run check"
+  },
+  "devDependencies": {
+    "potrace": "^2.1.8"
+  }
+}
