@@ -2,6 +2,7 @@
 // Modo: normal (desbloqueado) o frosted-lock (onboarding pendiente)
 import { NavLink, Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useProfile } from '../../context/ProfileContext'
 import {
   FileMagnifyingGlass, MagnifyingGlass, Briefcase,
   Folders, BookmarkSimple, Kanban,
@@ -173,7 +174,8 @@ function BienestarItem({ onClick, locked }) {
 }
 
 export default function Sidebar({ open, onClose }) {
-  const { user, perfil, isAdmin, onboardingPendiente, featuresDesbloqueadas, jpLoaded } = useAuth()
+  const { user } = useAuth()
+  const { perfil, isAdmin, onboardingPendiente, featuresDesbloqueadas, jpLoaded } = useProfile()
 
   const locked = !!onboardingPendiente
   // featureLocked: post-onboarding pero progreso < 100% (usar jpLoaded para evitar flash)

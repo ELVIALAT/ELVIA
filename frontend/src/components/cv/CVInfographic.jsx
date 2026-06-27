@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import html2canvas from 'html2canvas'
+import { descargarPng } from '../../utils/pdf'
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -21,16 +21,9 @@ export default function CVInfographic({ datos, matchScore, jobData, analisis, wa
     if (!ref.current) return
     setDescargando(true)
     try {
-      const canvas = await html2canvas(ref.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        logging: false,
+      await descargarPng(ref.current, {
+        filename: `CV-Infografico-${datos.nombre?.split(' ')[0] || 'CV'}.png`,
       })
-      const link = document.createElement('a')
-      link.download = `CV-Infografico-${datos.nombre?.split(' ')[0] || 'CV'}.png`
-      link.href = canvas.toDataURL('image/png')
-      link.click()
     } finally {
       setDescargando(false)
     }

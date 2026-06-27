@@ -2,11 +2,13 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useProfile } from '../../context/ProfileContext'
 import { useTenant } from '../../context/TenantContext'
 import { List, SignOut, Crown } from '@phosphor-icons/react'
 
 export default function Header({ onMenuToggle }) {
-  const { user, perfil, logout } = useAuth()
+  const { user, logout } = useAuth()
+  const { perfil } = useProfile()
   const { tenant, isB2B, showTenantLogo, showElviaLogo, elviaProminent, showProgramBadge, programBadgeText, tenantResolved } = useTenant()
   const navigate = useNavigate()
 

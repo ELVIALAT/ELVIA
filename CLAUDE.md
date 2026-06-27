@@ -44,7 +44,7 @@ ELVIA® es el **copiloto estratégico de clase mundial** diseñado para democrat
 - **Backend**: Node.js + Express (Netlify/Railway).
 - **Persistencia**: Supabase (PostgreSQL + Storage + Auth).
 - **IA Engine**: Claude 3 (Haiku/Sonnet).
-- **PDF Engine**: `pdf-lib` (Client-side rendering).
+- **PDF Engine**: `html2pdf.js` (snapshot visual DOM→canvas→PDF, client-side; helper único en `frontend/src/utils/pdf.js`). NO es `pdf-lib`: los CVs/informes se capturan como componentes React estilizados, no se dibujan por coordenadas.
 
 ## ⚙️ Reglas de Desarrollo (Manual de Estilo)
 

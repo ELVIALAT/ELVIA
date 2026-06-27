@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { api } from '../services/api';
-import { useAuth } from '../context/AuthContext';
+import { usePlan } from '../context/usePlan';
 import { useTrackEvent } from './useTrackEvent';
 
 const MAX_MENSAJES_FREE = 20;
@@ -21,7 +21,7 @@ const MENSAJE_MANUAL = `📖 **Modo manual activado.** Respondo solo con informa
 
 export function useChat({ mode = 'general' } = {}) {
   const location = useLocation();
-  const { isPaidPlan } = useAuth();
+  const { isPaidPlan } = usePlan();
   const trackEvent = useTrackEvent();
 
   const MAX_MENSAJES_SESION = isPaidPlan ? MAX_MENSAJES_PRO : MAX_MENSAJES_FREE;

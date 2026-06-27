@@ -7,12 +7,14 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { supabase } from '../../services/authService'
+import { useProfile } from '../../context/ProfileContext'
+import { entrevistaApi } from './api'
 import { api } from '../../services/api'
 import { useTrackEvent } from '../../hooks/useTrackEvent'
 
 export function useEntrevista() {
-  const { user, jpData } = useAuth()
+  const { user } = useAuth()
+  const { jpData } = useProfile()
   const navigate = useNavigate()
   const track = useTrackEvent()
 
@@ -64,39 +66,30 @@ export function useEntrevista() {
   useEffect(() => {
     if (!user) return
     const SUBTIPOS_EXCLUIDOS = ['infografia_proyecto', 'linkedin_analysis', 'entrevista_simulada', 'desde_cero']
-    supabase.from('cv_results')
-      .select('id, contenido, tipo, metadata')
-      .eq('user_id', user.id)
-      .in('tipo', ['optimize', 'original'])
-      .order('created_at', { ascending: false })
-      .limit(20)
-      .then(({ data }) => {
-        const base = (data || []).find(r => {
-          const subtipo = (typeof r.metadata === 'string' ? JSON.parse(r.metadata) : r.metadata)?.subtipo
-          return !SUBTIPOS_EXCLUIDOS.includes(subtipo) && r.tipo !== 'match'
-        })
-        if (base?.contenido) {
-          try {
-            const parsed = typeof base.contenido === 'string' ? JSON.parse(base.contenido) : base.contenido
-            const texto = parsed?.contenido_cv || parsed?.cv_text || parsed?.texto || ''
-            setCvBase(typeof texto === 'string' ? texto : JSON.stringify(texto))
-          } catch {
-            if (typeof base.contenido === 'string') setCvBase(base.contenido)
-          }
-        }
+    entrevistaApi.getCvBase(user.id).then(({ data }) => {
+      const base = data.find(r => {
+        const subtipo = (typeof r.metadata === 'string' ? JSON.parse(r.metadata) : r.metadata)?.subtipo
+        return !SUBTIPOS_EXCLUIDOS.includes(subtipo) && r.tipo !== 'match'
       })
+      if (base?.contenido) {
+        try {
+          const parsed = typeof base.contenido === 'string' ? JSON.parse(base.contenido) : base.contenido
+          const texto = parsed?.contenido_cv || parsed?.cv_text || parsed?.texto || ''
+          setCvBase(typeof texto === 'string' ? texto : JSON.stringify(texto))
+        } catch {
+          if (typeof base.contenido === 'string') setCvBase(base.contenido)
+        }
+      }
+    })
   }, [user])
 
   // Cargar vacantes guardadas con score ≥ 75 y título disponible
   useEffect(() => {
     if (!user) return
-    Promise.all([
-      supabase.from('saved_jobs').select('id, job_data, job_key').eq('user_id', user.id).order('created_at', { ascending: false }),
-      supabase.from('job_checks').select('job_key, score').eq('user_id', user.id),
-    ]).then(([{ data: saved }, { data: checks }]) => {
+    entrevistaApi.getVacantesYChecks(user.id).then(({ saved, checks }) => {
       const checkMap = {}
-      ;(checks || []).forEach(c => { if (c.job_key) checkMap[c.job_key] = c.score })
-      const filtradas = (saved || [])
+      checks.forEach(c => { if (c.job_key) checkMap[c.job_key] = c.score })
+      const filtradas = saved
         .filter(s => {
           const titulo = s.job_data?.title
           if (!titulo) return false
@@ -172,12 +165,12 @@ export function useEntrevista() {
     if (muted || !texto) return
     detenerVoz()
     try {
-      const { data: { session } } = await supabase.auth.getSession()
+      const accessToken = await entrevistaApi.getAccessToken()
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/interview/tts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify({ text: texto }),
       })

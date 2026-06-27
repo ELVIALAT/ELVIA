@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
 import { useCV } from '../context/CVContext'
 import { matchCVVacante, descargarCV } from '../services/cvService'
 import { supabase } from '../services/authService'
@@ -9,10 +10,15 @@ import LanguageSelector from '../components/common/LanguageSelector'
 import Button from '../components/common/Button'
 import FeatureLocked from '../components/common/FeatureLocked'
 import HelpBadge from '../components/common/HelpBadge'
+import CVVacioEstado from '../components/cv-vs-job/CVVacioEstado'
+import PerfilAvisos from '../components/cv-vs-job/PerfilAvisos'
+import DimensionesBreakdown from '../components/cv-vs-job/DimensionesBreakdown'
+import HistorialAnalisis from '../components/cv-vs-job/HistorialAnalisis'
 import { MagnifyingGlass, CaretDown, FileText, ArrowRight, Lightbulb } from '@phosphor-icons/react'
 
 export default function CVvsJob() {
-  const { user, refreshUsage, featuresDesbloqueadas, companyId, jpData, loading: authLoading } = useAuth()
+  const { user, loading: authLoading } = useAuth()
+  const { refreshUsage, featuresDesbloqueadas, companyId, jpData } = useProfile()
   const { resultadoOptimize, resultadoMatch, setResultadoMatch } = useCV()
   const navigate = useNavigate()
   const track = useTrackEvent()
@@ -235,6 +241,38 @@ export default function CVvsJob() {
     return 'text-red-500'
   }
 
+  const seleccionarHistorial = async (item) => {
+    const meta = item.metadata || {}
+    const score = meta.matchScore ?? 0
+    let tailoredCV = null
+    try {
+      const { data: cvData } = await supabase
+        .from('cv_results')
+        .select('contenido')
+        .eq('id', item.id)
+        .single()
+      if (cvData?.contenido) tailoredCV = cvData.contenido
+    } catch (err) {
+      console.error('Error fetching tailored CV:', err)
+    }
+
+    setResultadoMatch({
+      id: item.id,
+      matchScore: score,
+      analisis: meta.analisis || { fortalezas: [], brechas: [], conclusion: '' },
+      jobData: meta.jobData || {},
+      keywords: meta.keywords || null,
+      dimensiones: meta.dimensiones || null,
+      tailoredCV,
+      changes: meta.changes || [],
+    })
+    setCvDesvelado(false)
+    setTabActiva('analisis')
+    setSavedToPipeline(false)
+    setShowSaveForm(false)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 w-full py-8">
       <div className="max-w-4xl mx-auto px-4">
@@ -249,31 +287,7 @@ export default function CVvsJob() {
         </div>
 
         {/* Avisos contextuales de perfil */}
-        {(() => {
-          const avisos = []
-          const hard = jpData?.autoconocimiento?.hard_skills || []
-          const soft = jpData?.autoconocimiento?.soft_skills || []
-          if (hard.length < 2 || soft.length < 2) {
-            avisos.push('Agrega al menos 2 Hard Skills y 2 Power Skills en el Gerente de Proyecto para que el análisis de compatibilidad sea más preciso.')
-          }
-          const oferta = String(jpData?.oferta?.oferta_valor || '').trim()
-          if (!oferta) {
-            avisos.push('Completa tu Oferta de Valor en el Gerente de Proyecto para que el análisis identifique mejor tus fortalezas.')
-          }
-          if (!avisos.length) return null
-          return (
-            <div className="space-y-2 mb-4">
-              {avisos.map((msg, i) => (
-                <div key={i} className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-xs text-amber-800">
-                  <svg className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                  </svg>
-                  <span>{msg} <button onClick={() => navigate('/proyecto-laboral')} className="underline font-semibold ml-0.5">Ir al Gerente de Proyecto →</button></span>
-                </div>
-              ))}
-            </div>
-          )
-        })()}
+        <PerfilAvisos jpData={jpData} onIrAlGerente={() => navigate('/proyecto-laboral')} />
 
         <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-6">
           {/* ── Sección 1: Tu CV ── */}
@@ -281,20 +295,7 @@ export default function CVvsJob() {
 
           {cvsExistentes.length === 0 ? (
             /* Estado vacío — sin CVs */
-            <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-8 text-center">
-              <FileText size={42} className="text-slate-300 mx-auto mb-3" weight="light" />
-              <p className="text-sm font-semibold text-slate-700 mb-1">Aún no tienes un CV optimizado</p>
-              <p className="text-xs text-slate-500 mb-5 max-w-xs mx-auto">
-                Para medir tu compatibilidad con vacantes, primero sube y optimiza tu CV con nuestra IA.
-              </p>
-              <button
-                onClick={() => navigate('/cv-optimizer')}
-                className="inline-flex items-center gap-2 bg-primary text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-primary/90 transition-colors"
-              >
-                Ir al Optimizador de CV
-                <ArrowRight size={16} weight="bold" />
-              </button>
-            </div>
+            <CVVacioEstado onIrAlOptimizador={() => navigate('/cv-optimizer')} />
           ) : (() => {
             const cvSeleccionado = cvsExistentes.find(c => c.id === selectedCvId) || cvsExistentes[0]
             const cvRestantes = cvsExistentes.filter(c => c.id !== cvSeleccionado?.id)
@@ -554,34 +555,7 @@ export default function CVvsJob() {
             {/* Tab: Análisis */}
             {tabActiva === 'analisis' && (
               <div className="space-y-4">
-                {resultadoMatch.dimensiones && (() => {
-                  const dims = [
-                    { key: 'hard_skills', label: 'Hard Skills', color: 'bg-violet-500' },
-                    { key: 'soft_skills', label: 'Soft Skills', color: 'bg-blue-500' },
-                    { key: 'experiencia', label: 'Experiencia', color: 'bg-emerald-500' },
-                    { key: 'formato_ats', label: 'Formato ATS', color: 'bg-amber-500' },
-                  ]
-                  return (
-                    <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-                      <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Desglose por dimensión</h3>
-                      {dims.map(d => {
-                        const val = resultadoMatch.dimensiones[d.key]
-                        if (val === null || val === undefined) return null
-                        return (
-                          <div key={d.key}>
-                            <div className="flex justify-between items-center mb-1">
-                              <span className="text-xs text-gray-600">{d.label}</span>
-                              <span className={`text-xs font-bold ${val >= 75 ? 'text-emerald-600' : val >= 50 ? 'text-amber-600' : 'text-red-500'}`}>{val}%</span>
-                            </div>
-                            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                              <div className={`h-full ${d.color} rounded-full transition-all`} style={{ width: `${val}%` }} />
-                            </div>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  )
-                })()}
+                <DimensionesBreakdown dimensiones={resultadoMatch.dimensiones} />
                 <div>
                   <h3 className="text-sm font-semibold text-green-700 mb-1.5">Fortalezas</h3>
                   <ul className="text-xs space-y-1 text-gray-700">
@@ -807,75 +781,12 @@ export default function CVvsJob() {
         )
       })()}
 
-        {historialAnalisis.length > 0 && (
-          <div className="mt-6 bg-white rounded-2xl border border-gray-200 p-5">
-            <button
-              onClick={() => setMostrarHistorial(v => !v)}
-              className="w-full flex items-center justify-between text-left"
-            >
-              <h3 className="text-sm font-bold text-gray-700">Análisis recientes</h3>
-              <span className="text-xs text-gray-400 flex items-center gap-1">
-                {mostrarHistorial ? 'Ocultar' : `Ver últimos ${Math.min(historialAnalisis.length, 10)}`}
-                <CaretDown size={12} className={`transition-transform ${mostrarHistorial ? 'rotate-180' : ''}`} />
-              </span>
-            </button>
-            {mostrarHistorial && (
-              <div className="mt-4 space-y-2">
-                {historialAnalisis.slice(0, 10).map((item) => {
-                  const meta = item.metadata || {}
-                  const score = meta.matchScore ?? 0
-                  const empresa = meta.jobData?.company || ''
-                  const titulo = meta.jobData?.title || 'Vacante'
-                  const fecha = new Date(item.created_at).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={async () => {
-                        let tailoredCV = null
-                        try {
-                          const { data: cvData } = await supabase
-                            .from('cv_results')
-                            .select('contenido')
-                            .eq('id', item.id)
-                            .single()
-                          if (cvData?.contenido) tailoredCV = cvData.contenido
-                        } catch (err) {
-                          console.error('Error fetching tailored CV:', err)
-                        }
-
-                        setResultadoMatch({
-                          id: item.id,
-                          matchScore: score,
-                          analisis: meta.analisis || { fortalezas: [], brechas: [], conclusion: '' },
-                          jobData: meta.jobData || {},
-                          keywords: meta.keywords || null,
-                          dimensiones: meta.dimensiones || null,
-                          tailoredCV,
-                          changes: meta.changes || [],
-                        })
-                        setCvDesvelado(false)
-                        setTabActiva('analisis')
-                        setSavedToPipeline(false)
-                        setShowSaveForm(false)
-                        window.scrollTo({ top: 0, behavior: 'smooth' })
-                      }}
-                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-gray-100 hover:border-blue-200 hover:bg-blue-50 transition-all text-left"
-                    >
-                      <div className={`text-sm font-bold w-10 shrink-0 text-center ${score >= 75 ? 'text-emerald-600' : score >= 50 ? 'text-amber-500' : 'text-red-500'}`}>
-                        {score}%
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-semibold text-gray-800 truncate">{titulo}{empresa ? ` · ${empresa}` : ''}</div>
-                        <div className="text-[10px] text-gray-400 mt-0.5">{fecha}</div>
-                      </div>
-                      <ArrowRight size={13} className="text-gray-300 shrink-0" />
-                    </button>
-                  )
-                })}
-              </div>
-            )}
-          </div>
-        )}
+        <HistorialAnalisis
+          historial={historialAnalisis}
+          mostrar={mostrarHistorial}
+          onToggle={() => setMostrarHistorial(v => !v)}
+          onSelect={seleccionarHistorial}
+        />
       </div>
     </div>
   )

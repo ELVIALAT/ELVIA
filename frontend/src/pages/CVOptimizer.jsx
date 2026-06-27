@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
 import { useCV } from '../context/CVContext'
 import { optimizarCV, descargarCV, obtenerInfografia } from '../services/cvService'
 import { useTrackEvent } from '../hooks/useTrackEvent'
@@ -70,7 +71,8 @@ const nombreCV = (cv) => {
 }
 
 export default function CVOptimizer() {
-  const { user, refreshUsage, perfil, featuresDesbloqueadas, loading: authLoading } = useAuth()
+  const { user, loading: authLoading } = useAuth()
+  const { refreshUsage, perfil, featuresDesbloqueadas } = useProfile()
   const { cvArchivo, setCvArchivo, setResultadoOptimize, resultadoOptimize } = useCV()
   const navigate = useNavigate()
   const track = useTrackEvent()

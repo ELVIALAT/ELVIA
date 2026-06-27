@@ -3,6 +3,7 @@ import DOMPurify from 'dompurify'
 import { useNavigate } from 'react-router-dom'
 import { useCV } from '../context/CVContext'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
 import { useTenant } from '../context/TenantContext'
 import { supabase } from '../services/authService'
 import { api } from '../services/api'
@@ -38,7 +39,8 @@ const colorScore = (score) => {
 
 export default function JobMatches() {
   const { resultadoMatch, resultadoOptimize } = useCV()
-  const { user, refreshUsage, perfil, featuresDesbloqueadas, loading: authLoading } = useAuth()
+  const { user, loading: authLoading } = useAuth()
+  const { refreshUsage, perfil, featuresDesbloqueadas } = useProfile()
   const { isB2B } = useTenant()
   const navigate = useNavigate()
   const track = useTrackEvent()

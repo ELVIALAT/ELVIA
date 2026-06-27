@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../services/authService'
-import html2pdf from 'html2pdf.js'
+import { generarPdf } from '../utils/pdf'
 import { ArrowLeft, DownloadSimple } from '@phosphor-icons/react'
 
 const FONT = "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
@@ -93,18 +93,15 @@ export default function ReporteLaboral() {
     if (!reporteRef.current || descargando) return
     setDescargando(true)
     const nombre = (data?.nombreCandidato || 'Ejecutivo').replace(/\s+/g, '_')
-    html2pdf()
-      .set({
-        margin: 0,
-        filename: `Autoconocimiento_${nombre}.pdf`,
-        image: { type: 'jpeg', quality: 0.97 },
-        html2canvas: { scale: 2, useCORS: true, scrollY: 0, windowWidth: 794 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['css', 'legacy'] },
-      })
-      .from(reporteRef.current)
-      .save()
-      .finally(() => setDescargando(false))
+    generarPdf(reporteRef.current, {
+      filename: `Autoconocimiento_${nombre}.pdf`,
+      margin: 0,
+      quality: 0.97,
+      format: 'a4',
+      unit: 'mm',
+      html2canvas: { scrollY: 0, windowWidth: 794 },
+      pagebreak: { mode: ['css', 'legacy'] },
+    }).finally(() => setDescargando(false))
   }
 
   if (loading) return (

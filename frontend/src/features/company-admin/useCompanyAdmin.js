@@ -6,6 +6,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useProfile } from '../../context/ProfileContext'
 import { useTenant, DEFAULT_TENANT } from '../../context/TenantContext'
 import { useSectorLabels } from '../../hooks/useSectorLabels'
 import { toast } from 'react-hot-toast'
@@ -13,7 +14,8 @@ import { API } from './constants'
 
 export function useCompanyAdmin() {
   const navigate = useNavigate()
-  const { user, session, perfil, loading: authLoading, logout } = useAuth()
+  const { user, session, loading: authLoading, logout } = useAuth()
+  const { perfil } = useProfile()
   const { tenant, cohort } = useTenant()
   const L = useSectorLabels()
 

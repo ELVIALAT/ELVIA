@@ -1,6 +1,7 @@
 // Bienestar.jsx — Bienestar Emocional durante la Búsqueda Laboral
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
 import FeatureLocked from '../components/common/FeatureLocked'
 import HelpBadge from '../components/common/HelpBadge'
 import { supabase } from '../services/authService'
@@ -426,7 +427,8 @@ const TABS = [
 // ─── Componente Principal ────────────────────────────────────────────────────
 
 export default function Bienestar() {
-  const { user, featuresDesbloqueadas, loading } = useAuth()
+  const { user, loading } = useAuth()
+  const { featuresDesbloqueadas } = useProfile()
   const [tab, setTab]     = useState('checkin')
   const [perfil, setPerfil] = useState({})
   const [saving, setSaving] = useState(false)

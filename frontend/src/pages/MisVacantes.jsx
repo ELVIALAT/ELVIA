@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
 import { useCV } from '../context/CVContext'
 import { supabase } from '../services/authService'
 import JobActionPanel from '../components/common/JobActionPanel'
@@ -13,7 +14,8 @@ const formatFecha = (iso) => {
 }
 
 export default function MisVacantes() {
-  const { user, refreshUsage, loading: authLoading, featuresDesbloqueadas } = useAuth()
+  const { user, loading: authLoading } = useAuth()
+  const { refreshUsage, featuresDesbloqueadas } = useProfile()
   const { resultadoOptimize, resultadoMatch } = useCV()
   const navigate = useNavigate()
 

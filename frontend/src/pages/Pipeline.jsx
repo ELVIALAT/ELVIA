@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
 import { supabase } from '../services/authService'
 import FeatureLocked from '../components/common/FeatureLocked'
 import HelpBadge from '../components/common/HelpBadge'
@@ -274,7 +275,8 @@ const exportarExcel = (vacantes) => {
 }
 
 export default function Pipeline() {
-  const { user, loading: authLoading, featuresDesbloqueadas } = useAuth()
+  const { user, loading: authLoading } = useAuth()
+  const { featuresDesbloqueadas } = useProfile()
   const navigate = useNavigate()
 
   const [vacantes, setVacantes]     = useState([])

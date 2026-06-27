@@ -4,8 +4,11 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import toast from 'react-hot-toast'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
+import { usePlan } from '../context/usePlan'
 import { supabase } from '../services/authService'
 import { extractarPerfilCV, descargarCV } from '../services/cvService'
+import { generarPdf } from '../utils/pdf'
 import ReporteCompensacion from '../components/ReporteCompensacion'
 import { useTrackEvent } from '../hooks/useTrackEvent'
 import { calcPerfilPts, calcularProgreso as calcProgreso, calcularPorPilar } from '../utils/progresoLaboral'
@@ -61,7 +64,9 @@ const calcularProgreso = calcProgreso
 // ─── Componente Principal ────────────────────────────────────────────────────
 
 export default function ProyectoLaboral() {
-  const { user, perfil, refreshPerfil, onboardingPendiente, isPaidPlan, refreshJpData } = useAuth()
+  const { user } = useAuth()
+  const { perfil, refreshPerfil, onboardingPendiente, refreshJpData } = useProfile()
+  const { isPaidPlan } = usePlan()
   const track = useTrackEvent()
   useEffect(() => { track('page_view', 'proyecto_laboral', { pilar: 'perfil' }) }, [])
   const navigate = useNavigate()
@@ -175,16 +180,11 @@ export default function ProyectoLaboral() {
 
   // Función genérica de generación PDF → cv_results (upsert por subtipo)
   const generarReportePDF = async ({ elRef, subtipo, filename, contenido }) => {
-    const { default: html2pdf } = await import('html2pdf.js')
     const el = elRef.current
     if (!el) return
-    const opt = {
-      margin: 0, filename,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' }
-    }
-    const pdfBlob = await html2pdf().set(opt).from(el).outputPdf('blob')
+    const pdfBlob = await generarPdf(el, {
+      filename, margin: 0, quality: 0.98, format: [794, 1123], unit: 'px', output: 'blob',
+    })
     const pdfBase64 = await new Promise((resolve) => {
       const reader = new FileReader()
       reader.onloadend = () => resolve(reader.result.split(',')[1])

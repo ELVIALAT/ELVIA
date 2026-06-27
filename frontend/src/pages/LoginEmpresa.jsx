@@ -6,6 +6,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { supabase } from '../services/authService'
 import { useTenant, DEFAULT_TENANT } from '../context/TenantContext'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
 import { Eye, EyeSlash, Warning, ArrowRight, Info, CheckCircle } from '@phosphor-icons/react'
 
 export default function LoginEmpresa() {
@@ -14,7 +15,8 @@ export default function LoginEmpresa() {
   const [searchParams] = useSearchParams()
   const justActivated = searchParams.get('activated') === '1'
   const { tenant, loading: tenantLoading, isUniversity } = useTenant()
-  const { user, loading: authLoading, onboardingPendiente, bienvenidaPendiente, featuresDesbloqueadas, isCompanyAdmin, perfilCargado } = useAuth()
+  const { user, loading: authLoading } = useAuth()
+  const { onboardingPendiente, bienvenidaPendiente, featuresDesbloqueadas, isCompanyAdmin, perfilCargado } = useProfile()
 
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')

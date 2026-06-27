@@ -7,13 +7,17 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useProfile } from '../../context/ProfileContext'
+import { usePlan } from '../../context/usePlan'
 import { generarCVDesdeCero, extractarPerfilCV, optimizarResumenIA, optimizarExpIA, fusionarResumenIA } from '../../services/cvService'
 import { ESTADO_EMPTY } from './constants'
 import { analizarCalidad, calcularLlenado, generarTipsPorPaso, parseExpYear } from './utils'
 import { cvApi } from './api'
 
 export function useCVWizardState() {
-  const { user, isPaidPlan, perfil, refreshPerfil, refreshJpData } = useAuth()
+  const { user } = useAuth()
+  const { perfil, refreshPerfil, refreshJpData } = useProfile()
+  const { isPaidPlan } = usePlan()
   const navigate = useNavigate()
   const location = useLocation()
 
