@@ -35,6 +35,7 @@ const invAEmail = `${TAG}.invA@example.com`
 const invBEmail = `${TAG}.invB@example.com`
 let companyA, companyB
 let allowA, allowB
+let invB
 
 async function seedUser(u, companyId) {
   const { data: auth, error } = await admin.auth.admin.createUser({
@@ -66,9 +67,12 @@ describeOrSkip('Aislamiento service_role (repo real vs BD real)', () => {
       .insert({ company_id: companyB, email: `${TAG}.alistB@example.com`, status: 'pending' }).select('id').single()
     allowA = aA.id; allowB = aB.id
 
-    // invitaciones en ambos tenants (token/status/expires con defaults)
+    // invitaciones en ambos tenants (token/status/expires con defaults).
+    // Capturamos el id de la de B para probar el borrado cross-tenant.
     await admin.from('company_invitations').insert({ company_id: companyA, email: invAEmail })
-    await admin.from('company_invitations').insert({ company_id: companyB, email: invBEmail })
+    const { data: iB } = await admin.from('company_invitations')
+      .insert({ company_id: companyB, email: invBEmail }).select('id').single()
+    invB = iB.id
   }, 30000)
 
   afterAll(async () => {
@@ -120,11 +124,37 @@ describeOrSkip('Aislamiento service_role (repo real vs BD real)', () => {
     expect(data.status).toBe('pending')
   })
 
+  test('deleteAllowlistById(A, allowB) NO borra la fila de B (no-op silencioso)', async () => {
+    // A diferencia de update, delete NO usa .single() → borrar un id de otro tenant
+    // toca 0 filas y NO lanza. El único blindaje es el .eq('company_id', A) que
+    // inyecta tenantQuery. Verificamos contra la BD real que la fila de B sobrevive.
+    await expect(repo.deleteAllowlistById(admin, companyA, allowB)).resolves.toBeUndefined()
+    const { data } = await admin.from('company_allowlist').select('id').eq('id', allowB).maybeSingle()
+    expect(data).not.toBeNull()
+    expect(data.id).toBe(allowB)
+  })
+
   // ── company_invitations ──
   test('listInvitations(A) solo trae invitaciones de A', async () => {
     const rows = await repo.listInvitations(admin, companyA)
     const emails = rows.map(r => r.email)
     expect(emails).toContain(invAEmail)
     expect(emails).not.toContain(invBEmail)
+  })
+
+  test('getInvitationById(A, invB) → null (id válido de B, invisible para A)', async () => {
+    const row = await repo.getInvitationById(admin, companyA, invB)
+    expect(row).toBeNull()
+  })
+
+  test('deleteInvitationById(A, invB) NO borra la invitación de B (no-op silencioso)', async () => {
+    // Igual que delete allowlist: sin .single(), borrar un id de otro tenant no
+    // lanza; el filtro company_id de tenantQuery lo deja en 0 filas. La fila de B
+    // debe seguir existiendo. (El gate de negocio NO_ACCESS vive en el service vía
+    // getInvitationById; aquí probamos el blindaje del repo, su última línea.)
+    await expect(repo.deleteInvitationById(admin, companyA, invB)).resolves.toBeUndefined()
+    const { data } = await admin.from('company_invitations').select('id').eq('id', invB).maybeSingle()
+    expect(data).not.toBeNull()
+    expect(data.id).toBe(invB)
   })
 })

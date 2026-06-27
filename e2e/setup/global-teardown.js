@@ -20,6 +20,9 @@ module.exports = async () => {
     await tryDo(() => admin.auth.admin.deleteUser(uid));
   }
   for (const cid of state.companies || []) {
+    // Datos del tenant antes de la empresa (por si no hay cascade en la FK).
+    await tryDo(() => admin.from('company_allowlist').delete().eq('company_id', cid));
+    await tryDo(() => admin.from('company_invitations').delete().eq('company_id', cid));
     await tryDo(() => admin.from('companies').delete().eq('id', cid));
   }
 

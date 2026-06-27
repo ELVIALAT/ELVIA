@@ -50,6 +50,17 @@ module.exports = async () => {
   await ensureUser(fixtures.hrA, { companyId: fixtures.companyA.id, role: 'company_admin' });
   await ensureUser(fixtures.colabB, { companyId: fixtures.companyB.id, role: 'user' });
 
+  // Allowlist marcada en A y en B (para el test de aislamiento de /allowlist).
+  // upsert onConflict company_id,email → idempotente entre corridas.
+  await admin.from('company_allowlist').upsert(
+    { company_id: fixtures.companyA.id, email: fixtures.allowlistA.email, status: 'pending' },
+    { onConflict: 'company_id,email' },
+  );
+  await admin.from('company_allowlist').upsert(
+    { company_id: fixtures.companyB.id, email: fixtures.allowlistB.email, status: 'pending' },
+    { onConflict: 'company_id,email' },
+  );
+
   // Persistir estado para teardown
   fs.writeFileSync(STATE_FILE, JSON.stringify({
     companies: [fixtures.companyA.id, fixtures.companyB.id],
