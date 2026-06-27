@@ -62,15 +62,15 @@ test.describe('Flujo 5 — Aislamiento del HR (company_admin)', () => {
     const body = await res.json();
     const users = body.users || [];
 
-    const ids = users.map(u => u.id);
+    // Identificamos por email (string estático de fixtures); los .id se pueblan en
+    // global-setup, que corre en OTRO proceso → aquí son null y no sirven.
     const emails = users.map(u => (u.email_principal || '').toLowerCase());
 
     // Negativo (lo crítico): colabB pertenece a B → JAMÁS debe aparecer.
-    expect(ids).not.toContain(fixtures.colabB.id);
     expect(emails).not.toContain(fixtures.colabB.email.toLowerCase());
 
     // Positivo (no-vacuo): el propio HR de A SÍ está en la lista de A.
-    expect(ids).toContain(fixtures.hrA.id);
+    expect(emails).toContain(fixtures.hrA.email.toLowerCase());
   });
 
   // ── HR de A no puede LEER el perfil de empresa de B ─────────────────────────
@@ -85,9 +85,10 @@ test.describe('Flujo 5 — Aislamiento del HR (company_admin)', () => {
     expect(res.status()).toBe(200);
     const body = await res.json();
     const company = body.company || body;
-    expect(company.id).toBe(fixtures.companyA.id);
-    expect(company.id).not.toBe(fixtures.companyB.id);
+    // Identificamos por slug (string estático de fixtures); company.id de fixtures
+    // se puebla en global-setup (otro proceso) → aquí es null. El slug es estable.
     expect(company.slug).toBe(fixtures.companyA.slug);
+    expect(company.slug).not.toBe(fixtures.companyB.slug);
   });
 
   // ── HR de A no puede LEER el allowlist de B ─────────────────────────────────
