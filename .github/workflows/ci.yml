@@ -20,8 +20,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          # Node 22 LTS — versión única del monorepo (ver .nvmrc). Debe coincidir
-          # con el npm (10) que generó los lockfiles; ver engines en package.json.
+          # Node 22 LTS para el backend (ver .nvmrc raíz + nixpacks.toml de Railway).
+          # El frontend usa Node 24 por el bug de rollup en npm 10 (ver job web).
           node-version: '22'
           cache: 'npm'
           cache-dependency-path: services/api/package-lock.json
@@ -54,9 +54,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          # Node 22 LTS — versión única del monorepo (ver .nvmrc). El lockfile de
-          # apps/web se regeneró con npm 10 (el de Node 22) para casar exactamente.
-          node-version: '22'
+          # Node 24 (npm 11) — REQUERIDO para el frontend (ver apps/web/.nvmrc).
+          # Vite/rollup traen deps nativas opcionales por plataforma; npm 10
+          # (Node 22) tiene un bug (npm/cli#4828) que en `npm ci` sobre Linux NO
+          # instala @rollup/rollup-linux-x64-gnu → el build rompe. npm 11 lo
+          # resuelve. El lockfile de apps/web se genera con npm 11.
+          node-version: '24'
           cache: 'npm'
           cache-dependency-path: apps/web/package-lock.json
 
