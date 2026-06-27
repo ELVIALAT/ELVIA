@@ -22,17 +22,25 @@ vi.mock('../context/AuthContext', () => {
   const auth = {
     user: { id: 'u1', email: 'u1@test.com' },
     session: { access_token: 'tok' },
+    loading: false,
+    logout: () => {},
+  }
+  return { useAuth: () => auth }
+})
+vi.mock('../context/ProfileContext', () => {
+  const profile = {
     perfil: { role: 'company_admin', nombre1: 'Ana' },
     jpData: {},
     featuresDesbloqueadas: true,
-    loading: false,
-    isPaidPlan: false,
     onboardingPendiente: false,
-    logout: () => {},
     refreshPerfil: () => {},
     refreshJpData: () => {},
   }
-  return { useAuth: () => auth }
+  return { useProfile: () => profile }
+})
+vi.mock('../context/usePlan', () => {
+  const plan = { isPaidPlan: false }
+  return { usePlan: () => plan }
 })
 vi.mock('../context/TenantContext', () => {
   const tenant = { name: 'TestCo', slug: 'test', primary_color: '#0a3', secondary_color: '#137', logo_url: null }

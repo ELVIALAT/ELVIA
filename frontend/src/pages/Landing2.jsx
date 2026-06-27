@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
+import { usePlan } from '../context/usePlan'
 import {
   FileMagnifyingGlass, MagnifyingGlass, Briefcase, Kanban,
   ArrowRight, ArrowDown, CheckCircle, ChartBar, Coins, SignOut, Warning,
@@ -167,7 +169,9 @@ function AnimatedCounter({ target, suffix = '', duration = 1600 }) {
 // Se usa cuando la landing está montada en la raíz `/` como página comercial B2B.
 export default function Landing({ modoComercial = false }) {
   const navigate  = useNavigate()
-  const { user, perfil, creditosRestantes, LIMITE_PLAN } = useAuth()
+  const { user } = useAuth()
+  const { perfil } = useProfile()
+  const { creditosRestantes, LIMITE_PLAN } = usePlan()
   const { scrollYProgress } = useScroll()
   const springScroll = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 })
 

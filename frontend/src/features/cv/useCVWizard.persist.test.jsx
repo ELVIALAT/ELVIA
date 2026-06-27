@@ -20,14 +20,20 @@ vi.mock('react-router-dom', () => {
   return { useNavigate: () => navigate, useLocation: () => location }
 })
 vi.mock('../../context/AuthContext', () => {
-  const auth = {
-    user: { id: 'u1' },
-    isPaidPlan: false,
+  const auth = { user: { id: 'u1' } }
+  return { useAuth: () => auth }
+})
+vi.mock('../../context/ProfileContext', () => {
+  const profile = {
     perfil: null,
     refreshPerfil: () => {},
     refreshJpData: () => {},
   }
-  return { useAuth: () => auth }
+  return { useProfile: () => profile }
+})
+vi.mock('../../context/usePlan', () => {
+  const plan = { isPaidPlan: false }
+  return { usePlan: () => plan }
 })
 // supabase: el fetch de perfil devuelve null (sin perfil en BD). El path que importa
 // —restaurar desde sessionStorage— corre ANTES del fetch, así que no depende de esto.

@@ -7,12 +7,14 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useProfile } from '../../context/ProfileContext'
 import { entrevistaApi } from './api'
 import { api } from '../../services/api'
 import { useTrackEvent } from '../../hooks/useTrackEvent'
 
 export function useEntrevista() {
-  const { user, jpData } = useAuth()
+  const { user } = useAuth()
+  const { jpData } = useProfile()
   const navigate = useNavigate()
   const track = useTrackEvent()
 

@@ -6,6 +6,7 @@ import CookieConsent from './components/common/CookieConsent'
 import AiChatBot from './components/chat/AiChatBot'
 import ErrorBoundary from './components/common/ErrorBoundary'
 import { useAuth } from './context/AuthContext'
+import { useProfile } from './context/ProfileContext'
 import { Toaster } from 'react-hot-toast'
 
 const Landing2           = lazy(() => import('./pages/Landing2'))
@@ -68,7 +69,8 @@ const RUTAS_APP = [
 ]
 
 function PublicRoute({ children }) {
-  const { user, loading, isRecovering, onboardingPendiente, featuresDesbloqueadas, perfilCargado, isCompanyAdmin } = useAuth()
+  const { user, loading, isRecovering } = useAuth()
+  const { onboardingPendiente, featuresDesbloqueadas, perfilCargado, isCompanyAdmin } = useProfile()
   const location = useLocation()
 
   if (loading || !perfilCargado) return null
@@ -95,7 +97,8 @@ function PublicRoute({ children }) {
 }
 
 function OnboardingGuard({ children }) {
-  const { onboardingPendiente, featuresDesbloqueadas, loading, isRecovering, isCompanyAdmin, isAdmin, jpLoaded, perfilCargado } = useAuth()
+  const { loading, isRecovering } = useAuth()
+  const { onboardingPendiente, featuresDesbloqueadas, isCompanyAdmin, isAdmin, jpLoaded, perfilCargado } = useProfile()
   const location = useLocation()
 
   if (loading) return null
@@ -150,7 +153,8 @@ function PrivateRoute({ children }) {
 // Solo accesible si: autenticado + onboarding pendiente
 // Si no autenticado → /auth | Si ya completó onboarding → /dashboard
 function BienvenidaRoute({ children }) {
-  const { user, loading, onboardingPendiente, perfilCargado } = useAuth()
+  const { user, loading } = useAuth()
+  const { onboardingPendiente, perfilCargado } = useProfile()
   if (loading || !perfilCargado) return null
   if (!user) return <Navigate to="/auth" replace />
   if (!onboardingPendiente) return <Navigate to="/dashboard" replace />

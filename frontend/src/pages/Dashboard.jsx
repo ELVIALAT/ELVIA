@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
 import { supabase } from '../services/authService'
 import { calcularProgreso, calcPerfilPts, calcularPorPilar } from '../utils/progresoLaboral'
 import { useTrackEvent } from '../hooks/useTrackEvent'
@@ -69,7 +70,8 @@ function MetricCard({ icon: Icon, iconBg, label, value, sub, to, isEmpty, ctaLab
 }
 
 export default function Dashboard() {
-  const { user, perfil, jpData, refreshUsage } = useAuth()
+  const { user } = useAuth()
+  const { perfil, jpData, refreshUsage } = useProfile()
   const { tenant, isB2B } = useTenant()
 
   const [metricas, setMetricas] = useState({

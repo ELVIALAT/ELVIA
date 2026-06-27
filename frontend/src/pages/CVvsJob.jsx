@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
 import { useCV } from '../context/CVContext'
 import { matchCVVacante, descargarCV } from '../services/cvService'
 import { supabase } from '../services/authService'
@@ -12,7 +13,8 @@ import HelpBadge from '../components/common/HelpBadge'
 import { MagnifyingGlass, CaretDown, FileText, ArrowRight, Lightbulb } from '@phosphor-icons/react'
 
 export default function CVvsJob() {
-  const { user, refreshUsage, featuresDesbloqueadas, companyId, jpData, loading: authLoading } = useAuth()
+  const { user, loading: authLoading } = useAuth()
+  const { refreshUsage, featuresDesbloqueadas, companyId, jpData } = useProfile()
   const { resultadoOptimize, resultadoMatch, setResultadoMatch } = useCV()
   const navigate = useNavigate()
   const track = useTrackEvent()

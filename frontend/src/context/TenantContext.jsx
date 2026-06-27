@@ -9,6 +9,7 @@
 import { createContext, useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useAuth } from './AuthContext'
+import { useProfile } from './ProfileContext'
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -87,7 +88,8 @@ function clearCache(key) {
 }
 
 export function TenantProvider({ children }) {
-  const { user, session, perfil, loading: authLoading, perfilCargado } = useAuth()
+  const { user, session, loading: authLoading } = useAuth()
+  const { perfil, perfilCargado } = useProfile()
   const location = useLocation()
 
   const [tenant, setTenant]         = useState(() => {

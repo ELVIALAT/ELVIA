@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import toast from 'react-hot-toast'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
+import { usePlan } from '../context/usePlan'
 import { supabase } from '../services/authService'
 import { extractarPerfilCV, descargarCV } from '../services/cvService'
 import ReporteCompensacion from '../components/ReporteCompensacion'
@@ -61,7 +63,9 @@ const calcularProgreso = calcProgreso
 // ─── Componente Principal ────────────────────────────────────────────────────
 
 export default function ProyectoLaboral() {
-  const { user, perfil, refreshPerfil, onboardingPendiente, isPaidPlan, refreshJpData } = useAuth()
+  const { user } = useAuth()
+  const { perfil, refreshPerfil, onboardingPendiente, refreshJpData } = useProfile()
+  const { isPaidPlan } = usePlan()
   const track = useTrackEvent()
   useEffect(() => { track('page_view', 'proyecto_laboral', { pilar: 'perfil' }) }, [])
   const navigate = useNavigate()

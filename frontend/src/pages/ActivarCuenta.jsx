@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../services/authService'
 import { useTenant, DEFAULT_TENANT } from '../context/TenantContext'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
 import { CheckCircle, LockKey, Eye, EyeSlash, Warning, ShieldCheck } from '@phosphor-icons/react'
 import { Turnstile } from '@marsidev/react-turnstile'
 
@@ -35,7 +36,8 @@ export default function ActivarCuenta() {
   const { slug } = useParams()
   const navigate  = useNavigate()
   const { tenant, loading: tenantLoading, isUniversity } = useTenant()
-  const { setIsRecovering, user, loading: authLoading, isCompanyAdmin, onboardingPendiente, featuresDesbloqueadas } = useAuth()
+  const { setIsRecovering, user, loading: authLoading } = useAuth()
+  const { isCompanyAdmin, onboardingPendiente, featuresDesbloqueadas } = useProfile()
 
   const [password, setPassword]       = useState('')
   const [confirmar, setConfirmar]     = useState('')

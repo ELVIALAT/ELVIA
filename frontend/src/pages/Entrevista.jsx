@@ -7,13 +7,15 @@
 // los efectos pesados sólo corren cuando EntrevistaApp se monta = desbloqueado).
 import { useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
 import { useTrackEvent } from '../hooks/useTrackEvent'
 import { MicrophoneStage } from '@phosphor-icons/react'
 import FeatureLocked from '../components/common/FeatureLocked'
 import EntrevistaApp from '../features/interview/EntrevistaApp'
 
 export default function Entrevista() {
-  const { featuresDesbloqueadas, loading: authLoading } = useAuth()
+  const { loading: authLoading } = useAuth()
+  const { featuresDesbloqueadas } = useProfile()
   const track = useTrackEvent()
   useEffect(() => { track('page_view', 'entrevista') }, [])
 

@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useProfile } from '../../context/ProfileContext'
 import { calcularProgreso } from '../../utils/progresoLaboral'
 import toast from 'react-hot-toast'
 import { useTrackEvent } from '../../hooks/useTrackEvent'
@@ -16,7 +17,8 @@ import { API } from './constants'
 import { linkedinApi } from './api'
 
 export function useLinkedinPro() {
-  const { user, jpData, perfil } = useAuth()
+  const { user } = useAuth()
+  const { jpData, perfil } = useProfile()
   const navigate = useNavigate()
   const track = useTrackEvent()
   useEffect(() => { track('page_view', 'linkedin_pro') }, [])

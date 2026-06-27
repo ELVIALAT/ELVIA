@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { ArrowRight, Briefcase, ChartLine, CircleNotch, Export, Eye, EyeSlash, Lock, ShieldCheck, UsersThree, WarningCircle } from '@phosphor-icons/react'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
 import { useTenant, DEFAULT_TENANT } from '../context/TenantContext'
 import { useSectorLabels } from '../hooks/useSectorLabels'
 import { supabase } from '../services/authService'
@@ -15,7 +16,8 @@ import { supabase } from '../services/authService'
 export default function LoginHR() {
   const { slug } = useParams()
   const navigate = useNavigate()
-  const { login, logout, user, perfil, perfilCargado } = useAuth()
+  const { login, logout, user } = useAuth()
+  const { perfil, perfilCargado } = useProfile()
   const { tenant, loading: tenantLoading, isUniversity, showTenantLogo, showElviaLogo, elviaProminent } = useTenant()
   const L = useSectorLabels()
 

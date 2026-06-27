@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
+import { usePlan } from '../context/usePlan'
 import { supabase } from '../services/authService'
 import HelpBadge from '../components/common/HelpBadge'
 
@@ -104,7 +106,9 @@ const detectarMoneda = (pais) => MONEDA_POR_PAIS[pais] || 'USD'
 // ─── Componente ───────────────────────────────────────────────────────────────
 
 export default function Perfil() {
-  const { user, loading: authLoading, perfil, refreshPerfil, creditosRestantes, LIMITE_PLAN, usageCount, plan, isPaidPlan } = useAuth()
+  const { user, loading: authLoading, plan } = useAuth()
+  const { perfil, refreshPerfil } = useProfile()
+  const { creditosRestantes, LIMITE_PLAN, usageCount, isPaidPlan } = usePlan()
   const navigate = useNavigate()
 
   const bloqueado = !!(perfil?.nombre1 && perfil?.apellido1)

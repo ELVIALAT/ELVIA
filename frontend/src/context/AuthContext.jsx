@@ -1,108 +1,30 @@
-// Estado global de autenticación con control de plan freemium
+// Estado global de SESIÓN (capa de auth).
+//
+// Solo maneja la sesión de Supabase: user, session (token), loading y el flag de
+// recuperación de contraseña. El PERFIL del usuario y los datos derivados (roles,
+// progreso, multi-tenancy) viven en ProfileContext; la política de acceso/plan en
+// usePlan. Esta separación hace que un refresh de token —que solo cambia `session`—
+// no re-renderice a los consumidores de perfil.
 import { createContext, useContext, useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import { supabase } from '../services/authService'
-import { calcularProgreso } from '../utils/progresoLaboral'
-
-const API = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-
-// Intenta canjear el código pendiente en localStorage tras el primer login
-async function redimirCodigoPendiente(token, refreshFn) {
-  const code = localStorage.getItem('pending_access_code')
-  if (!code) return
-  try {
-    const res = await fetch(`${API}/api/codes/redeem`, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body:    JSON.stringify({ code }),
-    })
-    if (res.ok) {
-      localStorage.removeItem('pending_access_code')
-      refreshFn()  // recargar perfil para reflejar el nuevo plan
-    }
-    // Si falla (código inválido/agotado), no bloqueamos — solo limpiamos
-    if (!res.ok && res.status !== 500) {
-      localStorage.removeItem('pending_access_code')
-    }
-  } catch {
-    // Silenciar errores de red — no son críticos para el flujo de login
-  }
-}
 
 const AuthContext = createContext(null)
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser]                   = useState(null)
-  const [session, setSession]             = useState(null)
-  const [loading, setLoading]             = useState(true)
-  const [perfilCargado, setPerfilCargado] = useState(false)
-  const [perfil, setPerfil]               = useState(null)
-  const [isRecovering, setIsRecovering]   = useState(false)
-  const [jpData, setJpData]               = useState(null)
-  const [jpLoaded, setJpLoaded]           = useState(false)
+  const [user, setUser]                 = useState(null)
+  const [session, setSession]           = useState(null)
+  const [loading, setLoading]           = useState(true)
+  const [isRecovering, setIsRecovering] = useState(false)
   // Ref para saber el user.id activo SIN depender del closure del efecto.
   // Permite que onAuthStateChange distinga "mismo usuario, token refrescado"
   // de "login real" sin tener que re-crear la suscripción.
   const activeUserIdRef = useRef(null)
-
-  const fetchPerfil = useCallback(async (userId, email) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle()
-    if (data) {
-      let perfActualizado = { ...data }
-
-      // Si no tiene nombre1, intentar recuperarlo de los metadatos del registro
-      if (!data.nombre1) {
-        const { data: { user: authUser } } = await supabase.auth.getUser()
-        const meta = authUser?.user_metadata || {}
-        if (meta.nombre1 || meta.apellido1) {
-          const nombreCompleto = [meta.nombre1, meta.apellido1].filter(Boolean).join(' ')
-          const updates = {
-            nombre1:     meta.nombre1    || null,
-            apellido1:   meta.apellido1  || null,
-            indicativo1: meta.indicativo1 || null,
-            telefono1:   meta.telefono1  || null,
-            nombre:      nombreCompleto  || null,
-          }
-          await supabase.from('profiles').update(updates).eq('id', userId)
-          perfActualizado = { ...perfActualizado, ...updates }
-        }
-      }
-
-      if (email && !data.email_principal) {
-        await supabase.from('profiles').update({ email_principal: email }).eq('id', userId)
-        perfActualizado.email_principal = email
-      }
-
-      setPerfil(perfActualizado)
-    }
-    setPerfilCargado(true)
-  }, [])
-
-  const fetchJpData = useCallback(async (userId) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('job_search_profile')
-      .eq('id', userId)
-      .maybeSingle()
-    setJpData(data?.job_search_profile || null)
-    setJpLoaded(true)
-  }, [])
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setUser(session?.user ?? null)
       activeUserIdRef.current = session?.user?.id ?? null
-      if (session?.user) {
-        fetchPerfil(session.user.id, session.user.email)
-        fetchJpData(session.user.id)
-      } else {
-        setPerfilCargado(true)
-        setJpLoaded(true)
-      }
       setLoading(false)
     })
 
@@ -112,10 +34,10 @@ export const AuthProvider = ({ children }) => {
       }
 
       // Si el user.id no cambió (token refresh, INITIAL_SESSION, tab focus, etc.),
-      // solo actualizamos la sesión (token fresco) sin tocar user/perfil/jpData.
-      // Esto evita que setPerfilCargado(false) desmonte páginas con formularios
-      // en progreso (ProyectoLaboral, CVOptimizer, etc.) cada vez que el usuario
-      // vuelve a la pestaña después de que Supabase renueva el access token.
+      // solo actualizamos la sesión (token fresco) sin tocar `user`. Mantener la
+      // referencia de `user` estable evita que ProfileContext recargue el perfil y
+      // desmonte páginas con formularios en progreso (ProyectoLaboral, CVWizard…)
+      // cada vez que Supabase renueva el access token.
       const incomingId = session?.user?.id ?? null
       const isSameUser = incomingId !== null && incomingId === activeUserIdRef.current
       if (isSameUser) {
@@ -126,25 +48,10 @@ export const AuthProvider = ({ children }) => {
       setSession(session)
       setUser(session?.user ?? null)
       activeUserIdRef.current = incomingId
-      if (session?.user) {
-        setPerfilCargado(false)
-        fetchPerfil(session.user.id, session.user.email)
-        fetchJpData(session.user.id)
-        // Canjear código pendiente si el evento es un login nuevo
-        if (_event === 'SIGNED_IN' && session.access_token) {
-          redimirCodigoPendiente(
-            session.access_token,
-            () => fetchPerfil(session.user.id, session.user.email)
-          )
-        }
-      } else {
-        setPerfil(null); setPerfilCargado(true)
-        setJpData(null); setJpLoaded(true)
-      }
     })
 
     return () => subscription.unsubscribe()
-  }, [fetchPerfil, fetchJpData])
+  }, [])
 
   const login = useCallback((email, password, captchaToken) =>
     supabase.auth.signInWithPassword({ email, password, options: { ...(captchaToken ? { captchaToken } : {}) } }), [])
@@ -163,83 +70,17 @@ export const AuthProvider = ({ children }) => {
     return supabase.auth.signOut()
   }, [])
 
-  // ── Lógica de plan y acceso ───────────────────────────────────────────────
-
-  // ELVIA B2B puro: sin planes. Acceso full para todos.
-  // (Modelo freemium eliminado 2026-06-22 — ver docs/legacy/freemium-model.md)
-  const planInfo = useMemo(() => ({
-    isPaidPlan: true,
-    trialExpired: false,
-    canOptimizeCV: true,
-    canMatchCV: true,
-    creditosMatchRestantes: Infinity,
-    watermark: false,
-  }), [])
-
-  // Retrocompatibilidad: campos que otros componentes ya usan
-  const LIMITE_PLAN         = Infinity
-  const usageCount          = 0
-  const creditosRestantes   = Infinity
-
-  const onboardingPendiente  = useMemo(() => !loading && perfilCargado && !!user && (!perfil || !perfil.nombre1), [loading, perfilCargado, user, perfil])
-  const bienvenidaPendiente  = useMemo(() => !loading && !!user && user.user_metadata?.bienvenida_pendiente === true, [loading, user])
-
-  // Progreso del Gerente de Búsqueda (0-100) — disponible globalmente
-  const progresoLaboral = useMemo(() => {
-    if (!jpLoaded || !perfil) return 0
-    return calcularProgreso(jpData, perfil)
-  }, [jpData, perfil, jpLoaded])
-
-  // Usuarios B2B siguen el MISMO flujo que B2C: onboarding -> gerente -> 100% -> features.
-  // (Cambio de criterio: la empresa paga el programa pero el flujo educativo del
-  // Gerente de Búsqueda es parte del valor, no debe saltarse.)
-  const isB2BUser = !!perfil?.company_id
-  // Features se desbloquean al completar el Gerente de Búsqueda al 100% (flujo educativo).
-  const featuresDesbloqueadas = progresoLaboral >= 100
-
-  const refreshJpData = useCallback(async () => {
-    if (!user) return
-    await fetchJpData(user.id)
-  }, [user, fetchJpData])
-
-  const refreshPerfil = useCallback((uid) => fetchPerfil(uid || user?.id), [fetchPerfil, user])
-  const refreshUsage  = useCallback(()    => user && fetchPerfil(user.id), [fetchPerfil, user])
-
-  // Roles y multi-tenancy
-  const role = perfil?.role || 'user'
-  const companyId = perfil?.company_id || null
-  const isAdmin = perfil?.role === 'super_admin'
-  const isCompanyAdmin = perfil?.role === 'company_admin'
-
   const value = useMemo(() => ({
     user, session, loading,
     login, register, logout,
-    perfil,
-    refreshPerfil,
-    refreshUsage,
-    onboardingPendiente, bienvenidaPendiente, perfilCargado,
     isRecovering, setIsRecovering,
-    // Progreso Gerente de Búsqueda
-    progresoLaboral, featuresDesbloqueadas, jpLoaded, jpData, refreshJpData,
-    // Roles y multi-tenancy
-    role, companyId, isAdmin, isCompanyAdmin,
-    // Plan info — usa directamente estos valores en los componentes
-    ...planInfo,
-    // Retrocompatibilidad
-    usageCount, creditosRestantes, LIMITE_PLAN,
-  }), [
-    user, session, loading, login, register, logout, perfil, refreshPerfil, refreshUsage,
-    onboardingPendiente, bienvenidaPendiente, perfilCargado, isRecovering, setIsRecovering, progresoLaboral,
-    featuresDesbloqueadas, jpLoaded, jpData, refreshJpData, role, companyId, isAdmin, isCompanyAdmin,
-    planInfo, usageCount, creditosRestantes
-  ])
+  }), [user, session, loading, login, register, logout, isRecovering])
 
   return (
     <AuthContext.Provider value={value}>
-    {children}
+      {children}
     </AuthContext.Provider>
   )
-
 }
 
 export const useAuth = () => {

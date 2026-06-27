@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { BookOpen, MagnifyingGlass, Clock, Tag, X, ArrowRight, Lightbulb, Star, Images, ArrowSquareOut } from '@phosphor-icons/react'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
 import FeatureLocked from '../components/common/FeatureLocked'
 import HelpBadge from '../components/common/HelpBadge'
 
@@ -340,7 +341,8 @@ function RenderContenido({ secciones }) {
 
 // ── Componente principal ──────────────────────────────────────────────────────
 export default function Biblioteca() {
-  const { featuresDesbloqueadas, loading } = useAuth()
+  const { loading } = useAuth()
+  const { featuresDesbloqueadas } = useProfile()
   const [busqueda, setBusqueda] = useState('')
   const [categoriaActiva, setCategoriaActiva] = useState('Todos')
   const [articuloAbierto, setArticuloAbierto] = useState(null)

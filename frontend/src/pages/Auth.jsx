@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
 import { supabase } from '../services/authService'
 import { Turnstile } from '@marsidev/react-turnstile'
 
@@ -25,7 +26,8 @@ const checkPassword = (pwd) => ({
 })
 
 export default function Auth() {
-  const { user, login, register, logout, onboardingPendiente, isRecovering, isCompanyAdmin, perfil } = useAuth()
+  const { user, login, register, logout, isRecovering } = useAuth()
+  const { onboardingPendiente, isCompanyAdmin, perfil } = useProfile()
   const navigate = useNavigate()
   const turnstileRef = useRef(null)
 

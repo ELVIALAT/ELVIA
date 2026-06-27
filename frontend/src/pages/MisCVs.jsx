@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useProfile } from '../context/ProfileContext'
 import { supabase } from '../services/authService'
 import { descargarCV } from '../services/cvService'
 import FeatureLocked from '../components/common/FeatureLocked'
@@ -110,7 +111,8 @@ function InfoVacante({ title, company, location, link, via, snippet, jobText }) 
 }
 
 export default function MisCVs() {
-  const { user, loading: authLoading, featuresDesbloqueadas } = useAuth()
+  const { user, loading: authLoading } = useAuth()
+  const { featuresDesbloqueadas } = useProfile()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
 

@@ -11,6 +11,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import * as Sentry from '@sentry/react'
 import { AuthProvider } from './context/AuthContext'
+import { ProfileProvider } from './context/ProfileContext'
 import { TenantProvider } from './context/TenantContext'
 import { CVProvider } from './context/CVContext'
 import App from './App'
@@ -69,11 +70,13 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <TenantProvider>
-          <CVProvider>
-            <App />
-          </CVProvider>
-        </TenantProvider>
+        <ProfileProvider>
+          <TenantProvider>
+            <CVProvider>
+              <App />
+            </CVProvider>
+          </TenantProvider>
+        </ProfileProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>
