@@ -20,7 +20,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # Node 22 LTS — versión única del monorepo (ver .nvmrc). Debe coincidir
+          # con el npm (10) que generó los lockfiles; ver engines en package.json.
+          node-version: '22'
           cache: 'npm'
           cache-dependency-path: services/api/package-lock.json
 
@@ -52,10 +54,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          # Node 24 (npm 11) — debe coincidir con el npm que generó
-          # apps/web/package-lock.json. npm 10 (Node 22) resuelve el árbol de
-          # esbuild distinto y rechaza el lockfile en `npm ci`.
-          node-version: '24'
+          # Node 22 LTS — versión única del monorepo (ver .nvmrc). El lockfile de
+          # apps/web se regeneró con npm 10 (el de Node 22) para casar exactamente.
+          node-version: '22'
           cache: 'npm'
           cache-dependency-path: apps/web/package-lock.json
 
