@@ -73,10 +73,22 @@ describeOrSkip('Aislamiento service_role (repo real vs BD real)', () => {
     const { data: iB } = await admin.from('company_invitations')
       .insert({ company_id: companyB, email: invBEmail }).select('id').single()
     invB = iB.id
+
+    // Marcadores distintivos para las agregaciones del dashboard/costos.
+    // Uso conocido en A (11) y en B (7777) → un leak del dashboard mostraría 7777.
+    await admin.from('profiles').update({ usage_count: 11, cv_optimizer_count: 5, cv_match_count: 3 }).eq('id', userA.id)
+    await admin.from('profiles').update({ usage_count: 7777, cv_optimizer_count: 333, cv_match_count: 222 }).eq('id', userB.id)
+    // Planes y paquetes de mentor con precios marcador (A=1000/500, B=9999/8888).
+    await admin.from('company_plans').insert({ company_id: companyA, plan_type: 'pro', duration_months: 3, price_mxn: 1000 })
+    await admin.from('company_plans').insert({ company_id: companyB, plan_type: 'max', duration_months: 6, price_mxn: 9999 })
+    await admin.from('mentor_packages').insert({ company_id: companyA, hours: 6, price_mxn: 500 })
+    await admin.from('mentor_packages').insert({ company_id: companyB, hours: 24, price_mxn: 8888 })
   }, 30000)
 
   afterAll(async () => {
     if (!admin) return
+    await admin.from('company_plans').delete().in('company_id', [companyA, companyB].filter(Boolean))
+    await admin.from('mentor_packages').delete().in('company_id', [companyA, companyB].filter(Boolean))
     await admin.from('company_allowlist').delete().in('company_id', [companyA, companyB].filter(Boolean))
     await admin.from('company_invitations').delete().in('company_id', [companyA, companyB].filter(Boolean))
     for (const id of [userA.id, userB.id].filter(Boolean)) {
@@ -156,5 +168,36 @@ describeOrSkip('Aislamiento service_role (repo real vs BD real)', () => {
     const { data } = await admin.from('company_invitations').select('id').eq('id', invB).maybeSingle()
     expect(data).not.toBeNull()
     expect(data.id).toBe(invB)
+  })
+
+  // ── dashboard: agregaciones del tenant (countTenantUsers / getTenantUsageRows) ──
+  // No son bugs vivos (ambas pasan por tenantQuery), pero no tenían NINGÚN test de
+  // aislamiento: blindan contra una regresión futura que lea profiles sin filtro.
+  test('countTenantUsers(A) cuenta solo perfiles de A, nunca los de B', async () => {
+    // companyA es fresca (slug único); solo userA está asignado a ella.
+    const count = await repo.countTenantUsers(admin, companyA)
+    expect(count).toBe(1)
+  })
+
+  test('getTenantUsageRows(A) no incluye el uso del perfil de B', async () => {
+    const rows = await repo.getTenantUsageRows(admin, companyA)
+    const usages = rows.map(r => r.usage_count)
+    expect(usages).not.toContain(7777) // marcador sembrado en B
+    expect(usages).toContain(11)       // marcador de A (no-vacuo)
+  })
+
+  // ── costs: company_plans / mentor_packages del tenant ──
+  test('getCompanyPlans(A) solo trae planes de A (nunca el precio marcador de B)', async () => {
+    const rows = await repo.getCompanyPlans(admin, companyA)
+    const prices = rows.map(r => Number(r.price_mxn))
+    expect(prices).not.toContain(9999) // marcador de B
+    expect(prices).toContain(1000)     // marcador de A (no-vacuo)
+  })
+
+  test('getMentorPackages(A) solo trae paquetes de A (nunca el de B)', async () => {
+    const rows = await repo.getMentorPackages(admin, companyA)
+    const prices = rows.map(r => Number(r.price_mxn))
+    expect(prices).not.toContain(8888) // marcador de B
+    expect(prices).toContain(500)      // marcador de A (no-vacuo)
   })
 })
