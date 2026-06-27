@@ -2,8 +2,8 @@
 // Extraído verbatim desde pages/ProyectoLaboral.jsx (Fase 3, paso 3).
 import { useState } from 'react'
 import { Sparkle, MicrophoneStage, UsersThree, CheckFat, WarningCircle, X } from '@phosphor-icons/react'
-import { supabase } from '../../../services/authService'
 import HelpBadge from '../../../components/common/HelpBadge'
+import { careerProjectApi } from '../api'
 
 const CULTURA_SUGERIDAS = [
   'De puertas abiertas','Feedback continuo','Comunicación transparente',
@@ -31,10 +31,10 @@ export default function PilarOfertaDeValor({ data, onChange, onSave, justSaved, 
     setIaLoading(true)
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
-      const { data: { session } } = await (await import('../../../services/authService')).supabase.auth.getSession()
+      const token = await careerProjectApi.getAccessToken()
       const res = await fetch(`${apiUrl}/api/cv/oferta-valor-ia`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session?.access_token}` },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           ikigai_amas:     d.ikigai_amas || '',
           ikigai_bueno:    d.ikigai_bueno || '',

@@ -4,8 +4,8 @@
 import { useState, useEffect, useRef } from 'react'
 import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
-import { supabase } from '../../../services/authService'
 import { extractarPerfilCV, descargarCV } from '../../../services/cvService'
+import { careerProjectApi } from '../api'
 import HelpBadge from '../../../components/common/HelpBadge'
 import { PlusMinus, SpinnerGap, CheckCircle, Lock, Folders, UploadSimple, CheckFat, WarningCircle } from '@phosphor-icons/react'
 import {
@@ -42,8 +42,8 @@ export default function PilarMiPerfil({ perfil, extraData, onChange, onSavePerfi
   useEffect(() => {
     if (!userId || !perfil?.cv_path) return
     const getCvId = async () => {
-      const { data } = await supabase.from('cv_results').select('id').eq('user_id', userId).eq('tipo', 'original').order('created_at', { ascending: false }).limit(1).maybeSingle()
-      if (data) setOriginalCvId(data.id)
+      const id = await careerProjectApi.getCVOriginalId(userId)
+      if (id) setOriginalCvId(id)
     }
     getCvId()
   }, [userId, perfil])
@@ -53,18 +53,10 @@ export default function PilarMiPerfil({ perfil, extraData, onChange, onSavePerfi
     
     // Fallback: si no tenemos el ID (posiblemente recién generado), intentamos buscarlo
     if (!cvId) {
-      const { data } = await supabase
-        .from('cv_results')
-        .select('id')
-        .eq('user_id', userId)
-        .eq('tipo', 'original')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle()
-      
-      if (data) {
-        cvId = data.id
-        setOriginalCvId(data.id)
+      const id = await careerProjectApi.getCVOriginalId(userId)
+      if (id) {
+        cvId = id
+        setOriginalCvId(id)
       }
     }
 

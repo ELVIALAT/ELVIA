@@ -8,12 +8,12 @@ import { useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { supabase } from '../../services/authService'
 import { calcularProgreso } from '../../utils/progresoLaboral'
 import toast from 'react-hot-toast'
 import { useTrackEvent } from '../../hooks/useTrackEvent'
 import LinkedinReportePDF from '../../components/LinkedinReportePDF'
 import { API } from './constants'
+import { linkedinApi } from './api'
 
 export function useLinkedinPro() {
   const { user, jpData, perfil } = useAuth()
@@ -48,29 +48,14 @@ export function useLinkedinPro() {
     if (!user) return
     const loadHistorialYUso = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession()
-        const headers = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}
-        const [resH, resU, resA] = await Promise.all([
-          fetch(`${API}/api/linkedin/historial`, { headers }),
-          fetch(`${API}/api/linkedin/uso-mes`, { headers }),
-          fetch(`${API}/api/linkedin/ultimo-analisis`, { headers }),
-        ])
-        if (resH.ok) {
-          const data = await resH.json()
-          setHistorial(Array.isArray(data) ? data : [])
-        }
-        if (resU.ok) {
-          const u = await resU.json()
-          setUsoMes(u)
-        }
-        if (resA.ok) {
-          const a = await resA.json()
-          if (a?.original && Object.values(a.original).some(v => v?.trim?.().length > 0)) {
-            // Precargar los campos con el último texto original guardado (silencioso)
-            setCampos({ titular: '', extracto: '', experiencia: '', habilidades: '', idiomas: '', educacion: '', ...a.original })
-            setImportMode('manual')
-            setAnalisisPrevio({ created_at: a.created_at })
-          }
+        const { historial: h, usoMes: u, analisisPrevio: a } = await linkedinApi.cargarDatos()
+        setHistorial(h)
+        setUsoMes(u)
+        if (a) {
+          // Precargar los campos con el último texto original guardado (silencioso)
+          setCampos({ titular: '', extracto: '', experiencia: '', habilidades: '', idiomas: '', educacion: '', ...a.original })
+          setImportMode('manual')
+          setAnalisisPrevio({ created_at: a.created_at })
         }
       } catch { /* lectura inicial no es crítica */ }
     }
@@ -82,28 +67,8 @@ export function useLinkedinPro() {
     setError('')
 
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      const formData = new FormData()
-      formData.append('pdf', file)
-
-      const res = await fetch(`${API}/api/linkedin/extraer-pdf`, {
-        method: 'POST',
-        headers: {
-          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
-        },
-        body: formData,
-      })
-
-      if (!res.ok) {
-        // Preferimos el mensaje exacto del backend (incluye instrucciones de descarga si el PDF no coincide).
-        let backendMsg = 'No se pudo extraer la información del PDF. Asegúrate de que sea el "Guardar en PDF" de LinkedIn.'
-        try {
-          const payload = await res.json()
-          if (payload?.error) backendMsg = payload.error
-        } catch { /* ignoramos parse error y usamos el mensaje por defecto */ }
-        throw new Error(backendMsg)
-      }
-      const data = await res.json()
+      const { ok, data, error: errMsg } = await linkedinApi.extraerPDF(file)
+      if (!ok) throw new Error(errMsg)
 
       setCampos(data)
       setImportMode('manual') // Cambiar a manual para que vean los resultados
@@ -136,24 +101,9 @@ export function useLinkedinPro() {
     track('feature_used', 'linkedin_pro', { action: 'analizar' })
 
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      const accessToken = session?.access_token
+      const { ok, data, error: errMsg } = await linkedinApi.analizar({ campos, contextoLaboral: jpData })
+      if (!ok) throw new Error(errMsg)
 
-      const res = await fetch(`${API}/api/linkedin/analizar`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-        },
-        body: JSON.stringify({ ...campos, contextoLaboral: jpData }),
-      })
-
-      if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || 'Error al analizar el perfil')
-      }
-
-      const data = await res.json()
       setResultado(data)
 
       // Decremento optimista del contador (el backend ya validó antes del análisis).
@@ -247,19 +197,7 @@ export function useLinkedinPro() {
       document.body.removeChild(contenedor)
 
       // Guardar registro en Mis Documentos
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.access_token) {
-        await fetch(`${API}/api/linkedin/guardar-reporte`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
-          body: JSON.stringify({
-            analisis: resultado,
-            editables,
-            original: originalSnapshot,
-            filename: nombreArchivo,
-          }),
-        })
-      }
+      await linkedinApi.guardarReporte({ analisis: resultado, editables, original: originalSnapshot, filename: nombreArchivo })
 
       setInformeGenerado(true)
       toast.success('¡Informe creado! Puedes verlo en Mis Documentos', { duration: 5000, icon: '📄' })
