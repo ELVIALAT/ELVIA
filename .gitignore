@@ -1,6 +1,12 @@
 # Dependencias
 node_modules/
 
+# Lockfile raíz del monorepo: NO se commitea. Los deploys instalan por
+# subdirectorio (Netlify base=apps/web, Railway cd services/api), así que el
+# lockfile de cada workspace (apps/web, services/api) es la fuente de verdad.
+# Un lockfile raíz sería redundante y propenso a drift en este modelo.
+/package-lock.json
+
 # Variables de entorno — nunca subir al repo
 .env
 .env.*
@@ -30,12 +36,8 @@ uploads/
 # Propuestas comerciales (documentos internos)
 docs/*.html
 
-# Scripts de utilería root (potrace)
-/package.json
-/package-lock.json
-
 # Logos marca consultora APAZ (no pertenecen a la plataforma ELVIA)
-frontend/public/LOGOS/Logo APAZ Talent Search*
+apps/web/public/LOGOS/Logo APAZ Talent Search*
 
 # Artefactos de herramientas de desarrollo local (no pertenecen al repo)
 .agent/

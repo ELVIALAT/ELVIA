@@ -1,0 +1,17 @@
+{
+  "name": "elvia-platform",
+  "private": true,
+  "description": "Monorepo ELVIA. Cada workspace es self-contained: CI y los deploys (Netlify base=apps/web, Railway cd services/api) instalan por subdirectorio. NO se usa el campo npm `workspaces` porque rompería ese modelo de install por-subdir; cuando packages/* tengan código compartido que se importe, se introducirá un esquema de linking deliberado.",
+  "scripts": {
+    "dev:web": "npm --prefix apps/web run dev",
+    "dev:api": "npm --prefix services/api run dev",
+    "build:web": "npm --prefix apps/web run build",
+    "test:api": "npm --prefix services/api test",
+    "test:isolation": "npm --prefix services/api run test:isolation",
+    "test:e2e": "npm --prefix e2e test",
+    "check:api": "npm --prefix services/api run check"
+  },
+  "devDependencies": {
+    "potrace": "^2.1.8"
+  }
+}
