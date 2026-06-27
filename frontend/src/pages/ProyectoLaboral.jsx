@@ -8,6 +8,7 @@ import { useProfile } from '../context/ProfileContext'
 import { usePlan } from '../context/usePlan'
 import { supabase } from '../services/authService'
 import { extractarPerfilCV, descargarCV } from '../services/cvService'
+import { generarPdf } from '../utils/pdf'
 import ReporteCompensacion from '../components/ReporteCompensacion'
 import { useTrackEvent } from '../hooks/useTrackEvent'
 import { calcPerfilPts, calcularProgreso as calcProgreso, calcularPorPilar } from '../utils/progresoLaboral'
@@ -179,16 +180,11 @@ export default function ProyectoLaboral() {
 
   // Función genérica de generación PDF → cv_results (upsert por subtipo)
   const generarReportePDF = async ({ elRef, subtipo, filename, contenido }) => {
-    const { default: html2pdf } = await import('html2pdf.js')
     const el = elRef.current
     if (!el) return
-    const opt = {
-      margin: 0, filename,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
-      jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' }
-    }
-    const pdfBlob = await html2pdf().set(opt).from(el).outputPdf('blob')
+    const pdfBlob = await generarPdf(el, {
+      filename, margin: 0, quality: 0.98, format: [794, 1123], unit: 'px', output: 'blob',
+    })
     const pdfBase64 = await new Promise((resolve) => {
       const reader = new FileReader()
       reader.onloadend = () => resolve(reader.result.split(',')[1])

@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useProfile } from '../../context/ProfileContext'
 import { calcularProgreso } from '../../utils/progresoLaboral'
+import { generarPdf } from '../../utils/pdf'
 import toast from 'react-hot-toast'
 import { useTrackEvent } from '../../hooks/useTrackEvent'
 import LinkedinReportePDF from '../../components/LinkedinReportePDF'
@@ -162,8 +163,6 @@ export function useLinkedinPro() {
     if (!resultado) return
     setGenerandoInforme(true)
     try {
-      const { default: html2pdf } = await import('html2pdf.js')
-
       // Renderizar el componente PDF en un div temporal fuera del DOM visible
       const contenedor = document.createElement('div')
       contenedor.style.position = 'fixed'
@@ -187,13 +186,9 @@ export function useLinkedinPro() {
         setTimeout(resolve, 300)
       })
 
-      await html2pdf().set({
-        margin: 8,
-        filename: `${nombreArchivo}.pdf`,
-        image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      }).from(contenedor.firstChild).save()
+      await generarPdf(contenedor.firstChild, {
+        filename: `${nombreArchivo}.pdf`, margin: 8, quality: 0.95, format: 'a4', unit: 'mm',
+      })
 
       root.unmount()
       document.body.removeChild(contenedor)

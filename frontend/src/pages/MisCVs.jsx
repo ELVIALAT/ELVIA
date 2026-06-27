@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useProfile } from '../context/ProfileContext'
 import { supabase } from '../services/authService'
 import { descargarCV } from '../services/cvService'
+import { generarPdf } from '../utils/pdf'
 import FeatureLocked from '../components/common/FeatureLocked'
 import HelpBadge from '../components/common/HelpBadge'
 import LinkedinReportePDF from '../components/LinkedinReportePDF'
@@ -220,7 +221,6 @@ export default function MisCVs() {
 
   const descargarLinkedinPDF = async (item) => {
     try {
-      const { default: html2pdf } = await import('html2pdf.js')
       const meta = item.metadata || {}
       const nombreArchivo = (meta.filename || 'Analisis LinkedIn').replace(/_/g, ' ').replace(/\.pdf$/i, '')
 
@@ -247,13 +247,9 @@ export default function MisCVs() {
         setTimeout(resolve, 300)
       })
 
-      await html2pdf().set({
-        margin: 8,
-        filename: `${nombreArchivo}.pdf`,
-        image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      }).from(contenedor.firstChild).save()
+      await generarPdf(contenedor.firstChild, {
+        filename: `${nombreArchivo}.pdf`, margin: 8, quality: 0.95, format: 'a4', unit: 'mm',
+      })
 
       root.unmount()
       document.body.removeChild(contenedor)
@@ -281,8 +277,7 @@ export default function MisCVs() {
         return
       }
 
-      // Fallback: regenerar con html2pdf
-      const { default: html2pdf } = await import('html2pdf.js')
+      // Fallback: regenerar con html2pdf (vía helper)
       let payload = {}
       try {
         payload = typeof item.contenido === 'string' ? JSON.parse(item.contenido) : (item.contenido || {})
@@ -305,13 +300,10 @@ export default function MisCVs() {
         setTimeout(resolve, 400)
       })
 
-      await html2pdf().set({
-        margin: 0,
+      await generarPdf(contenedor.firstChild, {
         filename: meta.filename || 'Reporte de Compensacion.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'px', format: [794, 1123], orientation: 'portrait' },
-      }).from(contenedor.firstChild).save()
+        margin: 0, quality: 0.98, format: [794, 1123], unit: 'px',
+      })
 
       root.unmount()
       document.body.removeChild(contenedor)
