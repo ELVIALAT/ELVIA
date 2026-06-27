@@ -52,7 +52,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          # Node 24 (npm 11) — debe coincidir con el npm que generó
+          # apps/web/package-lock.json. npm 10 (Node 22) resuelve el árbol de
+          # esbuild distinto y rechaza el lockfile en `npm ci`.
+          node-version: '24'
           cache: 'npm'
           cache-dependency-path: apps/web/package-lock.json
 
