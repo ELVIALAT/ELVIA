@@ -8,40 +8,17 @@ import ErrorBoundary from './components/common/ErrorBoundary'
 import { useAuth } from './context/AuthContext'
 import { useProfile } from './context/ProfileContext'
 import { Toaster } from 'react-hot-toast'
+import { ROUTES } from './routes/registry'
+import {
+  classifyLayout,
+  evaluatePublicRoute,
+  evaluateOnboarding,
+  evaluateBienvenida,
+} from './routes/decisions'
 
-const Landing2           = lazy(() => import('./pages/Landing2'))
-const LandingMuyPronto   = lazy(() => import('./pages/LandingMuyPronto'))
-const CVOptimizer        = lazy(() => import('./pages/CVOptimizer'))
-const CVDesdeCero        = lazy(() => import('./pages/CVDesdeCero'))
-const CVvsJob            = lazy(() => import('./pages/CVvsJob'))
-const JobMatches         = lazy(() => import('./pages/JobMatches'))
-const Auth               = lazy(() => import('./pages/Auth'))
-const MisCVs             = lazy(() => import('./pages/MisCVs'))
-const MisVacantes        = lazy(() => import('./pages/MisVacantes'))
-const Pipeline           = lazy(() => import('./pages/Pipeline'))
-const Perfil             = lazy(() => import('./pages/Perfil'))
-const Dashboard          = lazy(() => import('./pages/Dashboard'))
-const BienvenidaOnboarding = lazy(() => import('./pages/BienvenidaOnboarding'))
-const Admin              = lazy(() => import('./pages/Admin'))
-const Entrevista         = lazy(() => import('./pages/Entrevista'))
-const Biblioteca         = lazy(() => import('./pages/Biblioteca'))
-const LinkedinPro        = lazy(() => import('./pages/LinkedinPro'))
-const Privacidad         = lazy(() => import('./pages/Privacidad'))
-const ResetPassword      = lazy(() => import('./pages/ResetPassword'))
-const Expertos           = lazy(() => import('./pages/Expertos'))
-const Infografias        = lazy(() => import('./pages/Infografias'))
-const ProyectoLaboral    = lazy(() => import('./pages/ProyectoLaboral'))
-const ReporteLaboral     = lazy(() => import('./pages/ReporteLaboral'))
-const Bienestar          = lazy(() => import('./pages/Bienestar'))
-const MisMetricas        = lazy(() => import('./pages/MisMetricas'))
-const Cookies            = lazy(() => import('./pages/Cookies'))
-const Ayuda              = lazy(() => import('./pages/Ayuda'))
-const LandingEmpresa     = lazy(() => import('./pages/LandingEmpresa'))
-const RegistroEmpresa    = lazy(() => import('./pages/RegistroEmpresa'))
-const LoginHR            = lazy(() => import('./pages/LoginHR'))
-const LoginEmpresa       = lazy(() => import('./pages/LoginEmpresa'))
-const ActivarCuenta      = lazy(() => import('./pages/ActivarCuenta'))
-const CompanyAdmin       = lazy(() => import('./pages/CompanyAdmin'))
+// ResetPassword se importa también aquí (además del registry) para el bloqueo nuclear
+// de abajo, que lo renderiza fuera del <Suspense>/<Routes> normal.
+const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 
 function PageLoader() {
   return (
@@ -51,94 +28,45 @@ function PageLoader() {
   )
 }
 
-// Rutas que NO muestran sidebar ni header estándar
-const RUTAS_FULL = ['/', '/waitlist', '/inicio', '/auth', '/bienvenida', '/admin', '/empresa-admin', '/privacidad', '/cookies', '/reset-password']
-// Rutas excluidas del guard de onboarding (no redirigen a /bienvenida aunque haya onboarding pendiente)
-const RUTAS_SIN_GUARD = ['/', '/waitlist', '/inicio', '/auth', '/bienvenida', '/admin', '/empresa-admin', '/privacidad', '/cookies', '/reset-password', '/proyecto-laboral', '/cv-desde-cero', '/linkedin-pro']
-// Rutas públicas (solo para usuarios NO autenticados).
-// /auth se excluye para que Auth.jsx maneje su propio redirect (evita que PublicRoute
-// intercepte la página antes de renderizar el banner de "sesión activa").
-const RUTAS_PUBLICAS = ['/', '/waitlist', '/privacidad', '/cookies', '/reset-password']
-
-// Rutas internas de la APP (si NO es una de estas, usamos FullLayout para el Catch-All)
-const RUTAS_APP = [
-  '/dashboard', '/cv-optimizer', '/cv-desde-cero', '/cv-vs-job', '/jobs', 
-  '/mis-cvs', '/mis-vacantes', '/pipeline', '/perfil',
-  '/entrevista', '/biblioteca', '/linkedin-pro', '/onboarding',
-  '/bienestar', '/proyecto-laboral', '/infografias', '/expertos', '/mis-metricas', '/ayuda'
-]
-
-function PublicRoute({ children }) {
-  const { user, loading, isRecovering } = useAuth()
-  const { onboardingPendiente, featuresDesbloqueadas, perfilCargado, isCompanyAdmin } = useProfile()
-  const location = useLocation()
-
-  if (loading || !perfilCargado) return null
-
-  const isRecoveryMode = sessionStorage.getItem('optima_recovery_mode') === 'true' || isRecovering || location.hash.includes('type=recovery')
-
-  if (isRecoveryMode || location.hash.includes('access_token')) {
-    return children
-  }
-
-  if (user) {
-    // Company admin (HR) → panel de empresa, no flujo de usuario
-    if (isCompanyAdmin) {
-      return <Navigate to="/empresa-admin" replace />
-    }
-    // Si tiene onboarding pendiente, dejar que PrivateRoute lo mande a /bienvenida o similar
-    // Pero si ya pasó el onboarding inicial y no tiene herramientas desbloqueadas -> /proyecto-laboral
-    if (!onboardingPendiente && !featuresDesbloqueadas) {
-      return <Navigate to="/proyecto-laboral" replace />
-    }
-    return <Navigate to="/dashboard" replace />
-  }
+// Traduce la decisión pura (routes/decisions.js) a lo que renderiza un guard.
+function applyDecision(decision, children) {
+  if (decision.type === 'wait') return null
+  if (decision.type === 'redirect') return <Navigate to={decision.to} replace />
   return children
 }
 
+// Lee el modo recovery de las fuentes side-effectful (sessionStorage + hash + flag).
+function useRecoveryMode() {
+  const { isRecovering } = useAuth()
+  const location = useLocation()
+  return sessionStorage.getItem('optima_recovery_mode') === 'true'
+    || isRecovering
+    || location.hash.includes('type=recovery')
+}
+
+function PublicRoute({ children }) {
+  const { user, loading } = useAuth()
+  const { onboardingPendiente, featuresDesbloqueadas, perfilCargado, isCompanyAdmin } = useProfile()
+  const location = useLocation()
+  const isRecoveryMode = useRecoveryMode()
+
+  return applyDecision(evaluatePublicRoute({
+    loading, perfilCargado, isRecoveryMode,
+    hasAccessTokenHash: location.hash.includes('access_token'),
+    user, isCompanyAdmin, onboardingPendiente, featuresDesbloqueadas,
+  }), children)
+}
+
 function OnboardingGuard({ children }) {
-  const { loading, isRecovering } = useAuth()
+  const { loading } = useAuth()
   const { onboardingPendiente, featuresDesbloqueadas, isCompanyAdmin, isAdmin, jpLoaded, perfilCargado } = useProfile()
   const location = useLocation()
+  const isRecoveryMode = useRecoveryMode()
 
-  if (loading) return null
-
-  const isRecoveryMode = sessionStorage.getItem('optima_recovery_mode') === 'true' || isRecovering || location.hash.includes('type=recovery')
-  const path = location.pathname.toLowerCase()
-
-  if (isRecoveryMode || path.startsWith('/reset-password')) {
-    return children
-  }
-
-  // Company admin / super admin → bypass guards de usuario.
-  // Si intenta entrar a rutas de usuario común, redirigir a su panel.
-  if (isCompanyAdmin || isAdmin) {
-    if (path === '/empresa-admin' || path.startsWith('/admin')) {
-      return children
-    }
-    return <Navigate to="/empresa-admin" replace />
-  }
-
-  // RUTAS_SIN_GUARD pasan sin esperar jpLoaded/perfilCargado para evitar
-  // que el guard desmonte páginas con formularios en progreso (ej. /proyecto-laboral)
-  if (RUTAS_SIN_GUARD.includes(path)) {
-    return children
-  }
-
-  // Solo las RUTAS_GATED esperan a que jpData y perfil estén listos
-  if (!jpLoaded || !perfilCargado) return null
-
-  if (onboardingPendiente) {
-    return <Navigate to="/bienvenida" replace />
-  }
-
-  // Gating de herramientas: si intenta entrar a dashboard o herramientas y no están desbloqueadas
-  const RUTAS_GATED = ['/dashboard', '/cv-optimizer', '/cv-vs-job', '/jobs', '/mis-cvs', '/mis-vacantes', '/pipeline', '/entrevista', '/biblioteca', '/linkedin-pro', '/mis-metricas']
-  if (RUTAS_GATED.includes(path) && !featuresDesbloqueadas) {
-    return <Navigate to="/proyecto-laboral" replace />
-  }
-
-  return children
+  return applyDecision(evaluateOnboarding({
+    loading, pathname: location.pathname, isRecoveryMode,
+    isCompanyAdmin, isAdmin, jpLoaded, perfilCargado, onboardingPendiente, featuresDesbloqueadas,
+  }), children)
 }
 
 function PrivateRoute({ children }) {
@@ -150,15 +78,23 @@ function PrivateRoute({ children }) {
   return <OnboardingGuard>{children}</OnboardingGuard>
 }
 
-// Solo accesible si: autenticado + onboarding pendiente
-// Si no autenticado → /auth | Si ya completó onboarding → /dashboard
 function BienvenidaRoute({ children }) {
   const { user, loading } = useAuth()
   const { onboardingPendiente, perfilCargado } = useProfile()
-  if (loading || !perfilCargado) return null
-  if (!user) return <Navigate to="/auth" replace />
-  if (!onboardingPendiente) return <Navigate to="/dashboard" replace />
-  return children
+  return applyDecision(evaluateBienvenida({ loading, perfilCargado, user, onboardingPendiente }), children)
+}
+
+const GUARDS = { public: PublicRoute, private: PrivateRoute, bienvenida: BienvenidaRoute }
+
+// Construye el elemento de una entrada del registry: redirect, o componente (con sus
+// props) envuelto en su guard si tiene uno.
+function buildElement(route) {
+  if (route.redirectTo) return <Navigate to={route.redirectTo} replace />
+  const Component = route.Component
+  let element = <Component {...(route.props || {})} />
+  const Guard = GUARDS[route.guard]
+  if (Guard) element = <Guard>{element}</Guard>
+  return element
 }
 
 // Layout con sidebar para páginas de app
@@ -193,7 +129,7 @@ export default function App() {
   const { isRecovering } = useAuth()
   const location = useLocation()
   const navigate = useNavigate()
-  
+
   // ── BLOQUEO Y REDIRECCIÓN DE SEGURIDAD (NUCLEAR) ──
   // 1. Si aterrizamos en cualquier parte (?forgot=1, /, etc) con un token de recuperación,
   // forzamos la navegación a la ruta dedicada.
@@ -216,71 +152,15 @@ export default function App() {
     )
   }
 
-  const currentPath = location.pathname.toLowerCase()
-  const isFullLayout = RUTAS_FULL.includes(currentPath) || !RUTAS_APP.includes(currentPath)
+  const isFullLayout = classifyLayout(location.pathname) === 'full'
 
   const routes = (
     <Suspense fallback={<PageLoader />}>
-    <Routes>
-      <Route path="/reset-password"  element={<ResetPassword />} />  {/* Por si acaso falla el bloqueo anterior */}
-      {/* Raíz: Landing2 en modo comercial (B2B + login para invitados) */}
-      <Route path="/"              element={<PublicRoute><Landing2 modoComercial={true} /></PublicRoute>} />
-      {/* Rutas legacy deshabilitadas — redirigen a la raíz para evitar exposición pública.
-          Si necesitas reactivar: cambia el <Navigate> por <PublicRoute>...</PublicRoute>. */}
-      <Route path="/waitlist"       element={<Navigate to="/" replace />} />
-      <Route path="/inicio"         element={<Navigate to="/" replace />} />
-      <Route path="/muy-pronto"     element={<LandingMuyPronto />} />
-      <Route path="/auth"          element={<PublicRoute><Auth /></PublicRoute>} />
-      <Route path="/privacidad"      element={<Privacidad />} />
-      <Route path="/cookies"         element={<Cookies />} />
-      <Route path="/bienvenida"     element={<BienvenidaRoute><BienvenidaOnboarding /></BienvenidaRoute>} />
-
-      {/* Landings co-brandeadas B2B y registro por slug de empresa/universidad */}
-      <Route path="/empresas/:slug"             element={<LandingEmpresa />} />
-      <Route path="/empresas/:slug/registro"    element={<RegistroEmpresa />} />
-      <Route path="/empresas/:slug/hr"          element={<LoginHR />} />
-      <Route path="/empresas/:slug/login"       element={<LoginEmpresa />} />
-      <Route path="/empresas/:slug/activar"     element={<ActivarCuenta />} />
-      <Route path="/universidades/:slug"          element={<LandingEmpresa />} />
-      <Route path="/universidades/:slug/registro" element={<RegistroEmpresa />} />
-      <Route path="/universidades/:slug/hr"       element={<LoginHR />} />
-      <Route path="/universidades/:slug/login"    element={<LoginEmpresa />} />
-      <Route path="/universidades/:slug/activar"  element={<ActivarCuenta />} />
-
-      {/* Panel del HR Director / Gestor de programa B2B */}
-      <Route path="/empresa-admin" element={<PrivateRoute><CompanyAdmin /></PrivateRoute>} />
-
-      {/* Admin / Especiales */}
-      <Route path="/admin"         element={<Admin />} />
-      <Route path="/expertos"        element={<Expertos />} />
-      <Route path="/infografias"     element={<Infografias />} />
-      <Route path="/proyecto-laboral" element={<PrivateRoute><ProyectoLaboral /></PrivateRoute>} />
-      <Route path="/reporte-visual/:id" element={<PrivateRoute><ReporteLaboral /></PrivateRoute>} />
-      <Route path="/bienestar"        element={<PrivateRoute><Bienestar /></PrivateRoute>} />
-
-      {/* Privadas (Protegidas por Auth + Onboarding) */}
-      <Route path="/dashboard"     element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-      <Route path="/cv-optimizer"  element={<PrivateRoute><CVOptimizer /></PrivateRoute>} />
-      <Route path="/cv-desde-cero" element={<PrivateRoute><CVDesdeCero /></PrivateRoute>} />
-      <Route path="/cv-vs-job"     element={<PrivateRoute><CVvsJob /></PrivateRoute>} />
-      <Route path="/jobs"          element={<PrivateRoute><JobMatches /></PrivateRoute>} />
-      <Route path="/mis-cvs"       element={<PrivateRoute><MisCVs /></PrivateRoute>} />
-      <Route path="/mis-vacantes"  element={<PrivateRoute><MisVacantes /></PrivateRoute>} />
-      <Route path="/pipeline"      element={<PrivateRoute><Pipeline /></PrivateRoute>} />
-      <Route path="/perfil"        element={<PrivateRoute><Perfil /></PrivateRoute>} />
-      <Route path="/entrevista"      element={<PrivateRoute><Entrevista /></PrivateRoute>} />
-      <Route path="/biblioteca"      element={<PrivateRoute><Biblioteca /></PrivateRoute>} />
-      <Route path="/linkedin-pro"    element={<PrivateRoute><LinkedinPro /></PrivateRoute>} />
-      <Route path="/mis-metricas"    element={<PrivateRoute><MisMetricas /></PrivateRoute>} />
-      
-      <Route path="/ayuda"          element={<PrivateRoute><Ayuda /></PrivateRoute>} />
-
-      {/* /onboarding redirige a /bienvenida — ruta legacy */}
-      <Route path="/onboarding"    element={<Navigate to="/bienvenida" replace />} />
-
-      {/* CATCH-ALL: Redirigir cualquier ruta no válida al home/dashboard según auth */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+      <Routes>
+        {ROUTES.map((route) => (
+          <Route key={route.path} path={route.path} element={buildElement(route)} />
+        ))}
+      </Routes>
     </Suspense>
   )
 
