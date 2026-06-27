@@ -59,6 +59,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Tests de runtime (vitest + jsdom): persistencia del CV-wizard y smoke de
+      # montaje de las pantallas refactorizadas. Mockean todo (supabase/api/fetch)
+      # → sin red ni secretos. NON-BLOCKING hasta estabilizar: quitar
+      # `continue-on-error` para volverlos obligatorios.
+      # Nota: los tests de aislamiento del backend (npm run test:isolation) NO van en
+      # CI — mutan staging y usan slugs fijos (colisión entre corridas concurrentes);
+      # se corren a mano antes de release.
+      - name: Test (vitest) — non-blocking
+        run: npx vitest run
+        continue-on-error: true
+
       - name: Build
         run: npm run build
         env:

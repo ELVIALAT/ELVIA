@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import * as PI from '@phosphor-icons/react'
+import { Brain, CircleNotch, ClockCounterClockwise, FilePdf, FileText, Ghost, UploadSimple, Warning } from '@phosphor-icons/react'
 import SectionHeading from '../shared/SectionHeading'
 import { toast } from 'react-hot-toast'
 
@@ -107,7 +107,7 @@ const KnowledgeTab = ({ API_URL, db }) => {
             <SectionHeading 
               title="Base de Conocimientos" 
               subtitle="Entrenamiento RAG"
-              icon={PI.Brain}
+              icon={Brain}
             />
 
             <div className="bg-[#111827] rounded-[2.5rem] p-8 border border-slate-800 shadow-2xl relative">
@@ -122,7 +122,7 @@ const KnowledgeTab = ({ API_URL, db }) => {
                     disabled={loading}
                   />
                   <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 mb-4">
-                    <PI.FilePdf size={32} className={file ? 'text-indigo-400' : 'text-slate-600'} weight="duotone" />
+                    <FilePdf size={32} className={file ? 'text-indigo-400' : 'text-slate-600'} weight="duotone" />
                   </div>
                   <p className="text-xs font-bold text-white mb-1">
                     {file ? file.name : 'Subir Documento'}
@@ -143,7 +143,7 @@ const KnowledgeTab = ({ API_URL, db }) => {
                   disabled={loading || !file}
                   className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-black uppercase tracking-widest py-4 rounded-2xl transition-all shadow-xl shadow-indigo-900/40 flex items-center justify-center gap-3 italic text-[10px]"
                 >
-                  {loading ? <PI.CircleNotch size={16} className="animate-spin" /> : <PI.UploadSimple size={16} weight="bold" />}
+                  {loading ? <CircleNotch size={16} className="animate-spin" /> : <UploadSimple size={16} weight="bold" />}
                   {loading ? 'Procesando...' : 'Indexar en ELVIA'}
                 </button>
               </form>
@@ -151,7 +151,7 @@ const KnowledgeTab = ({ API_URL, db }) => {
 
             <div className="p-6 rounded-[2rem] bg-amber-500/5 border border-amber-500/10 flex items-start gap-4 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 blur-[50px] rounded-full" />
-              <PI.Warning size={20} weight="duotone" className="text-amber-500 shrink-0" />
+              <Warning size={20} weight="duotone" className="text-amber-500 shrink-0" />
               <div className="relative z-10">
                  <h4 className="font-black text-amber-500 mb-1 uppercase italic tracking-widest text-[9px]">Límites de Ingesta</h4>
                  <p className="text-[10px] text-slate-400 leading-relaxed font-medium">
@@ -166,7 +166,7 @@ const KnowledgeTab = ({ API_URL, db }) => {
             <SectionHeading 
               title="Historial de Ingesta" 
               subtitle="Documentos activos en la IA"
-              icon={PI.ClockCounterClockwise}
+              icon={ClockCounterClockwise}
             />
 
             <div className="bg-[#111827] rounded-[2.5rem] border border-slate-800 shadow-2xl overflow-hidden">
@@ -190,7 +190,7 @@ const KnowledgeTab = ({ API_URL, db }) => {
                     ) : logs.length === 0 ? (
                       <tr>
                         <td colSpan="4" className="py-20 px-8 text-center">
-                          <PI.Ghost size={40} className="mx-auto text-slate-700 mb-4" weight="duotone" />
+                          <Ghost size={40} className="mx-auto text-slate-700 mb-4" weight="duotone" />
                           <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">No hay documentos indexados</p>
                         </td>
                       </tr>
@@ -199,7 +199,7 @@ const KnowledgeTab = ({ API_URL, db }) => {
                         <td className="py-6 px-8">
                           <div className="flex items-center gap-4">
                             <div className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-indigo-400">
-                              <PI.FileText size={18} weight="duotone" />
+                              <FileText size={18} weight="duotone" />
                             </div>
                             <span className="text-xs font-bold text-white group-hover:text-indigo-400 transition-colors truncate max-w-[180px]">
                               {log.filename}

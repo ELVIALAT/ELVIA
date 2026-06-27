@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import * as PI from '@phosphor-icons/react'
+import { ChartLineUp, CheckCircle, Crown, CurrencyDollar, Kanban, Sparkle, TrendUp, UsersThree } from '@phosphor-icons/react'
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   Cell, AreaChart, Area, PieChart, Pie
@@ -65,7 +65,7 @@ const OverviewTab = ({ stats, theme, users = [] }) => {
       <SectionHeading 
         title="Escritorio de Control B2C" 
         subtitle="Métricas generales de rendimiento y adopción"
-        icon={PI.Kanban}
+        icon={Kanban}
       />
 
       {/* KPIs Grid */}
@@ -74,28 +74,28 @@ const OverviewTab = ({ stats, theme, users = [] }) => {
           label="Usuarios totales"  
           value={stats.totalUsers}    
           sub="Registrados en plataforma"   
-          icon={PI.UsersThree}    
+          icon={UsersThree}    
           color="blue"   
         />
         <KpiCard 
           label="Perfiles Full"     
           value={stats.conOnboarding} 
           sub="Con onboarding completo" 
-          icon={PI.CheckCircle} 
+          icon={CheckCircle} 
           color="green"  
         />
         <KpiCard 
           label="MRR Activo"   
           value={`$${planData.reduce((acc, p) => p.name !== 'Free' ? acc + (p.usuarios * 15) : acc, 0)}`}        
           sub="Estimado B2C (USD)" 
-          icon={PI.CurrencyDollar} 
+          icon={CurrencyDollar} 
           color="emerald" 
         />
         <KpiCard 
           label="Impacto Total"     
           value={stats.totalUsage}    
           sub="CVs optimizados por IA" 
-          icon={PI.Sparkle} 
+          icon={Sparkle} 
           color="amber"  
         />
       </div>
@@ -104,7 +104,7 @@ const OverviewTab = ({ stats, theme, users = [] }) => {
         {/* Gráfico de Crecimiento */}
         <div className={`lg:col-span-2 ${cardBg} rounded-[2.5rem] p-10 border ${cardBorder} shadow-2xl relative overflow-hidden group transition-colors duration-300`}>
           <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
-            <PI.TrendUp size={120} weight="duotone" className="text-indigo-500" />
+            <TrendUp size={120} weight="duotone" className="text-indigo-500" />
           </div>
 
           <div className="flex items-center justify-between mb-10 relative z-10">
@@ -113,7 +113,7 @@ const OverviewTab = ({ stats, theme, users = [] }) => {
               <p className={`text-[10px] ${textSub} mt-1 font-bold uppercase tracking-widest`}>Adquisición últimos 6 meses</p>
             </div>
             <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">
-              <PI.ChartLineUp size={24} weight="duotone" />
+              <ChartLineUp size={24} weight="duotone" />
             </div>
           </div>
           
@@ -161,7 +161,7 @@ const OverviewTab = ({ stats, theme, users = [] }) => {
         <div className={`${cardBg} rounded-[2.5rem] p-10 border ${cardBorder} shadow-2xl flex flex-col transition-colors duration-300`}>
           <div className="flex items-center gap-4 mb-10">
             <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-500 border border-amber-500/20">
-              <PI.Crown size={24} weight="duotone" />
+              <Crown size={24} weight="duotone" />
             </div>
             <div>
               <h3 className={`font-black ${textTitle} text-lg italic uppercase`}>Suscripciones</h3>

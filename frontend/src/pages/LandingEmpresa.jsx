@@ -5,7 +5,7 @@
 
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import * as PI from '@phosphor-icons/react'
+import { ArrowRight, Books, Briefcase, ChartBar, ChatsCircle, FileText, Files, HeartStraight, Kanban, Lightning, LinkedinLogo, Lock, MagnifyingGlass, Quotes, ShieldCheck, Star, Target, UserCircle, WarningCircle } from '@phosphor-icons/react'
 import { useTenant, DEFAULT_TENANT } from '../context/TenantContext'
 
 export default function LandingEmpresa() {
@@ -37,7 +37,7 @@ export default function LandingEmpresa() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white px-6">
         <div className="max-w-md text-center">
-          <PI.WarningCircle size={56} weight="duotone" className="text-amber-500 mx-auto mb-4" />
+          <WarningCircle size={56} weight="duotone" className="text-amber-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Programa no disponible</h1>
           <p className="text-sm text-gray-500 mb-6">
             No encontramos un programa activo con el identificador <code className="px-2 py-0.5 bg-gray-100 rounded">{slug}</code>.
@@ -64,15 +64,15 @@ export default function LandingEmpresa() {
 
   // ── Features dinámicas según el tenant ──────────────────────────────────
   const allFeatures = [
-    { key: 'cv_optimizer', icon: PI.FileText,        title: 'CV de clase mundial',  desc: 'Plantillas Harvard y optimización ATS asistida por IA.' },
-    { key: 'cv_match',     icon: PI.Target,          title: 'CV vs Vacante',        desc: 'Match instantáneo con score por dimensión y keywords clave.' },
-    { key: 'jobs',         icon: PI.Briefcase,       title: 'Vacantes compatibles', desc: 'Buscador integrado con miles de empleos relevantes.' },
-    { key: 'pipeline',     icon: PI.Kanban,          title: 'Pipeline de búsqueda', desc: 'Organiza postulaciones, etapas, contactos y seguimientos.' },
-    { key: 'interview',    icon: PI.ChatsCircle,     title: 'Simulador de entrevista', desc: 'Practica con preguntas reales y obtén feedback IA.' },
-    { key: 'linkedin',     icon: PI.LinkedinLogo,    title: 'LinkedIn® Pro',        desc: 'Análisis y mejoras concretas para tu perfil profesional.' },
-    { key: 'library',      icon: PI.Books,           title: 'Biblioteca',           desc: 'Guías, tips y cartas de presentación listas para usar.' },
-    { key: 'wellbeing',    icon: PI.HeartStraight,   title: 'Bienestar',            desc: 'Acompañamiento emocional durante la transición.' },
-    { key: 'metrics',      icon: PI.ChartBar,        title: 'Mis Métricas',         desc: 'Visualiza tu progreso, conversión y tendencias semanales.' },
+    { key: 'cv_optimizer', icon: FileText,        title: 'CV de clase mundial',  desc: 'Plantillas Harvard y optimización ATS asistida por IA.' },
+    { key: 'cv_match',     icon: Target,          title: 'CV vs Vacante',        desc: 'Match instantáneo con score por dimensión y keywords clave.' },
+    { key: 'jobs',         icon: Briefcase,       title: 'Vacantes compatibles', desc: 'Buscador integrado con miles de empleos relevantes.' },
+    { key: 'pipeline',     icon: Kanban,          title: 'Pipeline de búsqueda', desc: 'Organiza postulaciones, etapas, contactos y seguimientos.' },
+    { key: 'interview',    icon: ChatsCircle,     title: 'Simulador de entrevista', desc: 'Practica con preguntas reales y obtén feedback IA.' },
+    { key: 'linkedin',     icon: LinkedinLogo,    title: 'LinkedIn® Pro',        desc: 'Análisis y mejoras concretas para tu perfil profesional.' },
+    { key: 'library',      icon: Books,           title: 'Biblioteca',           desc: 'Guías, tips y cartas de presentación listas para usar.' },
+    { key: 'wellbeing',    icon: HeartStraight,   title: 'Bienestar',            desc: 'Acompañamiento emocional durante la transición.' },
+    { key: 'metrics',      icon: ChartBar,        title: 'Mis Métricas',         desc: 'Visualiza tu progreso, conversión y tendencias semanales.' },
   ]
   const enabled = tenant.enabled_features || {}
   const features = allFeatures.filter(f => enabled[f.key] !== false)
@@ -116,7 +116,7 @@ export default function LandingEmpresa() {
               className="hidden md:inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-gray-900 px-3 py-2"
               title="Acceso para gestores del programa"
             >
-              <PI.ShieldCheck size={14} weight="duotone" />
+              <ShieldCheck size={14} weight="duotone" />
               Acceso HR
             </button>
             <button
@@ -180,7 +180,7 @@ export default function LandingEmpresa() {
                   style={{ background: primary, boxShadow: `0 8px 30px -6px ${primary}60` }}
                 >
                   Activar mi cuenta
-                  <PI.ArrowRight size={16} weight="bold" />
+                  <ArrowRight size={16} weight="bold" />
                 </button>
                 <button
                   onClick={() => navigate(`/${sectorPath}/${slug}/login`)}
@@ -192,7 +192,7 @@ export default function LandingEmpresa() {
 
               {/* Confidencialidad badge */}
               <div className="mt-8 inline-flex items-start gap-2.5 text-xs text-slate-500 max-w-xl">
-                <PI.ShieldCheck size={18} className="text-emerald-500 shrink-0 mt-0.5" weight="duotone" />
+                <ShieldCheck size={18} className="text-emerald-500 shrink-0 mt-0.5" weight="duotone" />
                 <span>
                   <strong className="text-slate-700 font-bold">Tu información es confidencial.</strong> {tenant.name} solo recibe métricas agregadas y anónimas del programa.
                 </span>
@@ -209,7 +209,7 @@ export default function LandingEmpresa() {
                 <div className="flex flex-col">
                   <div className="flex items-center gap-1.5">
                     {[...Array(5)].map((_, i) => (
-                      <PI.Star key={i} size={14} weight="fill" className="text-amber-400" />
+                      <Star key={i} size={14} weight="fill" className="text-amber-400" />
                     ))}
                     <span className="text-xs font-extrabold text-slate-800 ml-1">+100 registrados</span>
                   </div>
@@ -243,12 +243,12 @@ export default function LandingEmpresa() {
                 {/* 6-Capabilities Grid */}
                 <div className="grid grid-cols-2 gap-3 mb-6 relative">
                   {[
-                    { title: 'Autodescubrimiento', desc: 'Conoce quién eres', icon: PI.MagnifyingGlass },
-                    { title: 'Fortalezas', desc: 'Sabe en qué eres bueno', icon: PI.ShieldCheck },
-                    { title: 'Oferta de valor', desc: 'Descubre tu propuesta', icon: PI.Target },
-                    { title: 'Herramientas', desc: 'Recursos optimizados', icon: PI.Lightning },
-                    { title: 'Seguimiento', desc: 'Control y visibilidad', icon: PI.ChartBar },
-                    { title: 'Tranquilidad', desc: 'Te guía en el proceso', icon: PI.HeartStraight },
+                    { title: 'Autodescubrimiento', desc: 'Conoce quién eres', icon: MagnifyingGlass },
+                    { title: 'Fortalezas', desc: 'Sabe en qué eres bueno', icon: ShieldCheck },
+                    { title: 'Oferta de valor', desc: 'Descubre tu propuesta', icon: Target },
+                    { title: 'Herramientas', desc: 'Recursos optimizados', icon: Lightning },
+                    { title: 'Seguimiento', desc: 'Control y visibilidad', icon: ChartBar },
+                    { title: 'Tranquilidad', desc: 'Te guía en el proceso', icon: HeartStraight },
                   ].map((c, i) => {
                     const Icon = c.icon
                     return (
@@ -270,7 +270,7 @@ export default function LandingEmpresa() {
                   style={{ background: primary, boxShadow: `0 8px 24px -6px ${primary}60` }}
                 >
                   Activar mi cuenta
-                  <PI.ArrowRight size={14} weight="bold" />
+                  <ArrowRight size={14} weight="bold" />
                 </button>
               </div>
             </div>
@@ -284,7 +284,7 @@ export default function LandingEmpresa() {
       {tenant.welcome_message && (
         <section className="bg-gray-50 border-y border-gray-100">
           <div className="max-w-4xl mx-auto px-6 lg:px-10 py-16 text-center">
-            <PI.Quotes size={32} weight="duotone" className="mx-auto mb-4" style={{ color: primary }} />
+            <Quotes size={32} weight="duotone" className="mx-auto mb-4" style={{ color: primary }} />
             <p className="text-lg md:text-xl text-gray-700 leading-relaxed font-medium italic max-w-3xl mx-auto">
               {tenant.welcome_message}
             </p>
@@ -341,7 +341,7 @@ export default function LandingEmpresa() {
       <section className="bg-gray-50 border-t border-gray-100">
         <div className="max-w-5xl mx-auto px-6 lg:px-10 py-20">
           <div className="text-center mb-12">
-            <PI.ShieldCheck size={40} weight="duotone" className="mx-auto mb-4 text-emerald-500" />
+            <ShieldCheck size={40} weight="duotone" className="mx-auto mb-4 text-emerald-500" />
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Tu información, tu decisión</h2>
             <p className="text-base text-gray-500 max-w-2xl mx-auto leading-relaxed">
               Diseñado con compliance enterprise. {tenant.name} financia tu programa, pero nunca accede a tu CV, conversaciones, ni postulaciones individuales.
@@ -350,9 +350,9 @@ export default function LandingEmpresa() {
 
           <div className="grid md:grid-cols-3 gap-5">
             {[
-              { icon: PI.Lock,    title: 'Confidencialidad total',     desc: 'Tu CV, conversaciones y postulaciones jamás se comparten individualmente con la empresa.' },
-              { icon: PI.Files,   title: 'Métricas agregadas únicamente', desc: 'Solo reportes anónimos a nivel cohorte: % completitud, NPS, herramientas más usadas.' },
-              { icon: PI.UserCircle, title: 'Tus datos te pertenecen',   desc: 'Puedes exportar o eliminar tu información cuando quieras, sin pedir permiso.' },
+              { icon: Lock,    title: 'Confidencialidad total',     desc: 'Tu CV, conversaciones y postulaciones jamás se comparten individualmente con la empresa.' },
+              { icon: Files,   title: 'Métricas agregadas únicamente', desc: 'Solo reportes anónimos a nivel cohorte: % completitud, NPS, herramientas más usadas.' },
+              { icon: UserCircle, title: 'Tus datos te pertenecen',   desc: 'Puedes exportar o eliminar tu información cuando quieras, sin pedir permiso.' },
             ].map((p, i) => (
               <div key={i} className="bg-white p-6 rounded-2xl border border-gray-100">
                 <p.icon size={22} weight="duotone" className="text-gray-700 mb-3" />
@@ -381,7 +381,7 @@ export default function LandingEmpresa() {
             style={{ background: primary, boxShadow: `0 10px 30px -10px ${primary}80` }}
           >
             Activar mi cuenta
-            <PI.ArrowRight size={16} weight="bold" />
+            <ArrowRight size={16} weight="bold" />
           </button>
         </div>
       </section>

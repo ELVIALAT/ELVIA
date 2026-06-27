@@ -14,18 +14,18 @@ process.on('unhandledRejection', (reason, promise) => {
 const helmet = require('helmet');
 
 const { limiterGeneral } = require('./middleware/rateLimiter');
-const cvRoutes = require('./routes/cv');
-const jobsRoutes = require('./routes/jobs');
+const cvRoutes = require('./modules/cv/cv.routes');
+const jobsRoutes = require('./modules/jobs/jobs.routes');
 const emailRoutes = require('./routes/email');
-const chatRoutes      = require('./routes/chat')
-const interviewRoutes = require('./routes/interview')
-const linkedinRoutes  = require('./routes/linkedin')
+const { chatRouter, manualChatRouter } = require('./modules/mentor/mentor.routes')
+const interviewRoutes = require('./modules/interview/interview.routes')
+const linkedinRoutes  = require('./modules/linkedin/linkedin.routes')
 const codesRoutes     = require('./routes/codes')
-const adminRoutes     = require('./routes/admin')
+const adminRoutes     = require('./modules/admin/admin.routes')
 const waitlistRoutes  = require('./routes/waitlist')
 const eventRoutes     = require('./routes/events')
-const companyRoutes   = require('./routes/company')
-const manualChatRoutes = require('./routes/manualChat')
+const companyRoutes   = require('./modules/tenancy/tenancy.routes')
+const notificationsRoutes = require('./modules/notifications/notifications.routes')
 
 // Carga el manual ELVIA al boot — falla rápido si falta el archivo
 require('./lib/loadManual').loadManual();
@@ -109,9 +109,10 @@ app.use(limiterGeneral);
 // --- Rutas de la API ---
 app.use('/api/cv', cvRoutes);
 app.use('/api/jobs', jobsRoutes);
+app.use('/api/notifications', notificationsRoutes);
 app.use('/api/email', emailRoutes);
-app.use('/api/chat/manual', manualChatRoutes)
-app.use('/api/chat',      chatRoutes)
+app.use('/api/chat/manual', manualChatRouter)
+app.use('/api/chat',        chatRouter)
 app.use('/api/interview', interviewRoutes)
 app.use('/api/linkedin',  linkedinRoutes)
 app.use('/api/codes',     codesRoutes)

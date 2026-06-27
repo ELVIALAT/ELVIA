@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import * as PI from '@phosphor-icons/react'
+import { ArrowClockwise, FloppyDiskBack, GearSix, Lock, WarningCircle } from '@phosphor-icons/react'
 import SectionHeading from '../../shared/SectionHeading'
 
 const CompanySettingsTab = ({ company, onRefresh, db, API_URL }) => {
@@ -46,7 +46,7 @@ const CompanySettingsTab = ({ company, onRefresh, db, API_URL }) => {
           
           <div className="flex items-center gap-6 mb-12">
              <div className="p-4 rounded-[1.5rem] bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-xl">
-                <PI.GearSix size={36} weight="duotone" className="group-hover:rotate-45 transition-transform duration-700" />
+                <GearSix size={36} weight="duotone" className="group-hover:rotate-45 transition-transform duration-700" />
              </div>
              <div>
                 <h2 className="text-2xl font-black text-white uppercase italic tracking-tight">Preferencias de Entidad</h2>
@@ -84,7 +84,7 @@ const CompanySettingsTab = ({ company, onRefresh, db, API_URL }) => {
                 <div className="space-y-3">
                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest italic ml-1">Identificador Slug (Inmutable)</label>
                    <div className="w-full bg-slate-900/50 border border-slate-800/50 rounded-2xl px-6 py-5 text-sm text-slate-600 font-black uppercase italic tracking-widest flex items-center gap-3">
-                      <PI.Lock size={14} weight="bold" />
+                      <Lock size={14} weight="bold" />
                       elvia.ai/{company.slug}
                    </div>
                 </div>
@@ -96,7 +96,7 @@ const CompanySettingsTab = ({ company, onRefresh, db, API_URL }) => {
                    disabled={loading}
                    className="w-full py-5 rounded-[1.5rem] bg-indigo-600 text-white text-[11px] font-black uppercase tracking-widest hover:bg-indigo-500 shadow-2xl shadow-indigo-900/40 disabled:opacity-50 transition-all flex items-center justify-center gap-4 italic active:scale-[0.98]"
                 >
-                   {loading ? <PI.ArrowClockwise className="animate-spin" /> : <PI.FloppyDiskBack size={20} weight="bold" />}
+                   {loading ? <ArrowClockwise className="animate-spin" /> : <FloppyDiskBack size={20} weight="bold" />}
                    {loading ? 'Transmitiendo Cambios...' : 'Guardar Configuración'}
                 </button>
              </div>
@@ -105,7 +105,7 @@ const CompanySettingsTab = ({ company, onRefresh, db, API_URL }) => {
           <div className="mt-12 p-8 bg-amber-500/5 border border-amber-500/10 rounded-[2rem] relative group/warning">
              <div className="flex gap-6">
                 <div className="p-3 rounded-2xl bg-amber-500/10 text-amber-500 border border-amber-500/20 shrink-0">
-                  <PI.WarningCircle size={28} weight="duotone" className="group-hover/warning:animate-pulse" />
+                  <WarningCircle size={28} weight="duotone" className="group-hover/warning:animate-pulse" />
                 </div>
                 <div>
                    <h4 className="text-[11px] font-black text-amber-500 uppercase tracking-widest mb-2 italic">Zona Restringida</h4>

@@ -1,6 +1,6 @@
 import React from 'react'
 import AdminSidebar from './AdminSidebar'
-import * as PI from '@phosphor-icons/react'
+import { Moon, Sun } from '@phosphor-icons/react'
 
 const AdminLayout = ({ children, currentTab, onTabChange, onLogout, adminUser, theme, toggleTheme }) => {
   const isLight = theme === 'light';
@@ -26,7 +26,7 @@ const AdminLayout = ({ children, currentTab, onTabChange, onLogout, adminUser, t
             onClick={toggleTheme}
             className={`p-3 rounded-xl transition-all ${isLight ? 'bg-slate-200 text-slate-600 hover:bg-slate-300' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
           >
-            {isLight ? <PI.Moon size={20} weight="fill" /> : <PI.Sun size={20} weight="fill" />}
+            {isLight ? <Moon size={20} weight="fill" /> : <Sun size={20} weight="fill" />}
           </button>
         </header>
         

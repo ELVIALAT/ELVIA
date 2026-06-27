@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
-import * as PI from '@phosphor-icons/react'
+import { ArrowRight, Briefcase, ChartLine, CircleNotch, Export, Eye, EyeSlash, Lock, ShieldCheck, UsersThree, WarningCircle } from '@phosphor-icons/react'
 import { useAuth } from '../context/AuthContext'
 import { useTenant, DEFAULT_TENANT } from '../context/TenantContext'
 import { useSectorLabels } from '../hooks/useSectorLabels'
@@ -161,7 +161,7 @@ export default function LoginHR() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white px-6">
         <div className="max-w-md text-center">
-          <PI.WarningCircle size={56} weight="duotone" className="text-amber-500 mx-auto mb-4" />
+          <WarningCircle size={56} weight="duotone" className="text-amber-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Panel HR no disponible</h1>
           <p className="text-sm text-gray-500 mb-6">
             No encontramos un programa activo con el identificador <code className="px-2 py-0.5 bg-gray-100 rounded">{slug}</code>.
@@ -218,7 +218,7 @@ export default function LoginHR() {
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest mb-5"
               style={{ background: `${primary}10`, color: primary }}
             >
-              <PI.ShieldCheck size={12} weight="bold" />
+              <ShieldCheck size={12} weight="bold" />
               {L.adminAccessBadge}
             </div>
 
@@ -231,7 +231,7 @@ export default function LoginHR() {
 
             {isLoggedAsUser && (
               <div className="mb-6 p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800 flex items-start gap-2">
-                <PI.WarningCircle size={16} className="shrink-0 mt-0.5" />
+                <WarningCircle size={16} className="shrink-0 mt-0.5" />
                 <span>Tu cuenta es de {L.member}, no del equipo del programa. Ve a <Link to={`/${sectorPath}/${slug}`} className="underline font-semibold">tu panel</Link>.</span>
               </div>
             )}
@@ -240,7 +240,7 @@ export default function LoginHR() {
             {mfaScreen === 'enroll' && (
               <div className="space-y-5">
                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-800 flex items-start gap-2">
-                  <PI.ShieldCheck size={16} className="shrink-0 mt-0.5" style={{ color: primary }} />
+                  <ShieldCheck size={16} className="shrink-0 mt-0.5" style={{ color: primary }} />
                   <span>Este programa requiere autenticación de dos factores. Escanea el código QR con Google Authenticator o Authy.</span>
                 </div>
 
@@ -264,7 +264,7 @@ export default function LoginHR() {
 
                 {mfaError && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 flex items-center gap-2">
-                    <PI.WarningCircle size={14} />
+                    <WarningCircle size={14} />
                     <span>{mfaError}</span>
                   </div>
                 )}
@@ -275,7 +275,7 @@ export default function LoginHR() {
                   className="w-full py-3.5 rounded-xl text-white font-semibold text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   style={{ background: primary }}
                 >
-                  {mfaLoading ? <><PI.CircleNotch size={16} className="animate-spin" /> Verificando...</> : 'Activar autenticador →'}
+                  {mfaLoading ? <><CircleNotch size={16} className="animate-spin" /> Verificando...</> : 'Activar autenticador →'}
                 </button>
               </div>
             )}
@@ -284,7 +284,7 @@ export default function LoginHR() {
             {mfaScreen === 'verify' && (
               <div className="space-y-5">
                 <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-800 flex items-start gap-2">
-                  <PI.Lock size={16} className="shrink-0 mt-0.5" style={{ color: primary }} />
+                  <Lock size={16} className="shrink-0 mt-0.5" style={{ color: primary }} />
                   <span>Ingresa el código de tu app autenticadora para acceder al panel HR.</span>
                 </div>
 
@@ -303,7 +303,7 @@ export default function LoginHR() {
 
                 {mfaError && (
                   <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 flex items-center gap-2">
-                    <PI.WarningCircle size={14} />
+                    <WarningCircle size={14} />
                     <span>{mfaError}</span>
                   </div>
                 )}
@@ -314,7 +314,7 @@ export default function LoginHR() {
                   className="w-full py-3.5 rounded-xl text-white font-semibold text-sm transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   style={{ background: primary }}
                 >
-                  {mfaLoading ? <><PI.CircleNotch size={16} className="animate-spin" /> Verificando...</> : 'Verificar código →'}
+                  {mfaLoading ? <><CircleNotch size={16} className="animate-spin" /> Verificando...</> : 'Verificar código →'}
                 </button>
               </div>
             )}
@@ -344,14 +344,14 @@ export default function LoginHR() {
                     autoComplete="current-password"
                   />
                   <button type="button" onClick={() => setShowPwd(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700">
-                    {showPwd ? <PI.EyeSlash size={16} /> : <PI.Eye size={16} />}
+                    {showPwd ? <EyeSlash size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
               </div>
 
               {error && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 flex items-start gap-2">
-                  <PI.WarningCircle size={16} className="shrink-0 mt-0.5" />
+                  <WarningCircle size={16} className="shrink-0 mt-0.5" />
                   <span>{error}</span>
                 </div>
               )}
@@ -363,13 +363,13 @@ export default function LoginHR() {
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <PI.CircleNotch size={16} className="animate-spin" />
+                    <CircleNotch size={16} className="animate-spin" />
                     Validando acceso...
                   </span>
                 ) : (
                   <span className="flex items-center justify-center gap-2">
                     Acceder al {L.adminPanelTitle}
-                    <PI.ArrowRight size={14} weight="bold" />
+                    <ArrowRight size={14} weight="bold" />
                   </span>
                 )}
               </button>
@@ -401,7 +401,7 @@ export default function LoginHR() {
           <div className="relative z-10 flex flex-col justify-between h-full p-10 lg:p-16 text-white min-h-[400px]">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm text-[10px] font-bold uppercase tracking-widest mb-6">
-                <PI.Briefcase size={12} weight="duotone" />
+                <Briefcase size={12} weight="duotone" />
                 Operación del programa
               </div>
               <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-4">
@@ -413,10 +413,10 @@ export default function LoginHR() {
 
               <div className="grid sm:grid-cols-2 gap-4">
                 {[
-                  { icon: PI.UsersThree,   title: L.bullet1Title, desc: L.bullet1Desc },
-                  { icon: PI.ChartLine,    title: L.bullet2Title, desc: L.bullet2Desc },
-                  { icon: PI.ShieldCheck,  title: L.bullet3Title, desc: L.bullet3Desc },
-                  { icon: PI.Export,       title: L.bullet4Title, desc: L.bullet4Desc },
+                  { icon: UsersThree,   title: L.bullet1Title, desc: L.bullet1Desc },
+                  { icon: ChartLine,    title: L.bullet2Title, desc: L.bullet2Desc },
+                  { icon: ShieldCheck,  title: L.bullet3Title, desc: L.bullet3Desc },
+                  { icon: Export,       title: L.bullet4Title, desc: L.bullet4Desc },
                 ].map((f, i) => (
                   <div key={i} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4">
                     <f.icon size={20} weight="duotone" className="mb-2" style={{ color: primary }} />

@@ -1,5 +1,5 @@
 import React from 'react'
-import * as PI from '@phosphor-icons/react'
+import { ChartPieSlice, Coins, CurrencyDollar, Fire, Target } from '@phosphor-icons/react'
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   Cell, PieChart, Pie 
@@ -26,7 +26,7 @@ const SubscriptionsTab = ({ users }) => {
       <SectionHeading 
         title="Economía de ELVIA" 
         subtitle="Rendimiento del modelo de negocio y conversión premium"
-        icon={PI.Coins}
+        icon={Coins}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -34,14 +34,14 @@ const SubscriptionsTab = ({ users }) => {
           label="Candidatos Hot" 
           value={agotados} 
           sub="AGOTARON CRÉDITOS FREE" 
-          icon={PI.Fire} 
+          icon={Fire} 
           color="amber" 
         />
         <KpiCard 
           label="Tasa de Cierre" 
           value={`${conversion}%`} 
           sub="CONVERSIÓN FREE → PREMIUM" 
-          icon={PI.Target} 
+          icon={Target} 
           color="green" 
         />
       </div>
@@ -51,7 +51,7 @@ const SubscriptionsTab = ({ users }) => {
         <div className="bg-[#111827] rounded-[2.5rem] p-10 border border-slate-800 shadow-2xl">
           <div className="flex items-center justify-between mb-10">
             <h3 className="font-black text-white text-lg italic uppercase">Distribución</h3>
-            <PI.ChartPieSlice size={24} className="text-indigo-400/50" />
+            <ChartPieSlice size={24} className="text-indigo-400/50" />
           </div>
           
           <div className="h-[250px] w-full">
@@ -92,7 +92,7 @@ const SubscriptionsTab = ({ users }) => {
           <div className="bg-[#111827] rounded-[2.5rem] p-10 border border-slate-800 shadow-2xl flex flex-col items-center justify-center text-center relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-600/10 blur-[80px] rounded-full group-hover:bg-indigo-600/20 transition-all duration-1000" />
             
-            <PI.CurrencyDollar size={64} weight="duotone" className="text-emerald-400 mb-6" />
+            <CurrencyDollar size={64} weight="duotone" className="text-emerald-400 mb-6" />
             <p className="text-[11px] font-black text-emerald-500 uppercase tracking-[0.4em] mb-3">Valor Total de Cartera</p>
             <p className="text-6xl font-black text-white italic tracking-tighter">
               $ {totalRevenue.toLocaleString()} <span className="text-2xl text-slate-700">USD</span>

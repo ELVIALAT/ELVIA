@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import * as PI from '@phosphor-icons/react'
+import { ArrowClockwise, ArrowDown, Buildings, Circle, CircleNotch, ClipboardText, ClockCounterClockwise, EnvelopeSimple, Gear, ListChecks, UserMinus, UserPlus, X } from '@phosphor-icons/react'
 import SectionHeading from '../shared/SectionHeading'
 import AdminSkeleton from '../shared/AdminSkeleton'
 
 const ACTION_META = {
-  tenant_created:    { label: 'Tenant creado',       color: 'emerald', icon: PI.Buildings },
-  hr_admin_created:  { label: 'Admin HR creado',     color: 'blue',    icon: PI.UserPlus },
-  user_invited:      { label: 'Usuario invitado',    color: 'indigo',  icon: PI.EnvelopeSimple },
-  user_removed:      { label: 'Usuario eliminado',   color: 'rose',    icon: PI.UserMinus },
-  allowlist_updated: { label: 'Allowlist actualizada', color: 'amber', icon: PI.ListChecks },
-  config_changed:    { label: 'Config cambiada',     color: 'violet',  icon: PI.Gear },
+  tenant_created:    { label: 'Tenant creado',       color: 'emerald', icon: Buildings },
+  hr_admin_created:  { label: 'Admin HR creado',     color: 'blue',    icon: UserPlus },
+  user_invited:      { label: 'Usuario invitado',    color: 'indigo',  icon: EnvelopeSimple },
+  user_removed:      { label: 'Usuario eliminado',   color: 'rose',    icon: UserMinus },
+  allowlist_updated: { label: 'Allowlist actualizada', color: 'amber', icon: ListChecks },
+  config_changed:    { label: 'Config cambiada',     color: 'violet',  icon: Gear },
 }
 
 const COLOR = {
@@ -25,7 +25,7 @@ const COLOR = {
 const LIMIT = 50
 
 const ActionBadge = ({ action }) => {
-  const meta = ACTION_META[action] || { label: action, color: 'slate', icon: PI.Circle }
+  const meta = ACTION_META[action] || { label: action, color: 'slate', icon: Circle }
   const Icon = meta.icon
   const cls  = COLOR[meta.color]
   return (
@@ -113,13 +113,13 @@ const AuditTab = ({ db, API_URL }) => {
       <SectionHeading
         title="Audit Log B2B"
         subtitle="Registro inmutable de acciones sobre tenants y usuarios del panel super_admin"
-        icon={PI.ClockCounterClockwise}
+        icon={ClockCounterClockwise}
       >
         <button
           onClick={() => { setOffset(0); fetchLogs(0, true) }}
           className="px-6 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all"
         >
-          <PI.ArrowClockwise size={14} weight="bold" />
+          <ArrowClockwise size={14} weight="bold" />
           Actualizar
         </button>
       </SectionHeading>
@@ -153,7 +153,7 @@ const AuditTab = ({ db, API_URL }) => {
             onClick={() => { setFilterCompany(''); setFilterAction('') }}
             className="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-500 hover:text-slate-300 text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-1.5"
           >
-            <PI.X size={12} weight="bold" /> Limpiar
+            <X size={12} weight="bold" /> Limpiar
           </button>
         )}
 
@@ -167,7 +167,7 @@ const AuditTab = ({ db, API_URL }) => {
         {loading && logs.length > 0 && (
           <div className="absolute inset-0 bg-slate-950/30 backdrop-blur-[1px] z-10 flex items-center justify-center">
             <div className="bg-indigo-600/10 border border-indigo-500/30 px-6 py-3 rounded-2xl flex items-center gap-3">
-              <PI.CircleNotch size={18} className="text-indigo-500 animate-spin" />
+              <CircleNotch size={18} className="text-indigo-500 animate-spin" />
               <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">Cargando...</span>
             </div>
           </div>
@@ -188,7 +188,7 @@ const AuditTab = ({ db, API_URL }) => {
               {displayed.length === 0 && !loading ? (
                 <tr>
                   <td colSpan={5} className="px-8 py-24 text-center">
-                    <PI.ClipboardText size={32} className="text-slate-700 mx-auto mb-3" weight="duotone" />
+                    <ClipboardText size={32} className="text-slate-700 mx-auto mb-3" weight="duotone" />
                     <p className="text-slate-600 text-[10px] font-black uppercase tracking-widest">
                       Sin entradas en el audit log
                     </p>
@@ -237,7 +237,7 @@ const AuditTab = ({ db, API_URL }) => {
               disabled={loading}
               className="px-8 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-40 flex items-center gap-2"
             >
-              {loading ? <PI.CircleNotch size={14} className="animate-spin" /> : <PI.ArrowDown size={14} weight="bold" />}
+              {loading ? <CircleNotch size={14} className="animate-spin" /> : <ArrowDown size={14} weight="bold" />}
               Cargar más
             </button>
           </div>

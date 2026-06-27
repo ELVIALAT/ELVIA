@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import * as PI from '@phosphor-icons/react'
+import { ArrowClockwise, Cpu, Eye, Lightning } from '@phosphor-icons/react'
 
 const COHORT_EMAILS = [
   'mario.bahamonde@telefonica.com',
@@ -125,7 +125,7 @@ export default function CohortTab({ db, theme }) {
 
   if (loading) return (
     <div className="h-full flex items-center justify-center py-32">
-      <PI.Cpu size={40} className="text-indigo-500 animate-pulse" weight="duotone" />
+      <Cpu size={40} className="text-indigo-500 animate-pulse" weight="duotone" />
     </div>
   )
 
@@ -149,7 +149,7 @@ export default function CohortTab({ db, theme }) {
           </label>
           <button onClick={fetchData}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-black transition-colors">
-            <PI.ArrowClockwise size={13} weight="bold" />
+            <ArrowClockwise size={13} weight="bold" />
             Actualizar
           </button>
         </div>
@@ -304,8 +304,8 @@ export default function CohortTab({ db, theme }) {
                     <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
                       style={{ background: cfg.color + '20' }}>
                       {isPageView
-                        ? <PI.Eye size={12} weight="duotone" style={{ color: cfg.color }} />
-                        : <PI.Lightning size={12} weight="fill" style={{ color: cfg.color }} />
+                        ? <Eye size={12} weight="duotone" style={{ color: cfg.color }} />
+                        : <Lightning size={12} weight="fill" style={{ color: cfg.color }} />
                       }
                     </div>
                     <div className="flex-1 min-w-0">

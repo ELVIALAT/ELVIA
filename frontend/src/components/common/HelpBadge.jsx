@@ -1,6 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
-import * as Icons from '@phosphor-icons/react';
+import {
+  BookOpen, Books, Briefcase, BriefcaseMetal, ChartBar, ChartPie, ClipboardText,
+  Coins, Compass, CreditCard, CurrencyDollar, FileText, Globe, GraduationCap,
+  Handshake, Heartbeat, IdentificationCard, Layout, Lightning, MagnifyingGlass,
+  Microphone, Note, Paperclip, PushPin, Sliders, Smiley, Star, Target,
+  TextColumns, TrendUp, User, Video, Wind, Question, X,
+} from '@phosphor-icons/react';
 import { HELP_CONTENT } from '../../data/helpContent';
+
+// Mapa explícito de iconos posibles (los iconName de helpContent + Question/X).
+// Reemplaza el `import * as Icons`, que rompía el tree-shaking y empaquetaba TODA
+// la librería de Phosphor (~5MB) en el bundle. Iconos desconocidos → Question (igual
+// que el fallback original).
+const ICONS = {
+  BookOpen, Books, Briefcase, BriefcaseMetal, ChartBar, ChartPie, ClipboardText,
+  Coins, Compass, CreditCard, CurrencyDollar, FileText, Globe, GraduationCap,
+  Handshake, Heartbeat, IdentificationCard, Layout, Lightning, MagnifyingGlass,
+  Microphone, Note, Paperclip, PushPin, Sliders, Smiley, Star, Target,
+  TextColumns, TrendUp, User, Video, Wind, Question, X,
+};
 
 export default function HelpBadge({ id, className = '' }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,7 +58,7 @@ export default function HelpBadge({ id, className = '' }) {
   }, [isOpen]);
 
   // Obtener dinámicamente el componente de icono de Phosphor
-  const IconComponent = Icons[content.iconName] || Icons.Question;
+  const IconComponent = ICONS[content.iconName] || Question;
 
   const toggleOpen = (e) => {
     e.stopPropagation();
@@ -64,7 +82,7 @@ export default function HelpBadge({ id, className = '' }) {
           }
         `}
       >
-        <Icons.Question size={14} weight="bold" />
+        <Question size={14} weight="bold" />
       </button>
 
       {/* Popover Flotante de Ayuda (Estilo Premium Apple Glassmorphism) */}
@@ -98,7 +116,7 @@ export default function HelpBadge({ id, className = '' }) {
               className="text-gray-400 hover:text-gray-600 rounded-lg p-0.5 hover:bg-gray-100 transition-colors"
               aria-label="Cerrar ayuda"
             >
-              <Icons.X size={14} weight="bold" />
+              <X size={14} weight="bold" />
             </button>
           </div>
 

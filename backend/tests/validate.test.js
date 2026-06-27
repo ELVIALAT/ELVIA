@@ -1,6 +1,8 @@
 // Tests del middleware de validación Zod + envelope (Fase 1, tareas 4-5).
 const { validate } = require('../src/middleware/validate');
-const schemas = require('../src/schemas');
+// Schemas migraron a sus módulos (Fase 2).
+const tenancySchemas = require('../src/modules/tenancy/tenancy.schemas');
+const tenantsSchemas = require('../src/modules/admin/tenants/tenants.schemas');
 
 // Mock mínimo de res
 function mockRes() {
@@ -21,13 +23,13 @@ function run(schema, body) {
 
 describe('validate middleware + envelope', () => {
   test('body válido → next() y req.body queda parseado', () => {
-    const { nexted, req } = run(schemas.companyRegistration, { email: 'A@B.COM', password: '12345678' });
+    const { nexted, req } = run(tenancySchemas.companyRegistration, { email: 'A@B.COM', password: '12345678' });
     expect(nexted).toBe(true);
     expect(req.body.email).toBe('a@b.com'); // normalizado (toLowerCase + trim)
   });
 
   test('body inválido → 400 con envelope, NO 500', () => {
-    const { nexted, res } = run(schemas.companyRegistration, { email: 'malo', password: '1' });
+    const { nexted, res } = run(tenancySchemas.companyRegistration, { email: 'malo', password: '1' });
     expect(nexted).toBe(false);
     expect(res.statusCode).toBe(400);
     expect(res.body.success).toBe(false);
@@ -36,14 +38,10 @@ describe('validate middleware + envelope', () => {
     expect(typeof res.body.mensaje).toBe('string');       // retrocompat frontend
   });
 
-  test('jobs/compatibility sin cvText → rechaza', () => {
-    const { res, nexted } = run(schemas.jobsCompatibility, { jobTitle: 'Dev' });
-    expect(nexted).toBe(false);
-    expect(res.statusCode).toBe(400);
-  });
+  // (jobs/compatibility schema migrado a src/modules/jobs — cubierto en jobs.test.js)
 
   test('admin/tenants con slug inválido → rechaza con mensaje claro', () => {
-    const { res, nexted } = run(schemas.adminCreateTenant, {
+    const { res, nexted } = run(tenantsSchemas.adminCreateTenant, {
       nombre: 'X', slug: 'Slug Con Espacios', hr_nombre: 'Y', hr_email: 'y@z.com',
     });
     expect(nexted).toBe(false);
@@ -51,7 +49,7 @@ describe('validate middleware + envelope', () => {
   });
 
   test('allowlist/bulk vacío → rechaza (al menos una fila)', () => {
-    const { res, nexted } = run(schemas.allowlistBulk, { rows: [] });
+    const { res, nexted } = run(tenancySchemas.allowlistBulk, { rows: [] });
     expect(nexted).toBe(false);
     expect(res.statusCode).toBe(400);
   });

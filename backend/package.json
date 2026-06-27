@@ -8,7 +8,7 @@
     "dev": "nodemon server.js",
     "test": "jest --testPathIgnorePatterns tests/isolation",
     "test:isolation": "jest tests/isolation",
-    "check": "node --check src/app.js src/routes/*.js src/middleware/*.js src/lib/*.js src/services/*.js",
+    "check": "node --check src/app.js src/routes/*.js src/middleware/*.js src/lib/*.js src/services/*.js src/modules/**/*.js src/schemas/*.js",
     "manual:sync": "node ../scripts/sync-manual.js"
   },
   "dependencies": {
