@@ -4,9 +4,11 @@
 > (Haiku/Sonnet) y su exposición PII, para que la migración al router no rompa nada.
 > Estado medido el **2026-06-30** sobre `dev2` @ `14e76fd`. Tracker hermano: [`ESTADO_REFACTOR.md`](ESTADO_REFACTOR.md).
 
-> **Estado implementación (2026-06-30):** router `platform/ai/` construido y verificado (pasos 1-3).
-> 123/123 Jest verdes · `npm run check` verde · smoke de política OK. Default = **Híbrido por PII**
-> (PII→Claude lock, no-PII→DeepSeek). Pendiente: paso 4 (ledger por tenant) + paso 5 (limpieza).
+> **Estado implementación (2026-06-30):** router `platform/ai/` + ledger de costo por tenant + dashboard
+> construidos y verificados (**pasos 1-4**). 137/137 Jest · `npm run check` verde · `vite build` verde ·
+> smoke ALS OK. Default = **Híbrido por PII** (PII→Claude lock, no-PII→DeepSeek).
+> Commits dev2: `fa0df71` (router) · `7e8c008` (ledger+endpoint) · `cbc2ae3` (dashboard).
+> Pendiente: aplicar migración `ai_usage` a staging/prod · paso 5 (limpieza: borrar claudeService muerto + rename gemini) · split resend.
 
 ## 🔴 Hallazgo que invierte el plan original
 
@@ -86,7 +88,10 @@ Costo relativo aprox/token: DeepSeek ≈ 1× · Haiku ≈ 3-4× · Sonnet ≈ 10
 1. ✅ **HECHO** — `services/api/src/platform/ai/` con `routeTask({ task, payload, tenant })` + tabla de política `policy.js` (task → {claudeModel, piiLock}).
 2. ✅ **HECHO** — providers `claude` (Haiku/Sonnet + caching del system) y `deepseek` (pluggable). `complete()` = primitiva central (resolve → provider → recordCost).
 3. ✅ **HECHO** — `deepseekService.js` convertido a **facade fino** → rutas de import y mocks Jest verdes (123/123). `claudeService.js` (muerto) intacto, se elimina en paso 5.
-4. ⏳ **Ledger de costo por tenant** + dashboard. Stub listo (`cost/ledger.js` normaliza usage; falta persistir + threading de tenant).
+4. ✅ **HECHO** — **Ledger de costo por tenant + dashboard**. Threading de tenant vía AsyncLocalStorage
+   (`context.js` + middleware `aiContext`; `auth` escribe userId, `dailyCap` escribe company_id). `ledger.js`
+   persiste tokens crudos en `ai_usage` (fire-and-forget, cache user→company). Endpoint super_admin
+   `GET /api/admin/ai-cost` + tab "Costo IA" en el Admin Center. **Migración `ai_usage` pendiente de aplicar.**
 5. ⏳ Matar `claudeService.js` (muerto) + re-export reliquia + renombrar `geminiService` → `knowledgeBaseService`.
 6. ⏳ Split del god-file de email `resendService.js` (900 LOC) — fuera de scope IA, cleanup aparte.
 
@@ -95,11 +100,14 @@ Costo relativo aprox/token: DeepSeek ≈ 1× · Haiku ≈ 3-4× · Sonnet ≈ 10
 platform/ai/
   index.js          routeTask({task,payload,tenant}) + named exports + complete
   policy.js         TASKS + POLICY (claudeModel, piiLock) + resolve()
-  complete.js       primitiva: resolve → provider.call → recordCost
+  complete.js       primitiva: resolve → provider.call → recordCost (lee ALS)
+  context.js        AsyncLocalStorage por request (userId/tenant)
   providers/        claude.js (Haiku/Sonnet + cache_control) · deepseek.js (pluggable)
-  cost/ledger.js    recordCost + normalizeUsage (stub; persistencia = paso 4)
+  cost/             ledger.js (persiste ai_usage) · rates.js (tarifas) · report.js (aggregateByTenant)
   shared/           sistema.js (SISTEMA_BASE, ETIQUETA_IDIOMA) · pii.js · parsers.js
   tasks/            cv.js · interview.js · linkedin.js · mentor.js · index.js (14 fns)
+middleware/aiContext.js   · modules/admin/admin.aiCost.js   · migration 20260630_ai_usage_ledger.sql
+apps/web .../tabs/AiCostTab.jsx   (dashboard super_admin)
 ```
 
 ## Decisiones (resueltas)
@@ -109,8 +117,13 @@ platform/ai/
 - [x] **Tiers**: `evaluarEntrevista` → Sonnet · `optimizarDescripcionExp` → Haiku.
 - [x] **Prompt del chat**: se conserva el de DeepSeek (anchors del manual, más completo).
 
-## Decisiones pendientes (pasos 4-5)
+## Decisiones (resueltas, pasos 4)
 
-- [ ] **Threading de tenant**: cómo llega `tenant` a `complete()` (AsyncLocalStorage vs ctx explícito) para el ledger.
+- [x] **Threading de tenant**: **AsyncLocalStorage** (`context.js` + middleware `aiContext`). userId desde `auth`, company_id reusando el que `dailyCap` ya resuelve; fallback a resolver desde userId en el persist (cacheado). Verificado que sobrevive `await` y aísla requests concurrentes.
+
+## Decisiones pendientes (paso 5 / ops)
+
+- [ ] **Aplicar migración `ai_usage`** a staging/prod (hasta entonces `recordCost` no-opea sin tabla).
+- [ ] **Verificar tarifas** en `cost/rates.js` contra precios oficiales vigentes (son aproximadas).
 - [ ] **Flip de bulk no-PII**: cuándo mover `resumen`/`descripcionExp`/`corregirProyecto`/`analizar`/`evaluar`/`chat` a Claude (hoy DeepSeek). Palanca: `AI_NONPII_PROVIDER=claude`.
 - [ ] **RAG**: ¿recablear `searchKnowledgeBase` (hoy huérfano) al chat vivo o dejarlo fuera?
