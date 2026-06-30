@@ -14,6 +14,7 @@ process.on('unhandledRejection', (reason, promise) => {
 const helmet = require('helmet');
 
 const { limiterGeneral } = require('./middleware/rateLimiter');
+const aiContext = require('./middleware/aiContext');
 const cvRoutes = require('./modules/cv/cv.routes');
 const jobsRoutes = require('./modules/jobs/jobs.routes');
 const emailRoutes = require('./routes/email');
@@ -104,7 +105,9 @@ app.use(express.json({ limit: '50kb' }));
 app.use(express.urlencoded({ extended: true, limit: '50kb' }));
 app.use(limiterGeneral);
 
-
+// Abre el contexto de IA (AsyncLocalStorage) por request, antes de las rutas:
+// auth (por-ruta) escribe el userId y dailyCap el tenant; complete() los lee para el ledger de costo.
+app.use(aiContext);
 
 // --- Rutas de la API ---
 app.use('/api/cv', cvRoutes);

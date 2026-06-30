@@ -2,6 +2,7 @@
 // Devuelve el TEXTO crudo del modelo — el parseo/retry/fallback vive en cada task (fiel al original).
 const { resolve } = require('./policy');
 const { recordCost } = require('./cost/ledger');
+const { getAiContext } = require('./context');
 
 const PROVIDERS = {
   claude: require('./providers/claude'),
@@ -15,7 +16,11 @@ async function complete({ task, system, messages, maxTokens, temperature, cacheS
 
   const t0 = Date.now();
   const { text, usage } = await impl.call({ model, system, messages, maxTokens, temperature, cacheSystem });
-  recordCost({ tenant, task, provider, model, usage });
+
+  // Atribución de costo: tenant explícito gana; si no, el del request (AsyncLocalStorage).
+  const aiCtx = getAiContext();
+  recordCost({ tenant: tenant || aiCtx.tenant || null, userId: aiCtx.userId || null, task, provider, model, usage });
+
   if (process.env.AI_LOG_TIMING === '1') {
     console.log(`[ai] ${task} via ${provider}/${model} ${((Date.now() - t0) / 1000).toFixed(1)}s`);
   }

@@ -2,6 +2,7 @@
 // ADR-004: caps en 3 dimensiones (global / per-tenant / per-user) vía RPC atómica,
 // para que el tenant genérico no sea vector de DoS económico entre usuarios B2C.
 const { supabaseAdmin } = require('../lib/supabase');
+const { setAiTenant } = require('../platform/ai/context');
 
 // Mensajes por dimensión que bloqueó (no filtrar detalles de otros usuarios/tenants).
 const BLOCK_MESSAGES = {
@@ -30,6 +31,7 @@ const dailyCap = async (req, res, next) => {
         .maybeSingle();
       companyId = profile?.company_id || null;
     }
+    setAiTenant(companyId); // reusa el company_id ya resuelto para el ledger de costo de IA
 
     // Incremento atómico multi-dimensión: check + insert/update de las 3 dimensiones
     const { data, error } = await supabaseAdmin.rpc('increment_daily_cap_v2', {

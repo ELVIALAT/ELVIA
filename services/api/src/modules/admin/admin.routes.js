@@ -25,6 +25,7 @@ router.use(require('./admin.users'))
 router.use(require('./admin.config'))
 router.use(require('./admin.audit'))
 router.use(require('./admin.knowledge'))
+router.use(require('./admin.aiCost'))
 router.use(require('./tenants/tenants.routes'))
 
 module.exports = router

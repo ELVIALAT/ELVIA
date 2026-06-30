@@ -2,6 +2,7 @@
 // Verifica el JWT de Supabase (vía identity.service) y adjunta user/cliente.
 const { supabase, crearClienteAutenticado } = require('../lib/supabase');
 const { authenticate } = require('../modules/identity/identity.service');
+const { setAiUser } = require('../platform/ai/context');
 
 const auth = async (req, res, next) => {
   if (!supabase) {
@@ -27,6 +28,7 @@ const auth = async (req, res, next) => {
   req.user = user;
   req.token = token;
   req.supabase = crearClienteAutenticado(token);
+  setAiUser(user.id); // atribución de costo de IA por usuario (ledger)
   next();
 };
 
