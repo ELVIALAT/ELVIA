@@ -1,5 +1,5 @@
 import React from 'react'
-import { Binoculars, Brain, CaretRight, ClockCounterClockwise, Coins, Gear, Kanban, ListStar, ShieldCheck, SignOut, Storefront, Tag, TrendUp, UsersThree } from '@phosphor-icons/react'
+import { Binoculars, Brain, CaretRight, ChartLineUp, ClockCounterClockwise, Coins, Gear, Kanban, ListStar, ShieldCheck, SignOut, Storefront, Tag, TrendUp, UsersThree } from '@phosphor-icons/react'
 
 const TABS_B2C = [
   { id: 'overview',      label: 'Escritorio',     icon: Kanban },
@@ -11,6 +11,7 @@ const TABS_B2C = [
   { id: 'marketing',     label: 'Marketing Hub',  icon: TrendUp },
   { id: 'knowledge',     label: 'Conocimiento',   icon: Brain },
   { id: 'cohort',        label: 'Cohort Telefónica', icon: Binoculars },
+  { id: 'ai-cost',       label: 'Costo IA',       icon: ChartLineUp },
   { id: 'audit',         label: 'Audit Log',      icon: ClockCounterClockwise },
   { id: 'sistema',       label: 'Configuración',  icon: Gear },
 ]
