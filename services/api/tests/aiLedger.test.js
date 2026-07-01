@@ -30,7 +30,7 @@ describe('ai/cost/ledger · normalizeUsage', () => {
     expect(u).toMatchObject({ inputTokens: 10, outputTokens: 20, cacheReadTokens: 5, cacheWriteTokens: 2 });
   });
   it('normaliza el usage de DeepSeek (formato OpenAI)', () => {
-    const u = normalizeUsage('deepseek', 'deepseek-chat', {
+    const u = normalizeUsage('deepseek', 'deepseek-v4-flash', {
       prompt_tokens: 7, completion_tokens: 9, prompt_cache_hit_tokens: 3,
     });
     expect(u).toMatchObject({ inputTokens: 7, outputTokens: 9, cacheReadTokens: 3, cacheWriteTokens: 0 });
@@ -65,7 +65,7 @@ describe('ai/cost/report · aggregateByTenant', () => {
   it('agrupa por tenant, computa costo por modelo y ordena por costo desc', () => {
     const rows = [
       { company_id: 'A', provider: 'claude',   model: 'claude-sonnet-4-6',         calls: 2, input_tokens: 1e6, output_tokens: 0,   cache_read_tokens: 0, cache_write_tokens: 0 },
-      { company_id: 'A', provider: 'deepseek',  model: 'deepseek-chat',             calls: 1, input_tokens: 1e6, output_tokens: 0,   cache_read_tokens: 0, cache_write_tokens: 0 },
+      { company_id: 'A', provider: 'deepseek',  model: 'deepseek-v4-flash',         calls: 1, input_tokens: 1e6, output_tokens: 0,   cache_read_tokens: 0, cache_write_tokens: 0 },
       { company_id: 'B', provider: 'claude',    model: 'claude-haiku-4-5-20251001', calls: 5, input_tokens: 1e6, output_tokens: 1e6, cache_read_tokens: 0, cache_write_tokens: 0 },
     ];
     const { tenants, totals } = aggregateByTenant(rows, { A: 'Empresa A', B: 'Empresa B' });
@@ -73,11 +73,11 @@ describe('ai/cost/report · aggregateByTenant', () => {
     const B = tenants.find(t => t.company_id === 'B');
     expect(A.name).toBe('Empresa A');
     expect(A.calls).toBe(3);
-    expect(A.costUsd).toBeCloseTo(3.27, 6);   // sonnet 3.0 + deepseek 0.27
+    expect(A.costUsd).toBeCloseTo(3.14, 6);   // sonnet 3.0 + v4-flash 0.14
     expect(B.costUsd).toBeCloseTo(6.0, 6);    // haiku 1 (in) + 5 (out)
     expect(tenants[0].company_id).toBe('B');  // ordenado por costo desc
     expect(totals.calls).toBe(8);
-    expect(totals.costUsd).toBeCloseTo(9.27, 6);
+    expect(totals.costUsd).toBeCloseTo(9.14, 6);
   });
   it('maneja filas vacías y company_id null', () => {
     expect(aggregateByTenant([]).tenants).toEqual([]);

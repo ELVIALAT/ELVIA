@@ -3,7 +3,7 @@
 const OpenAI = require('openai');
 const Anthropic = require('@anthropic-ai/sdk');
 
-const DS_MODEL = 'deepseek-chat';
+const DS_MODEL = 'deepseek-v4-flash'; // deepseek-chat deprecado 2026-07-24
 
 let _deepseek = null, _dsInit = false;
 function getDeepseek() {

@@ -15,7 +15,7 @@ const MODELS = {
   sonnet: process.env.CLAUDE_MODEL || 'claude-sonnet-4-6',
   haiku: process.env.CLAUDE_MODEL_FAST || 'claude-haiku-4-5-20251001',
 };
-const MODEL_DEEPSEEK = process.env.DEEPSEEK_MODEL || 'deepseek-chat';
+const MODEL_DEEPSEEK = process.env.DEEPSEEK_MODEL || 'deepseek-v4-flash'; // deepseek-chat deprecado 2026-07-24
 const NONPII_PROVIDER = process.env.AI_NONPII_PROVIDER || 'deepseek';
 
 const TASKS = {
