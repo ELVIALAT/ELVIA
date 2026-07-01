@@ -8,9 +8,10 @@
 > + limpieza construidos y verificados (**pasos 1-5**). 137/137 Jest · `npm run check` verde · `vite build` verde ·
 > smoke ALS OK. Default = **Híbrido por PII** (PII→Claude lock, no-PII→DeepSeek).
 > Commits dev2: `fa0df71` (router) · `7e8c008` (ledger+endpoint) · `cbc2ae3` (dashboard) · `646226d` (limpieza) ·
-> `55c5f77` (split email) · `aa1a261` (consumidores→platform/ai, facade borrado).
+> `55c5f77` (split email) · `aa1a261` (consumidores→platform/ai, facade borrado) · `7399715` (DeepSeek→v4-flash) ·
+> `70dd2f0` (absorber jobs.ai al router).
 > **Migración `ai_usage` APLICADA a staging/prod (`evkxbvrbncbtpyvirzee`, 2026-06-30 vía `supabase db push`; de paso arregló el drift de `companies_created_by`).**
-> **Refactor #1 COMPLETO.** Único pendiente: verificar tarifas en `cost/rates.js` (son aproximadas).
+> **Refactor #1 COMPLETO — TODA la IA pasa ahora por `platform/ai` (17 tasks, cost-tracked).** DeepSeek en `deepseek-v4-flash` (chat deprecado 24-jul). Único pendiente conocido: ninguno estructural.
 
 ## 🔴 Hallazgo que invierte el plan original
 
