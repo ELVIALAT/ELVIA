@@ -1,0 +1,246 @@
+// Emails B2B / tenancy: invitación, bienvenida HR, activación de candidato y post-activación.
+const { resend, FROM_EMAIL, escapeHtml } = require('./client');
+
+const sendInvitacionEmail = async (to, nombre, companyName, inviteUrl) => {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY no configurada');
+  }
+
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('es-MX', {
+    day: '2-digit', month: 'long', year: 'numeric',
+  });
+  const nombreSafe = escapeHtml(nombre || '');
+  const companySafe = escapeHtml(companyName);
+
+  return resend.emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: `Invitación: Únete a ${companySafe} en ELVIA`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
+        <h2 style="color: #E8541A;">¡Hola${nombreSafe ? ` ${nombreSafe}` : ''}! 👋</h2>
+        <p>Fuiste invitado/a a unirte a <strong>${companySafe}</strong> en ELVIA.</p>
+        <p>Haz clic en el botón para crear tu cuenta y acceder a la plataforma:</p>
+        <div style="text-align:center; margin: 32px 0;">
+          <a href="${escapeHtml(inviteUrl)}" style="background:#E8541A;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:16px;">
+            Aceptar invitación
+          </a>
+        </div>
+        <p style="font-size:13px;color:#6b7280;">Este enlace expira el ${expiresAt}.</p>
+        <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;" />
+        <p style="font-size:12px;color:#9ca3af;">© ${new Date().getFullYear()} ELVIA · Todos los derechos reservados</p>
+      </div>
+    `,
+  });
+};
+
+const sendHRWelcomeEmail = async (to, { hrNombre, companyName, hrUrl, setupLink }) => {
+  if (!resend) {
+    console.warn('[Resend] sendHRWelcomeEmail — email deshabilitado (sin API key)')
+    return
+  }
+  const nombreSafe = escapeHtml(hrNombre || '')
+  const companySafe = escapeHtml(companyName)
+  const urlSafe = escapeHtml(hrUrl)
+  const setupSafe = escapeHtml(setupLink)
+
+  return resend.emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: `Tu acceso al panel HR de ${companySafe} en ELVIA`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6;">
+        <h2 style="color: #1e3a8a;">¡Hola${nombreSafe ? ` ${nombreSafe}` : ''}! 👋</h2>
+        <p>Tu cuenta de administrador HR ha sido creada para <strong>${companySafe}</strong> en ELVIA.</p>
+
+        <p>Para activarla, configura tu contraseña haciendo clic en el botón de abajo. El enlace es de un solo uso y expira en 1 hora.</p>
+
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${setupSafe}"
+             style="background: #1e3a8a; color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">
+            Configurar mi contraseña
+          </a>
+        </div>
+
+        <div style="background: #f0f9ff; border-left: 4px solid #3b82f6; padding: 16px; margin: 20px 0;">
+          <p style="margin: 0 0 8px; font-size: 12px; text-transform: uppercase; color: #6b7280;">Tu portal HR (después de configurar):</p>
+          <p style="margin: 0 0 16px;">
+            <a href="${urlSafe}" style="color: #1e3a8a; font-weight: bold;">${urlSafe}</a>
+          </p>
+          <p style="margin: 0 0 4px; font-size: 12px; color: #6b7280;">Email de acceso:</p>
+          <p style="margin: 0; font-weight: bold;">${escapeHtml(to)}</p>
+        </div>
+
+        <p style="color: #6b7280; font-size: 13px;">
+          Si no esperabas este email, ignóralo. El enlace expirará automáticamente.
+        </p>
+
+        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+        <p style="font-size: 12px; color: #9ca3af;">© ${new Date().getFullYear()} ELVIA · Plataforma de Outplacement</p>
+      </div>
+    `,
+  })
+}
+
+/**
+ * Email de activación para candidatos B2B invitados por HR Admin.
+ * Incluye colores del tenant para branding consistente.
+ */
+const sendCandidatoInviteEmail = async (to, { nombre, apellido, companyName, primaryColor, activarUrl, hrUrl }) => {
+  if (!resend) {
+    console.warn('[Resend] sendCandidatoInviteEmail — email deshabilitado (sin API key)')
+    return
+  }
+  const nombreSafe   = escapeHtml((nombre || '').trim())
+  const companySafe  = escapeHtml(companyName)
+  const color        = escapeHtml(primaryColor || '#14B8A6')
+  const activarSafe  = escapeHtml(activarUrl)
+  const hrSafe       = escapeHtml(hrUrl || '')
+
+  return resend.emails.send({
+    from: FROM_EMAIL,
+    to,
+    subject: `Activa tu acceso al programa ${companySafe} en ELVIA®`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6; color: #1e293b;">
+
+        <div style="text-align: center; padding: 32px 0 16px;">
+          <img src="https://elvia.lat/LOGOS/ELVIA_logo_fondo_transparente.png" alt="ELVIA" style="height: 36px; width: auto;" />
+        </div>
+
+        <div style="background: ${color}; height: 4px; border-radius: 2px; margin-bottom: 32px;"></div>
+
+        <h2 style="color: #0f172a; margin: 0 0 8px;">
+          Hola${nombreSafe ? ` ${nombreSafe}` : ''}${apellido ? ` ${escapeHtml(apellido)}` : ''} 👋
+        </h2>
+        <p style="color: #475569; margin: 0 0 24px;">
+          <strong>${companySafe}</strong> te ha dado acceso a <strong>ELVIA®</strong>,
+          tu plataforma personal de acompañamiento en transición profesional.
+        </p>
+
+        <p style="color: #475569; margin: 0 0 8px;">
+          Para empezar, activa tu cuenta creando una contraseña. El enlace es de un solo uso y válido por <strong>1 hora</strong>.
+        </p>
+
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${activarSafe}"
+             style="display: inline-block; background: ${color}; color: #ffffff; padding: 14px 40px;
+                    border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 16px;">
+            Activar mi cuenta
+          </a>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; margin: 24px 0;">
+          <p style="margin: 0 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: #94a3b8;">
+            ¿Ya activaste tu cuenta? Inicia sesión aquí:
+          </p>
+          <a href="${hrSafe}" style="color: ${color}; font-weight: bold; word-break: break-all;">${hrSafe}</a>
+        </div>
+
+        <p style="font-size: 13px; color: #64748b;">
+          Si no esperabas este email o tienes dudas, contáctanos en
+          <a href="mailto:soporte@elvia.lat" style="color: ${color};">soporte@elvia.lat</a>.
+        </p>
+
+        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0 16px;" />
+        <p style="font-size: 11px; color: #94a3b8; text-align: center; margin: 0;">
+          © ${new Date().getFullYear()} ELVIA® · Plataforma de Outplacement y Empleabilidad
+        </p>
+      </div>
+    `,
+  })
+}
+
+/**
+ * Email de bienvenida tras activación exitosa de cuenta B2B.
+ * Incluye fecha de activación, fecha de caducidad y CTA a Autoconocimiento.
+ */
+const sendBienvenidaActivacionEmail = async (to, { nombre, apellido, companyName, primaryColor, loginUrl, activatedAt, licenseExpiresAt }) => {
+  if (!resend) {
+    console.warn('[Resend] sendBienvenidaActivacionEmail — email deshabilitado (sin API key)')
+    return
+  }
+  const nombreSafe   = escapeHtml((nombre || '').trim())
+  const apellidoSafe = escapeHtml((apellido || '').trim())
+  const companySafe  = escapeHtml(companyName)
+  const color        = escapeHtml(primaryColor || '#14B8A6')
+  const loginSafe    = escapeHtml(loginUrl)
+
+  const fmtDate = (d) => new Date(d).toLocaleDateString('es', { day: '2-digit', month: 'long', year: 'numeric' })
+  const activacionStr  = fmtDate(activatedAt)
+  const caducidadStr   = fmtDate(licenseExpiresAt)
+
+  return resend.emails.send({
+    from: FROM_EMAIL,
+    to,
+    reply_to: 'soporte@elvia.lat',
+    subject: `¡Bienvenido/a a ELVIA®, ${nombreSafe || 'participante'}! Tu acceso está listo 🎉`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; line-height: 1.6; color: #1e293b;">
+
+        <div style="text-align: center; padding: 32px 0 16px;">
+          <img src="https://elvia.lat/LOGOS/ELVIA_logo_fondo_transparente.png" alt="ELVIA®" style="height: 36px; width: auto;" />
+        </div>
+
+        <div style="background: ${color}; height: 4px; border-radius: 2px; margin-bottom: 32px;"></div>
+
+        <h2 style="color: #0f172a; margin: 0 0 6px;">
+          ¡Bienvenido/a${nombreSafe ? `, ${nombreSafe}${apellidoSafe ? ` ${apellidoSafe}` : ''}` : ''}! 🎉
+        </h2>
+        <p style="color: #475569; margin: 0 0 24px;">
+          Tu cuenta en <strong>${companySafe}</strong> a través de <strong>ELVIA®</strong> está activa y lista para usar.
+        </p>
+
+        <!-- Datos de licencia -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin: 0 0 28px;">
+          <p style="margin: 0 0 12px; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: .05em; color: #64748b;">
+            Información de tu acceso
+          </p>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px 0; font-size: 14px; color: #64748b; width: 50%;">Fecha de activación</td>
+              <td style="padding: 8px 0; font-size: 14px; font-weight: bold; color: #0f172a;">${activacionStr}</td>
+            </tr>
+            <tr style="border-top: 1px solid #e2e8f0;">
+              <td style="padding: 8px 0; font-size: 14px; color: #64748b;">Fecha de caducidad</td>
+              <td style="padding: 8px 0; font-size: 14px; font-weight: bold; color: ${color};">${caducidadStr}</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Primer paso recomendado -->
+        <div style="background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 0 0 28px;">
+          <p style="margin: 0 0 6px; font-weight: bold; color: #92400e;">⭐ Por dónde empezar</p>
+          <p style="margin: 0; font-size: 14px; color: #78350f;">
+            Para activar <strong>todas las funcionalidades</strong> de la plataforma, incluyendo el Gerente de Búsqueda y el análisis de compatibilidad con vacantes, es indispensable que primero completes la sección de <strong>Autoconocimiento</strong>. Es el primer paso de tu Proyecto Laboral.
+          </p>
+        </div>
+
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${loginSafe}"
+             style="display: inline-block; background: ${color}; color: #ffffff; padding: 14px 40px;
+                    border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 16px;">
+            Ir a la plataforma
+          </a>
+        </div>
+
+        <p style="font-size: 13px; color: #64748b; text-align: center;">
+          ¿Tienes dudas? Escríbenos a
+          <a href="mailto:soporte@elvia.lat" style="color: ${color};">soporte@elvia.lat</a>
+        </p>
+
+        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 32px 0 16px;" />
+        <p style="font-size: 11px; color: #94a3b8; text-align: center; margin: 0;">
+          © ${new Date().getFullYear()} ELVIA® · Plataforma de Outplacement y Empleabilidad
+        </p>
+      </div>
+    `,
+  })
+}
+
+module.exports = {
+  sendInvitacionEmail,
+  sendHRWelcomeEmail,
+  sendCandidatoInviteEmail,
+  sendBienvenidaActivacionEmail,
+};
