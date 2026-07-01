@@ -8,7 +8,8 @@
 > construidos y verificados (**pasos 1-4**). 137/137 Jest · `npm run check` verde · `vite build` verde ·
 > smoke ALS OK. Default = **Híbrido por PII** (PII→Claude lock, no-PII→DeepSeek).
 > Commits dev2: `fa0df71` (router) · `7e8c008` (ledger+endpoint) · `cbc2ae3` (dashboard).
-> Pendiente: aplicar migración `ai_usage` a staging/prod · paso 5 (limpieza: borrar claudeService muerto + rename gemini) · split resend.
+> **Migración `ai_usage` APLICADA a staging/prod (`evkxbvrbncbtpyvirzee`, 2026-06-30 vía `supabase db push`; de paso arregló el drift de `companies_created_by`).**
+> Pendiente: verificar tarifas · paso 5 (limpieza: borrar claudeService muerto + rename gemini) · split resend.
 
 ## 🔴 Hallazgo que invierte el plan original
 
@@ -91,7 +92,7 @@ Costo relativo aprox/token: DeepSeek ≈ 1× · Haiku ≈ 3-4× · Sonnet ≈ 10
 4. ✅ **HECHO** — **Ledger de costo por tenant + dashboard**. Threading de tenant vía AsyncLocalStorage
    (`context.js` + middleware `aiContext`; `auth` escribe userId, `dailyCap` escribe company_id). `ledger.js`
    persiste tokens crudos en `ai_usage` (fire-and-forget, cache user→company). Endpoint super_admin
-   `GET /api/admin/ai-cost` + tab "Costo IA" en el Admin Center. **Migración `ai_usage` pendiente de aplicar.**
+   `GET /api/admin/ai-cost` + tab "Costo IA" en el Admin Center. **Migración `ai_usage` aplicada (2026-06-30).**
 5. ⏳ Matar `claudeService.js` (muerto) + re-export reliquia + renombrar `geminiService` → `knowledgeBaseService`.
 6. ⏳ Split del god-file de email `resendService.js` (900 LOC) — fuera de scope IA, cleanup aparte.
 
@@ -123,7 +124,7 @@ apps/web .../tabs/AiCostTab.jsx   (dashboard super_admin)
 
 ## Decisiones pendientes (paso 5 / ops)
 
-- [ ] **Aplicar migración `ai_usage`** a staging/prod (hasta entonces `recordCost` no-opea sin tabla).
+- [x] **Migración `ai_usage` aplicada** a `evkxbvrbncbtpyvirzee` (2026-06-30, `supabase db push`). Staging=prod.
 - [ ] **Verificar tarifas** en `cost/rates.js` contra precios oficiales vigentes (son aproximadas).
 - [ ] **Flip de bulk no-PII**: cuándo mover `resumen`/`descripcionExp`/`corregirProyecto`/`analizar`/`evaluar`/`chat` a Claude (hoy DeepSeek). Palanca: `AI_NONPII_PROVIDER=claude`.
 - [ ] **RAG**: ¿recablear `searchKnowledgeBase` (hoy huérfano) al chat vivo o dejarlo fuera?
