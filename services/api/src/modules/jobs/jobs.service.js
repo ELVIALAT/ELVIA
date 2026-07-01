@@ -1,7 +1,10 @@
 // jobs.service — lógica de negocio: fetch de vacante (SSRF-safe), búsqueda
 // multi-provider con filtro IA, y compatibilidad CV vs vacante (con cache).
 const { isAllowedJobUrl } = require('./jobs.ssrf');
-const { DS_MODEL, getDeepseek, getClaude } = require('./jobs.ai');
+const {
+  limpiarDescripcionVacante, filtrarVacantesIndices, analizarCompatibilidadVacante,
+  isProviderReady, TASKS,
+} = require('../../platform/ai');
 const providers = require('./jobs.providers');
 const repo = require('./jobs.repository');
 
@@ -61,14 +64,8 @@ async function fetchJobUrl(url) {
 
   const textoRecortado = texto.length > 12000 ? texto.slice(0, 12000) : texto;
 
-  const client = getDeepseek();
-  if (!client) return { text: textoRecortado };
-
-  const respuesta = await client.chat.completions.create({
-    model: DS_MODEL, max_tokens: 1024,
-    messages: [{ role: 'user', content: `Del siguiente texto extraído de una página web de empleo, extrae ÚNICAMENTE la descripción de la vacante: título, empresa, ubicación, rol, requisitos y beneficios. Elimina navegación, menús, empleos similares y publicidad. Responde solo con el texto limpio.\n\nTEXTO:\n${textoRecortado}` }],
-  });
-  return { text: respuesta.choices[0].message.content.trim() };
+  if (!isProviderReady(TASKS.JOBS_CLEAN)) return { text: textoRecortado };
+  return { text: await limpiarDescripcionVacante(textoRecortado) };
 }
 
 // ── similar: búsqueda multi-provider con dedup, post-filtro geo y filtro IA ──
@@ -120,8 +117,7 @@ async function findSimilar(query) {
   let vacantes = dedupe(results.flat());
   if (vacantes.length === 0) return { vacantes: [], total: 0 };
 
-  const client = getDeepseek();
-  if (!client) return { vacantes, total: vacantes.length, sinFiltroIA: true };
+  if (!isProviderReady(TASKS.JOBS_FILTER)) return { vacantes, total: vacantes.length, sinFiltroIA: true };
 
   const gl = providers.detectarGL(location);
   if (gl !== 'us' && location) {
@@ -133,11 +129,7 @@ async function findSimilar(query) {
   const ubicacionCtx = location || 'LATAM';
   const lista = vacantes.map((v, i) => `${i}. ${v.title} | ${v.company || ''} | ${v.location || ''}`).join('\n');
   try {
-    const resp = await client.chat.completions.create({
-      model: DS_MODEL, max_tokens: 512,
-      messages: [{ role: 'user', content: `Se buscó con: "${queryOriginal}", ubicación: "${ubicacionCtx}". De esta lista devuelve los índices de vacantes relacionadas y compatibles con esa ubicación. Responde solo con los índices separados por comas.\n\n${lista}` }],
-    });
-    const indices = new Set(resp.choices[0].message.content.trim().split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n)));
+    const indices = await filtrarVacantesIndices({ queryOriginal, ubicacionCtx, lista });
     if (indices.size > 0) vacantes = vacantes.filter((_, i) => indices.has(i));
   } catch (e) {
     console.warn('[jobs.service] filtro IA falló:', e.message);
@@ -156,22 +148,9 @@ async function checkCompatibility(db, userId, body) {
   const cached = await repo.getCachedCheck(db, jobKey);
   if (cached) return { score: cached.score, motivos: cached.motivos, fromCache: true };
 
-  const claude = getClaude();
-  if (!claude) throw new DomainError('Servicio de análisis no disponible temporalmente', 503);
+  if (!isProviderReady(TASKS.JOBS_COMPAT)) throw new DomainError('Servicio de análisis no disponible temporalmente', 503);
 
-  const respuesta = await claude.messages.create({
-    model: process.env.CLAUDE_MODEL_FAST || 'claude-haiku-4-5-20251001',
-    max_tokens: 300,
-    messages: [{ role: 'user', content: `Analiza la compatibilidad entre este CV y la vacante. Responde ÚNICAMENTE en este formato exacto:\n\nSCORE: [número 0-100]\nMOTIVOS:\n- [motivo breve en español]\n- [motivo breve en español]\n- [motivo breve en español]\n\nCV:\n${cvText.slice(0, 2000)}\n\nVACANTE: ${jobTitle}\n${jobSnippet || ''}` }],
-  });
-
-  const texto = respuesta.content[0].text.trim();
-  const scoreMatch = texto.match(/SCORE:\s*(\d+)/i);
-  const motivosMatch = texto.match(/MOTIVOS:\s*([\s\S]+)/i);
-  const score = scoreMatch ? parseInt(scoreMatch[1]) : 0;
-  const motivos = motivosMatch
-    ? motivosMatch[1].trim().split('\n').map(l => l.replace(/^[-•]\s*/, '').trim()).filter(Boolean)
-    : [];
+  const { score, motivos } = await analizarCompatibilidadVacante({ cvText, jobTitle, jobSnippet });
 
   const jobData = { title: jobTitle, company: jobCompany || '', location: jobLocation || '', link: jobLink || '', via: jobVia || '', snippet: jobSnippet || '' };
   await repo.saveCheck(db, userId, { jobKey, score, motivos, jobData });

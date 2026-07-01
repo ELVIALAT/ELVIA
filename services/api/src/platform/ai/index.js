@@ -6,7 +6,7 @@
 //
 // El routing real (provider/modelo por tarea, PII-lock, costo por tenant) vive en policy.js + complete.js.
 const tasks = require('./tasks');
-const { complete } = require('./complete');
+const { complete, isReady } = require('./complete');
 const { TASKS, resolve } = require('./policy');
 
 const DISPATCH = {
@@ -24,6 +24,9 @@ const DISPATCH = {
   [TASKS.LINKEDIN_ANALIZAR]:    (p, ctx) => tasks.analizarLinkedin(p, ctx),
   [TASKS.LINKEDIN_EXTRAER]:     (p, ctx) => tasks.extraerDatosLinkedin(p.rawText, ctx),
   [TASKS.MENTOR_CHAT]:          (p, ctx) => tasks.generateChatResponse(p.message, p.history, p.context, ctx),
+  [TASKS.JOBS_CLEAN]:           (p, ctx) => tasks.limpiarDescripcionVacante(p.texto, ctx),
+  [TASKS.JOBS_FILTER]:          (p, ctx) => tasks.filtrarVacantesIndices(p, ctx),
+  [TASKS.JOBS_COMPAT]:          (p, ctx) => tasks.analizarCompatibilidadVacante(p, ctx),
 };
 
 function routeTask({ task, payload = {}, tenant } = {}) {
@@ -32,4 +35,4 @@ function routeTask({ task, payload = {}, tenant } = {}) {
   return fn(payload, { tenant });
 }
 
-module.exports = { ...tasks, routeTask, complete, resolve, TASKS };
+module.exports = { ...tasks, routeTask, complete, isProviderReady: isReady, resolve, TASKS };

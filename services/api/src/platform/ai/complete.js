@@ -27,4 +27,12 @@ async function complete({ task, system, messages, maxTokens, temperature, cacheS
   return text;
 }
 
-module.exports = { complete };
+// ¿El provider que atendería esta task está configurado (API key presente)?
+// Para consumidores que gatean su control de flujo por disponibilidad de IA (ej. jobs.service).
+function isReady(task) {
+  const { provider } = resolve(task);
+  const impl = PROVIDERS[provider];
+  return !!(impl && impl.isReady && impl.isReady());
+}
+
+module.exports = { complete, isReady };

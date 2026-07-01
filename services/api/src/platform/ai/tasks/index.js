@@ -3,5 +3,6 @@ const cv = require('./cv');
 const interview = require('./interview');
 const linkedin = require('./linkedin');
 const mentor = require('./mentor');
+const jobs = require('./jobs');
 
-module.exports = { ...cv, ...interview, ...linkedin, ...mentor };
+module.exports = { ...cv, ...interview, ...linkedin, ...mentor, ...jobs };

@@ -33,6 +33,9 @@ const TASKS = {
   LINKEDIN_ANALIZAR: 'linkedin.analizar',
   LINKEDIN_EXTRAER: 'linkedin.extraer',
   MENTOR_CHAT: 'mentor.chat',
+  JOBS_COMPAT: 'jobs.compatibility',
+  JOBS_CLEAN: 'jobs.cleanDescription',
+  JOBS_FILTER: 'jobs.filterRelevance',
 };
 
 // piiLock=true → Claude-lock (privacidad). claudeModel = tier en Claude.
@@ -55,6 +58,10 @@ const POLICY = {
   [TASKS.CV_DESCRIPCION_EXP]:   { claudeModel: 'haiku',  piiLock: false },
   [TASKS.CV_CORREGIR_PROYECTO]: { claudeModel: 'haiku',  piiLock: false },
   [TASKS.MENTOR_CHAT]:          { claudeModel: 'haiku',  piiLock: false },
+  // ── Jobs (búsqueda/compatibilidad de vacantes) ───────────────────────────
+  [TASKS.JOBS_COMPAT]:          { claudeModel: 'haiku',  piiLock: true },  // cvText = PII → Claude Haiku
+  [TASKS.JOBS_CLEAN]:           { claudeModel: 'haiku',  piiLock: false }, // limpia HTML público scrapeado
+  [TASKS.JOBS_FILTER]:          { claudeModel: 'haiku',  piiLock: false }, // filtra índices por relevancia
 };
 
 // Resuelve provider + modelo para una tarea. Aplica el lock de PII de forma estructural:
