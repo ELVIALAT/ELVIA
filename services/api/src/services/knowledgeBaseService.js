@@ -1,7 +1,10 @@
 const { supabaseAdmin } = require('../lib/supabase');
 
+// knowledgeBaseService — búsqueda RAG en la base de conocimientos (tabla elvia_knowledge)
+// vía full-text search de Supabase. Antes se llamaba geminiService; ya NO usa Gemini.
+// Hoy sin consumidores vivos — listo para recablear al chat (ver docs/superpowers/AI_LAYER_MAPPING.md).
 /**
- * Busca en Supabase usando búsqueda de texto (Fallback robusto sin Gemini)
+ * Busca en la base de conocimientos con full-text search de Postgres.
  */
 const searchKnowledgeBase = async (query) => {
   console.log('[RAG] Buscando en base de conocimientos para:', query.substring(0, 50));
