@@ -7,9 +7,10 @@
 > **Estado implementación (2026-06-30):** router `platform/ai/` + ledger de costo por tenant + dashboard
 > + limpieza construidos y verificados (**pasos 1-5**). 137/137 Jest · `npm run check` verde · `vite build` verde ·
 > smoke ALS OK. Default = **Híbrido por PII** (PII→Claude lock, no-PII→DeepSeek).
-> Commits dev2: `fa0df71` (router) · `7e8c008` (ledger+endpoint) · `cbc2ae3` (dashboard) · `646226d` (limpieza).
+> Commits dev2: `fa0df71` (router) · `7e8c008` (ledger+endpoint) · `cbc2ae3` (dashboard) · `646226d` (limpieza) ·
+> `55c5f77` (split email) · `aa1a261` (consumidores→platform/ai, facade borrado).
 > **Migración `ai_usage` APLICADA a staging/prod (`evkxbvrbncbtpyvirzee`, 2026-06-30 vía `supabase db push`; de paso arregló el drift de `companies_created_by`).**
-> Pendiente: verificar tarifas · split `resendService` (email, fuera de scope IA) · (opcional) migrar consumidores del facade `deepseekService` a importar `platform/ai` directo y borrar el facade.
+> **Refactor #1 COMPLETO.** Único pendiente: verificar tarifas en `cost/rates.js` (son aproximadas).
 
 ## 🔴 Hallazgo que invierte el plan original
 
@@ -94,7 +95,7 @@ Costo relativo aprox/token: DeepSeek ≈ 1× · Haiku ≈ 3-4× · Sonnet ≈ 10
    persiste tokens crudos en `ai_usage` (fire-and-forget, cache user→company). Endpoint super_admin
    `GET /api/admin/ai-cost` + tab "Costo IA" en el Admin Center. **Migración `ai_usage` aplicada (2026-06-30).**
 5. ✅ **HECHO** — `claudeService.js` (1070 LOC muerto) BORRADO + re-export reliquia eliminado + `geminiService.js` → `knowledgeBaseService.js` (0 refs colgantes, 137/137).
-6. ⏳ Split del god-file de email `resendService.js` (900 LOC) — fuera de scope IA, cleanup aparte.
+6. ✅ **HECHO** — `resendService.js` (900 LOC) partido en `platform/email/` (client + transactional/waitlist/tenancy/nurture); verificado por equivalencia byte a byte (0 diffs de contenido). Consumidores migrados a `platform/ai` directo + facade `deepseekService` BORRADO.
 
 **Estructura creada:**
 ```
