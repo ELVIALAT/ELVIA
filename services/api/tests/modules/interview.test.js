@@ -1,5 +1,5 @@
-// Tests del módulo interview (service con mocks de DeepSeek y repository).
-jest.mock('../../src/services/deepseekService', () => ({
+// Tests del módulo interview (service con mocks del router de IA y repository).
+jest.mock('../../src/platform/ai', () => ({
   generarPreguntasEntrevista: jest.fn(async () => ['¿Cuál es tu mayor logro?']),
   evaluarEntrevista: jest.fn(async () => ({ puntuacion: 85, resumen: 'Buen desempeño' })),
 }));

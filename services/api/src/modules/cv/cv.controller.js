@@ -11,7 +11,7 @@ const {
   fusionarResumen: fusionarResumenService,
   optimizarDescripcionExp,
   extractProfileFromCV,
-} = require('../../services/deepseekService');
+} = require('../../platform/ai');
 const { generarPDF } = require('../../services/pdfService');
 const { generarWord } = require('../../services/wordService');
 const { incrementDailyCap } = require('../../middleware/dailyCap');

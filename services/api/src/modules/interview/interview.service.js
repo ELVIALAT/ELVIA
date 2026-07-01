@@ -1,5 +1,5 @@
 // interview.service — lógica de negocio. No conoce HTTP; usa el repository.
-const { generarPreguntasEntrevista, evaluarEntrevista } = require('../../services/deepseekService');
+const { generarPreguntasEntrevista, evaluarEntrevista } = require('../../platform/ai');
 const repo = require('./interview.repository');
 
 class ValidationError extends Error { constructor(m) { super(m); this.code = 'VALIDATION'; } }

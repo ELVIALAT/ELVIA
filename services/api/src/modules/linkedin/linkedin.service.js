@@ -1,5 +1,5 @@
 // linkedin.service — lógica de negocio. No conoce HTTP; usa el repository.
-const { analizarLinkedin, extraerDatosLinkedin } = require('../../services/deepseekService');
+const { analizarLinkedin, extraerDatosLinkedin } = require('../../platform/ai');
 const { extraerTextoPDF } = require('../../utils/pdfParser');
 const repo = require('./linkedin.repository');
 

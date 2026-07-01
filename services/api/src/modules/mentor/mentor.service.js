@@ -1,7 +1,7 @@
 // mentor.service — lógica de negocio del chat ELVIA.
 // Dos modos: chat general (DeepSeek) y modo manual (responde solo con el manual).
 // Sin repository: no toca Supabase; orquesta los services de IA.
-const { generateChatResponse } = require('../../services/deepseekService');
+const { generateChatResponse } = require('../../platform/ai');
 const { responderConManual } = require('../../services/claudeManualService');
 
 // Chat general: copilot conversacional con historial acotado.

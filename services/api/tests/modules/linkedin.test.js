@@ -1,5 +1,5 @@
-// Tests del módulo linkedin (service con mocks del repository y DeepSeek).
-jest.mock('../../src/services/deepseekService', () => ({
+// Tests del módulo linkedin (service con mocks del repository y router de IA).
+jest.mock('../../src/platform/ai', () => ({
   analizarLinkedin: jest.fn(async () => ({ puntaje_global: 80, resumen_global: 'ok', top_acciones: [], secciones: {} })),
   extraerDatosLinkedin: jest.fn(async () => ({ titular: 'X' })),
 }));

@@ -12,7 +12,7 @@ jest.mock('../../src/middleware/auth', () => (req, res, next) => {
 });
 
 // Mocks de los services de IA y middlewares con efectos externos
-jest.mock('../../src/services/deepseekService', () => ({
+jest.mock('../../src/platform/ai', () => ({
   generateChatResponse: jest.fn().mockResolvedValue('Mocked AI response'),
 }));
 jest.mock('../../src/services/claudeManualService', () => ({
