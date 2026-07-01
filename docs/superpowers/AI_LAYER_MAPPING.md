@@ -5,11 +5,11 @@
 > Estado medido el **2026-06-30** sobre `dev2` @ `14e76fd`. Tracker hermano: [`ESTADO_REFACTOR.md`](ESTADO_REFACTOR.md).
 
 > **Estado implementación (2026-06-30):** router `platform/ai/` + ledger de costo por tenant + dashboard
-> construidos y verificados (**pasos 1-4**). 137/137 Jest · `npm run check` verde · `vite build` verde ·
+> + limpieza construidos y verificados (**pasos 1-5**). 137/137 Jest · `npm run check` verde · `vite build` verde ·
 > smoke ALS OK. Default = **Híbrido por PII** (PII→Claude lock, no-PII→DeepSeek).
-> Commits dev2: `fa0df71` (router) · `7e8c008` (ledger+endpoint) · `cbc2ae3` (dashboard).
+> Commits dev2: `fa0df71` (router) · `7e8c008` (ledger+endpoint) · `cbc2ae3` (dashboard) · `646226d` (limpieza).
 > **Migración `ai_usage` APLICADA a staging/prod (`evkxbvrbncbtpyvirzee`, 2026-06-30 vía `supabase db push`; de paso arregló el drift de `companies_created_by`).**
-> Pendiente: verificar tarifas · paso 5 (limpieza: borrar claudeService muerto + rename gemini) · split resend.
+> Pendiente: verificar tarifas · split `resendService` (email, fuera de scope IA) · (opcional) migrar consumidores del facade `deepseekService` a importar `platform/ai` directo y borrar el facade.
 
 ## 🔴 Hallazgo que invierte el plan original
 
@@ -93,7 +93,7 @@ Costo relativo aprox/token: DeepSeek ≈ 1× · Haiku ≈ 3-4× · Sonnet ≈ 10
    (`context.js` + middleware `aiContext`; `auth` escribe userId, `dailyCap` escribe company_id). `ledger.js`
    persiste tokens crudos en `ai_usage` (fire-and-forget, cache user→company). Endpoint super_admin
    `GET /api/admin/ai-cost` + tab "Costo IA" en el Admin Center. **Migración `ai_usage` aplicada (2026-06-30).**
-5. ⏳ Matar `claudeService.js` (muerto) + re-export reliquia + renombrar `geminiService` → `knowledgeBaseService`.
+5. ✅ **HECHO** — `claudeService.js` (1070 LOC muerto) BORRADO + re-export reliquia eliminado + `geminiService.js` → `knowledgeBaseService.js` (0 refs colgantes, 137/137).
 6. ⏳ Split del god-file de email `resendService.js` (900 LOC) — fuera de scope IA, cleanup aparte.
 
 **Estructura creada:**
