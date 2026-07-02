@@ -3,6 +3,7 @@ const router = express.Router();
 const { supabaseAdmin } = require('../lib/supabase');
 const { sendWelcomeWaitlistEmail } = require('../services/resendService');
 const auth = require('../middleware/auth');
+const requireRole = require('../middleware/requireAdmin');
 const rateLimit = require('express-rate-limit');
 
 // Rate limiter estricto para POST /api/waitlist: 5 por hora por IP
@@ -21,20 +22,10 @@ const SITUACIONES_PERMITIDAS = new Set([
   'Quiero gestionar mi siguiente paso'
 ]);
 
-// GET /api/waitlist — listar todos los leads (solo admins autenticados)
-router.get('/', auth, async (req, res, next) => {
+// GET /api/waitlist — listar todos los leads (solo super_admin)
+// Gate canónico del panel (tabla administrators), consistente con el resto de admin.*
+router.get('/', auth, requireRole('super_admin'), async (req, res, next) => {
   try {
-    // Verificar que el usuario autenticado sea admin
-    const { data: profile, error: profileError } = await supabaseAdmin
-      .from('profiles')
-      .select('is_admin')
-      .eq('id', req.user.id)
-      .single();
-
-    if (profileError || !profile?.is_admin) {
-      return res.status(403).json({ error: 'Acceso denegado' });
-    }
-
     // Paginación: por defecto primeras 50, máximo 100
     const page = Math.max(0, parseInt(req.query.page) || 0);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 50));

@@ -44,9 +44,9 @@ No existe ningún path donde un no-super_admin alcance datos de otro tenant vía
 
 ## Observaciones menores (NO seguridad — opcionales)
 
-1. **`waitlist.js` GET `/`** usa un check ad-hoc `is_admin` (lee `profiles.is_admin` del propio caller)
-   en vez de `requireRole('super_admin')`. NO es fuga (`waitlist_leads` es global sin tenant), pero es un
-   patrón de auth inconsistente con el resto del panel. *Fix opcional:* migrar a `requireRole('super_admin')`.
+1. ✅ **HECHO** — `waitlist.js` GET `/` migrado de un check ad-hoc `is_admin` a `requireRole('super_admin')`
+   (gate canónico = tabla `administrators`, consistente con el resto de admin.*). Bonus: elimina 1 uso de
+   `supabaseAdmin`. Los super_admin reales no se afectan (ya autentican vía `administrators` en el Admin panel).
 2. **Consistencia arquitectónica:** algunas lecturas/escrituras de tablas globales viven directo en routes/
    controllers en vez de en un pequeño repository. Es preferencia de estilo, no seguridad: el patrón repository
    importa para acceso TENANT-SCOPED (para forzar el guard), y esas rutas ya usan RLS. *Fix opcional, baja prioridad.*
@@ -60,6 +60,5 @@ No existe ningún path donde un no-super_admin alcance datos de otro tenant vía
 
 ## Recomendación
 
-**Cerrar #3 sin cambios de seguridad.** No hay exposición cross-tenant. Los 2 ítems menores son opcionales
-y de bajo valor/riesgo; tocarlos (código de auth) sin necesidad agrega riesgo. Si se quiere pulir consistencia,
-hacer solo la nota #1 (waitlist → `requireRole('super_admin')`) con verificación.
+**#3 cerrado sin cambios de seguridad** (no había exposición cross-tenant). Se aplicó el pulido opcional #1
+(waitlist → `requireRole('super_admin')`, verificado: 137/137). La nota #2 queda pendiente como estilo, baja prioridad.
